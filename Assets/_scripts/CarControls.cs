@@ -68,7 +68,7 @@ public class CarControls : Photon.MonoBehaviour
       if (!photonView.isMine)
       {
           //Update remote player (smooth this, this looks good, at the cost of some accuracy)
-        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15);
+        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15 );
           transform.rotation = Quaternion.Lerp(  transform.rotation, correctPlayerRot, Time.deltaTime * 15);
 
           if( Input.GetKeyDown(KeyCode.Space) && this.photonView.ownerId != PhotonNetwork.player.ID )
@@ -103,40 +103,41 @@ public class CarControls : Photon.MonoBehaviour
     }
     public void Drive()
     {
-      if(Input.GetMouseButton(0))
-      {
-        acceleration = 520.5f;
-        rb.AddForce(transform.forward * acceleration * Time.deltaTime);
-        // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      }
-      if(Input.GetMouseButton(1))
-      {
-        acceleration = -520.5f;
-        rb.AddForce(transform.forward * acceleration * Time.deltaTime);
-        // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      }
-      if(Input.GetKey(KeyCode.W))
-      {
-        acceleration = -520.5f;
-        rb.AddForce(transform.right * acceleration * Time.deltaTime);
-        // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      }
-      if(Input.GetKey(KeyCode.S))
-      {
-        acceleration = 520.5f;
-        rb.AddForce(transform.right * acceleration * Time.deltaTime);
-        // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      }
-      if(Input.GetKey(KeyCode.A))
-      {
-
-        transform.Rotate(0,-0.5f,0);
-        // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      }
-      if(Input.GetKey(KeyCode.D))
-      {
-        transform.Rotate(0,0.5f,0);
-      }
+      GetComponent<CarControlCS>().ControlCar();
+      // if(Input.GetMouseButton(0))
+      // {
+      //   acceleration = 520.5f;
+      //   rb.AddForce(transform.forward * acceleration * Time.deltaTime);
+      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
+      // }
+      // if(Input.GetMouseButton(1))
+      // {
+      //   acceleration = -520.5f;
+      //   rb.AddForce(transform.forward * acceleration * Time.deltaTime);
+      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
+      // }
+      // if(Input.GetKey(KeyCode.W))
+      // {
+      //   acceleration = -520.5f;
+      //   rb.AddForce(transform.right * acceleration * Time.deltaTime);
+      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
+      // }
+      // if(Input.GetKey(KeyCode.S))
+      // {
+      //   acceleration = 520.5f;
+      //   rb.AddForce(transform.right * acceleration * Time.deltaTime);
+      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
+      // }
+      // if(Input.GetKey(KeyCode.A))
+      // {
+      //
+      //   transform.Rotate(0,-0.5f,0);
+      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
+      // }
+      // if(Input.GetKey(KeyCode.D))
+      // {
+      //   transform.Rotate(0,0.5f,0);
+      // }
     }
 
     [PunRPC]
