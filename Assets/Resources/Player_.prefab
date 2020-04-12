@@ -9,14 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 400000}
-  - component: {fileID: 11100000}
-  - component: {fileID: 14300000}
-  - component: {fileID: 11400002}
-  - component: {fileID: 11400000}
   - component: {fileID: 11400006}
-  - component: {fileID: 11400008}
+  - component: {fileID: -1072977464918650275}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player_
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,98 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!111 &11100000
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400014, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  m_Animations:
-  - {fileID: 7400012, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  - {fileID: 7400016, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  - {fileID: 7400018, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  - {fileID: 7400014, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
---- !u!143 &14300000
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.8327
-  m_Radius: 0.3
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &11400002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 955c74c013058e749bab96303414a7c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  idleAnimation: {fileID: 7400012, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  walkAnimation: {fileID: 7400016, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  runAnimation: {fileID: 7400014, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  jumpPoseAnimation: {fileID: 7400018, guid: 449b48f7eb5d87a4baaa5fb73f875a59, type: 3}
-  walkMaxAnimationSpeed: 0.9
-  trotMaxAnimationSpeed: 1.3
-  runMaxAnimationSpeed: 0.9
-  jumpAnimationSpeed: 1.15
-  landAnimationSpeed: 1
-  _characterState: 0
-  walkSpeed: 3
-  trotSpeed: 4
-  runSpeed: 8
-  inAirControlAcceleration: 3
-  jumpHeight: 1
-  gravity: 20
-  speedSmoothing: 10
-  rotateSpeed: 500
-  trotAfterSeconds: 2
-  canJump: 1
-  isControllable: 1
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f04aa96c3db9b22499df04b7c798e649, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 0}
-  distance: 3
-  height: 1
-  angularSmoothLag: 0.1
-  angularMaxSpeed: 175
-  heightSmoothLag: 0.3
-  snapSmoothLag: 0.2
-  snapMaxSpeed: 720
-  clampHeadPositionScreenSpace: 0.75
-  lockCameraTimeout: 0.2
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,24 +55,28 @@ MonoBehaviour:
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
   ObservedComponents:
-  - {fileID: 11400008}
+  - {fileID: -1072977464918650275}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
---- !u!114 &11400008
+--- !u!114 &-1072977464918650275
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13c4159c5850b1a498351cd423b910b3, type: 3}
+  m_Script: {fileID: 11500000, guid: 568b1b86a749b424fa4d3e3a09fa8099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  playerNum: 0
+  score: 0
+  name: 
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0

@@ -44,4 +44,8 @@ MonoBehaviour:
   - RequestForPickupTimes
   - TaggedPlayer
   - Accelerate
+  - PlayerJoinGame
+  - NextTurn
+  - SetNumberInList
+  - HitSomething
   DisableAutoOpenWizard: 1

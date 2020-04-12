@@ -6,6 +6,7 @@ using System.Collections;
 
 public class CarControls : Photon.MonoBehaviour
 {
+  public GameManager gameManager;
     ThirdPersonCamera cameraScript;
     ThirdPersonController controllerScript;
     public float acceleration;
@@ -68,15 +69,17 @@ public class CarControls : Photon.MonoBehaviour
       if (!photonView.isMine)
       {
           //Update remote player (smooth this, this looks good, at the cost of some accuracy)
-        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15 );
+        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15  );
+        // transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15 / (0.1f + Vector3.Distance(transform.position,correctPlayerPos)) );
           transform.rotation = Quaternion.Lerp(  transform.rotation, correctPlayerRot, Time.deltaTime * 15);
 
-          if( Input.GetKeyDown(KeyCode.Space) && this.photonView.ownerId != PhotonNetwork.player.ID )
-          {
-            Vector3 colVector = new Vector3( Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ) );
-            this.photonView.RPC( "ColorRpc", PhotonTargets.AllBufferedViaServer, colVector );
-                this.photonView.RequestOwnership();
-          }
+
+          // if( Input.GetKeyDown(KeyCode.Space) && this.photonView.ownerId != PhotonNetwork.player.ID )
+          // {
+          //   Vector3 colVector = new Vector3( Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ) );
+          //   this.photonView.RPC( "ColorRpc", PhotonTargets.AllBufferedViaServer, colVector );
+          //       this.photonView.RequestOwnership();
+          // }
 
 
 
@@ -104,40 +107,11 @@ public class CarControls : Photon.MonoBehaviour
     public void Drive()
     {
       GetComponent<CarControlCS>().ControlCar();
-      // if(Input.GetMouseButton(0))
-      // {
-      //   acceleration = 520.5f;
-      //   rb.AddForce(transform.forward * acceleration * Time.deltaTime);
-      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      // }
-      // if(Input.GetMouseButton(1))
-      // {
-      //   acceleration = -520.5f;
-      //   rb.AddForce(transform.forward * acceleration * Time.deltaTime);
-      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      // }
-      // if(Input.GetKey(KeyCode.W))
-      // {
-      //   acceleration = -520.5f;
-      //   rb.AddForce(transform.right * acceleration * Time.deltaTime);
-      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      // }
-      // if(Input.GetKey(KeyCode.S))
-      // {
-      //   acceleration = 520.5f;
-      //   rb.AddForce(transform.right * acceleration * Time.deltaTime);
-      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      // }
-      // if(Input.GetKey(KeyCode.A))
-      // {
-      //
-      //   transform.Rotate(0,-0.5f,0);
-      //   // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-      // }
-      // if(Input.GetKey(KeyCode.D))
-      // {
-      //   transform.Rotate(0,0.5f,0);
-      // }
+
+        if(Input.GetKey(KeyCode.D))
+        {
+
+        }
     }
 
     [PunRPC]
@@ -153,15 +127,24 @@ public class CarControls : Photon.MonoBehaviour
         this.gameObject.GetComponent<Renderer>().material.color = color;
     }
 
+    public void OnCollisionEnter(Collision col)
+    {
+      if( PhotonNetwork.isMasterClient  && col.relativeVelocity.magnitude > 5 )
+      {
+        gameManager.photonView.RPC( "HitSomething", PhotonTargets.AllBufferedViaServer, gameManager.currentTurn );
+
+      }
+    }
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
         {
             //We own this player: send the others our data
-            correctPlayerPos = transform.position;
-            correctPlayerRot = transform.rotation;
+
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
+            correctPlayerPos = transform.position;
+            correctPlayerRot = transform.rotation;
         }
         else
         {
