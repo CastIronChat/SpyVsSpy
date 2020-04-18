@@ -48,4 +48,8 @@ MonoBehaviour:
   - NextTurn
   - SetNumberInList
   - HitSomething
+  - NewTurn
+  - UpdateScore
+  - ActivateHazardRPC
+  - AttemptToActivateHazardRPC
   DisableAutoOpenWizard: 1

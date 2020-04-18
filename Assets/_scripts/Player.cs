@@ -4,7 +4,7 @@ using UnityEngine;
 public class Player :  Photon.MonoBehaviour
 {
   public GameManager gameManager;
-    public int numberInList,playerNum,score;
+    public int numberInList,playerNum,score,money;
     public string name;
     public GameObject myScoreCard;
     public Material myColor;
@@ -32,6 +32,7 @@ public class Player :  Photon.MonoBehaviour
         // name = playerNum.ToString() + " x " + playerNum.ToString();
 
           gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, photonView.viewID , name );
+          gameManager.localPlayer = photonView.viewID;
       }
 	}
 
@@ -74,6 +75,7 @@ public class Player :  Photon.MonoBehaviour
     }
     public void StartMyTurn(int num)
     {
+      money++;
       if (photonView.isMine)
       {
               if (gameManager == null)
@@ -98,6 +100,12 @@ public class Player :  Photon.MonoBehaviour
     {
         numberInList = listPlace;
     }
+    [PunRPC]
+    public void UpdateScore(int scoreChange  )
+    {
+        score = scoreChange;
+    }
+
     void Update()
     {
 

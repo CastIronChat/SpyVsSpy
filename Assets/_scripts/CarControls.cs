@@ -17,11 +17,16 @@ public class CarControls : Photon.MonoBehaviour
 	void OnEnable()
 	{
 	 	firstTake = true;
+    rb = GetComponent<Rigidbody>();
+    if (photonView.isMine)
+   {rb.isKinematic = false;}
 	}
 
     void Awake()
     {
       rb = GetComponent<Rigidbody>();
+      if (photonView.isMine)
+     {rb.isKinematic = false;}
         // cameraScript = GetComponent<ThirdPersonCamera>();
         // controllerScript = GetComponent<ThirdPersonController>();
         //
@@ -68,6 +73,7 @@ public class CarControls : Photon.MonoBehaviour
 
       if (!photonView.isMine)
       {
+        rb.isKinematic = true;
           //Update remote player (smooth this, this looks good, at the cost of some accuracy)
         transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15  );
         // transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15 / (0.1f + Vector3.Distance(transform.position,correctPlayerPos)) );
@@ -86,12 +92,12 @@ public class CarControls : Photon.MonoBehaviour
       }else
       {
 
-
+        rb.isKinematic = false;
           Drive();
           // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
             Debug.Log( "acceleration = 0.5f" + PhotonNetwork.player.ID.ToString());
 
-
+            if(Input.GetMouseButtonDown(0)){rb.AddForce(Vector3.up * 2500,ForceMode.Impulse);}
       }
 
 
@@ -129,11 +135,12 @@ public class CarControls : Photon.MonoBehaviour
 
     public void OnCollisionEnter(Collision col)
     {
-      if( PhotonNetwork.isMasterClient  && col.relativeVelocity.magnitude > 5 )
-      {
-        gameManager.photonView.RPC( "HitSomething", PhotonTargets.AllBufferedViaServer, gameManager.currentTurn );
-
-      }
+        gameManager.photonView.RPC( "HitSomething", PhotonTargets.AllBufferedViaServer,  col.relativeVelocity.magnitude);
+      // if( PhotonNetwork.isMasterClient  && col.relativeVelocity.magnitude > 5 )
+      // {
+      //   gameManager.photonView.RPC( "HitSomething", PhotonTargets.AllBufferedViaServer,   col.relativeVelocity.magnitude);
+      //
+      // }
     }
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
