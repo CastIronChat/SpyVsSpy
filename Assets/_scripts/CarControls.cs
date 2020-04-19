@@ -9,7 +9,7 @@ public class CarControls : Photon.MonoBehaviour
   public GameManager gameManager;
     ThirdPersonCamera cameraScript;
     ThirdPersonController controllerScript;
-    public float acceleration;
+    public float acceleration,distToGround = 0.5f,jumpheight = 15.0f;
     public int drivingPlayer = 1;
 	bool firstTake = false;
   private Rigidbody rb;
@@ -97,14 +97,20 @@ public class CarControls : Photon.MonoBehaviour
           // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
             Debug.Log( "acceleration = 0.5f" + PhotonNetwork.player.ID.ToString());
 
-            if(Input.GetMouseButtonDown(0)){rb.AddForce(Vector3.up * 2500,ForceMode.Impulse);}
+            if(Input.GetMouseButtonDown(0) && IsGrounded()){
+              // rb.AddForce(Vector3.up * 2500,ForceMode.Impulse);
+              rb.velocity = (Vector3.up * jumpheight);
+            }
       }
 
 
 
-
-
     }
+
+      public bool IsGrounded()
+   {
+     return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
+   }
     [PunRPC]
     public void Accelerate(int fromPlayer  )
     {

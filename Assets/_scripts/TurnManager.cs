@@ -4,8 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 public class TurnManager :  Photon.MonoBehaviour
 {
+  public GameManager gameManager;
     public Transform car;
+    public bool switchingPlayers;
     public Vector3 startPosition,lastPosition;
+    public float timer,turnTime = 10.0f;
     public float totalDistance,totalDisplacement;
     public Text distanceText,displacementText;
     // Start is called before the first frame update
@@ -18,7 +21,25 @@ public class TurnManager :  Photon.MonoBehaviour
     void Update()
     {
       TrackDistance();
+      // if(switchingPlayers == false)
+      // {
+      //   timer -= Time.deltaTime;
+      //   if(timer > 0)
+      //   {TrackDistance();}
+      //   else{
+      //     switchingPlayers = true;
+      //     // gameManager.SwitchTurn();
+      //   }
+
+      // }
+
     }
+
+    public void HitSomething( float magnitude)
+    {
+      switchingPlayers = true;
+    }
+
 
     [PunRPC]
     public void NewTurn()
@@ -27,7 +48,8 @@ public class TurnManager :  Photon.MonoBehaviour
       lastPosition = car.position;
       totalDistance = 0;
       totalDisplacement = 0;
-
+      timer = turnTime;
+        switchingPlayers = false;
     }
     public void TrackDistance()
     {

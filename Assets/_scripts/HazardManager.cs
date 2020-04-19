@@ -25,7 +25,7 @@ public class HazardManager : MonoBehaviour
       if(hazards.Count > whichHazard)
       {
         print("disable hazard");
-        hazards[whichHazard].active = false;
+        hazards[whichHazard].GetComponent<Hazard>().Activate();
       }
     }
 
@@ -48,6 +48,7 @@ public class HazardManager : MonoBehaviour
 
 
         closestHazard.GetComponent<Hazard>().SetSpotInList(  hazards.Count, gameManager);
+        closestHazard.GetComponent<Hazard>().Deactivate();
         hazards.Add(closestHazard.gameObject);
       }
 

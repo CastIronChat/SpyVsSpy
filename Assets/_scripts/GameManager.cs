@@ -15,7 +15,9 @@ public class GameManager : Photon.MonoBehaviour
   public int currentPlayer = -1,currentTurn = -1;//turn is 0-x and player is their photonid
   public Renderer myRenderer;
   public List<Material> colors;
+  public Transform colorBlindShapes;
 
+  public int startingLives = 3;
   public int localPlayer; //set to the photonid of the local player via the player script for checking if objects can be activated
 
     public void Awake()
@@ -30,20 +32,24 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void NextTurn(int setTurn)
     {
-        currentPlayer = playerManager.transform.GetChild(setTurn).GetComponent<Player>().playerNum;
+        // currentPlayer = playerManager.transform.GetChild(setTurn).GetComponent<Player>().playerNum;
 
 
-
+        foreach(Transform child in colorBlindShapes)
+        {child.gameObject.active = false;}
+        colorBlindShapes.GetChild(setTurn).gameObject.active = true;
+        // colorBlindShapes.GetChild(setTurn).GetComponent<Renderer>().material = colors[setTurn]
         myRenderer.material = colors[setTurn];
         foreach(Transform go in playerManager.transform)
         {
-          go.GetComponent<Player>().myScoreCard.transform.GetChild(1).GetComponent<Text>().text = go.GetComponent<Player>().name + " : ";
-          go.GetComponent<Player>().myScoreCard.transform.GetChild(2).GetComponent<Text>().text = go.GetComponent<Player>().score.ToString();
+          // go.GetComponent<Player>().myScoreCard.transform.GetChild(1).GetComponent<Text>().text = go.GetComponent<Player>().name + " : ";
+          // go.GetComponent<Player>().myScoreCard.transform.GetChild(2).GetComponent<Text>().text = go.GetComponent<Player>().score.ToString();
 
           if(go.GetComponent<Player>().numberInList == setTurn)
           {go.GetComponent<Player>().StartMyTurn(setTurn);}
 
         }
+        // turnManager.NewTurn();
         // scoreBoard.transform.GetChild(playercount).GetChild(1).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().name + " : ";
         // scoreBoard.transform.GetChild(playercount).GetChild(2).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().score.ToString();
         // PopulateScoreBoard(1,"");
@@ -54,10 +60,7 @@ public class GameManager : Photon.MonoBehaviour
         print("new player Number: " + newPlayer);
 
         PopulateScoreBoard(newPlayer,newname);
-        // GameObject clone = Instantiate(playerScoreCard,new Vector3(playerScoreCard.transform.position.x,playerScoreCard.transform.position.y - 35,playerScoreCard.transform.position.z),playerScoreCard.transform.rotation);
-        // clone.transform.parent = playerScoreCard.transform.parent;
-        // clone.transform.GetChild(1).GetComponent<Text>().text = "Player" + newPlayer.ToString();
-        // clone.transform.GetChild(2).GetComponent<Text>().text = newPlayer.ToString();
+
     }
 
     public void PopulateScoreBoard(int newPlayer,string newname )
@@ -68,6 +71,8 @@ public class GameManager : Photon.MonoBehaviour
       Transform nextPlayerInOrder = playerManager.transform.GetChild(0);
       if(nextPlayerInOrder.GetComponent<Player>().playerNum <= 0)
       {
+        // nextPlayerInOrder.GetComponent<Player>().lives = startingLives;
+
         nextPlayerInOrder.GetComponent<Player>().playerNum = nextPlayerInOrder.GetComponent<PhotonView>().viewID;
       }
       int lowestPlayerNum = 99999;
@@ -104,7 +109,12 @@ public class GameManager : Photon.MonoBehaviour
 
             nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild(playercount).gameObject;
             nextPlayerInOrder.parent = playerManager.transform;
-            nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
+            if( PhotonNetwork.isMasterClient  )
+            {
+      nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
+            }
+
 
 
             scoreBoard.transform.GetChild(playercount).GetChild(3).GetComponent<RawImage>().color = colors[playercount].color;
@@ -120,23 +130,30 @@ public class GameManager : Photon.MonoBehaviour
     }
      void Update()
     {
-        if( PhotonNetwork.isMasterClient  && Input.GetKeyDown(KeyCode.Space) )
+        if( PhotonNetwork.isMasterClient   && Input.GetKeyDown(KeyCode.Space)   )
         {
+          // turnManager.timer = 10;
+          // turnManager.switchingPlayers = true;
           SwitchTurn();
         }
     }
     public void SwitchTurn()
     {
-      foreach(Transform go in playerManager.transform)
-      {
-        if(go.GetComponent<Player>().numberInList == currentTurn)
-        {go.GetComponent<PhotonView>().RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().score + (int)(turnManager.totalDistance * turnManager.totalDisplacement) );}
-     }
-      currentTurn = currentTurn + 1;
-      if(currentTurn >= playerManager.transform.childCount){currentTurn = 0;}
-      myRenderer.material = colors[currentTurn];
-      this.photonView.RPC( "NextTurn", PhotonTargets.AllBufferedViaServer, currentTurn );
-      turnManager.GetComponent<PhotonView>().photonView.RPC( "NewTurn", PhotonTargets.AllBufferedViaServer );
+
+
+            foreach(Transform go in playerManager.transform)
+            {
+              if(go.GetComponent<Player>().numberInList == currentTurn)
+              {go.GetComponent<PhotonView>().RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().score + (int)(turnManager.totalDistance * turnManager.totalDisplacement) );}
+            }
+          currentTurn = currentTurn + 1;
+          if(currentTurn >= playerManager.transform.childCount){currentTurn = 0;}
+          myRenderer.material = colors[currentTurn];
+          this.photonView.RPC( "NextTurn", PhotonTargets.AllBufferedViaServer, currentTurn );
+
+          turnManager.GetComponent<PhotonView>().photonView.RPC( "NewTurn", PhotonTargets.AllBufferedViaServer );
+
+
     }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -205,9 +222,17 @@ public class GameManager : Photon.MonoBehaviour
     public void HitSomething( float magnitude)
     {
       print("hit something: " + magnitude + " " + PhotonNetwork.isMasterClient);
-      if( PhotonNetwork.isMasterClient  && magnitude > 5 )
+      if( PhotonNetwork.isMasterClient  && magnitude > 5 && turnManager.switchingPlayers == false)
       {
+        turnManager.totalDistance = 0;
+        turnManager.switchingPlayers = true;
+        turnManager.timer = 11;
+        foreach(Transform go in playerManager.transform)
+        {
+        if(go.GetComponent<Player>().numberInList == currentTurn)
+        {go.GetComponent<PhotonView>().RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().lives - 1);}
         SwitchTurn();
+        }
         // scoreBoard.transform.GetChild(whichPlayer).GetChild(2).GetComponent<Text>().text = (Convert.ToInt32(scoreBoard.transform.GetChild(whichPlayer).GetChild(2).GetComponent<Text>().text) + 1).ToString();
 
         // foreach(Transform go in playerManager.transform)

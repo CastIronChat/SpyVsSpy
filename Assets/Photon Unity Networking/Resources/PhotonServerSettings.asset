@@ -52,4 +52,5 @@ MonoBehaviour:
   - UpdateScore
   - ActivateHazardRPC
   - AttemptToActivateHazardRPC
+  - UpdateLives
   DisableAutoOpenWizard: 1
