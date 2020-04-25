@@ -69,28 +69,22 @@ public class CarControls : Photon.MonoBehaviour
 
     void Update()
     {
-      // transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward, Time.deltaTime * acceleration);
 
       if (!photonView.isMine)
       {
         rb.isKinematic = true;
-          //Update remote player (smooth this, this looks good, at the cost of some accuracy)
         transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15  );
-        // transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15 / (0.1f + Vector3.Distance(transform.position,correctPlayerPos)) );
           transform.rotation = Quaternion.Lerp(  transform.rotation, correctPlayerRot, Time.deltaTime * 15);
 
 
-          // if( Input.GetKeyDown(KeyCode.Space) && this.photonView.ownerId != PhotonNetwork.player.ID )
-          // {
-          //   Vector3 colVector = new Vector3( Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ), Random.Range( 0.0f, 1.0f ) );
-          //   this.photonView.RPC( "ColorRpc", PhotonTargets.AllBufferedViaServer, colVector );
-          //       this.photonView.RequestOwnership();
-          // }
+      }
 
 
+    }
 
-      }else
-      {
+    public void DriveCar()
+    {
+
 
         rb.isKinematic = false;
           Drive();
@@ -99,10 +93,7 @@ public class CarControls : Photon.MonoBehaviour
 
             if(Input.GetMouseButtonDown(0) && IsGrounded()){
               // rb.AddForce(Vector3.up * 2500,ForceMode.Impulse);
-              rb.velocity = (Vector3.up * jumpheight);
-            }
-      }
-
+              rb.velocity = (rb.velocity + (Vector3.up * jumpheight));}
 
 
     }

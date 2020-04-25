@@ -8,19 +8,25 @@ public class TurnManager :  Photon.MonoBehaviour
     public Transform car;
     public bool switchingPlayers;
     public Vector3 startPosition,lastPosition;
-    public float timer,turnTime = 10.0f;
+    public float safeSpotTimer, timer,turnTime = 10.0f;
     public float totalDistance,totalDisplacement;
     public Text distanceText,displacementText;
+    public float carReturnSpeed = 5.0f;
+    public Quaternion lastSafeRotation,secondLastSafeRotation;
+    public Vector3 lastSafeSpot,secondLastSafeSpot;
     // Start is called before the first frame update
     void Start()
     {
-
+      secondLastSafeSpot = car.position;
+      secondLastSafeRotation = car.rotation;
+      lastSafeRotation = car.rotation;
+      lastSafeSpot = car.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-      TrackDistance();
+
       // if(switchingPlayers == false)
       // {
       //   timer -= Time.deltaTime;
@@ -35,6 +41,30 @@ public class TurnManager :  Photon.MonoBehaviour
 
     }
 
+    public void TurnActive()
+    {
+      safeSpotTimer += Time.deltaTime;
+      if(safeSpotTimer > 2.0f)
+      {
+          safeSpotTimer = 0;
+          secondLastSafeSpot = lastSafeSpot;
+          secondLastSafeRotation = lastSafeRotation;
+          lastSafeRotation = car.rotation;
+          lastSafeSpot = car.position;
+      }
+      TrackDistance();
+    }
+
+    public bool ReturnCarToSafeSpot()
+    {
+      if(car.position != secondLastSafeSpot)
+      {
+        car.rotation = Quaternion.Slerp(car.rotation, secondLastSafeRotation, carReturnSpeed * Time.deltaTime);
+        car.position = Vector3.MoveTowards(car.position, secondLastSafeSpot, carReturnSpeed  * Time.deltaTime);
+        return false;
+      }else{    return true;}
+
+    }
     public void HitSomething( float magnitude)
     {
       switchingPlayers = true;
@@ -60,5 +90,17 @@ public class TurnManager :  Photon.MonoBehaviour
 
       distanceText.text =  Mathf.Round(totalDistance).ToString();
       displacementText.text = Mathf.Round(totalDisplacement).ToString();
+    }
+
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.isWriting)
+        {
+
+        }
+        else
+        {
+
+        }
     }
 }

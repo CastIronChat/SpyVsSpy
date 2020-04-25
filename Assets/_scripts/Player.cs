@@ -15,6 +15,7 @@ public class Player :  Photon.MonoBehaviour
       if (!photonView.isMine)
      {
        // gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+       // transform.parent = gameManager.idleplayerManager.transform;
        // playerNum = photonView.viewID;
        // this.photonView.RequestOwnership();
        print("start");
@@ -26,22 +27,20 @@ public class Player :  Photon.MonoBehaviour
      gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     transform.parent = gameManager.playerManager.transform;
       if (photonView.isMine){
-        // gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        // playerNum = photonView.viewID;
-        // this.photonView.RequestOwnership();
-        // playerNum = photonView.viewID;
-        name = PhotonNetwork.playerName;
-        // name = playerNum.ToString() + " x " + playerNum.ToString();
-        lives = gameManager.startingLives;
-        this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer,lives );
-          gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, photonView.viewID , name );
-          gameManager.localPlayer = photonView.viewID;
+
+              playerNum = photonView.viewID;
+              name = PhotonNetwork.playerName;
+                gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, photonView.viewID , name );
+                // this.photonView.RPC( "JoinGame", PhotonTargets.AllBufferedViaServer, name, photonView.viewID  );
+
+                gameManager.localPlayer = photonView.viewID;
       }
 	}
 
     void Awake()
     {
-
+      // gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+     // transform.parent = gameManager.idleplayerManager.transform;
          if (photonView.isMine)
         {
           // gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -62,15 +61,15 @@ public class Player :  Photon.MonoBehaviour
         if (stream.isWriting)
         {
             //We own this player: send the others our data
-            stream.SendNext(score);
-            stream.SendNext(name);
+          //  stream.SendNext(score);
+          //  stream.SendNext(name);
             // stream.SendNext(transform.rotation);
         }
         else
         {
             //Network player, receive data
-          score = (int)stream.ReceiveNext();
-            name = (string)stream.ReceiveNext();
+        //  score = (int)stream.ReceiveNext();
+        //    name = (string)stream.ReceiveNext();
             // correctPlayerRot = (Quaternion)stream.ReceiveNext();
 
 
@@ -78,7 +77,6 @@ public class Player :  Photon.MonoBehaviour
     }
     public void StartMyTurn(int num)
     {
-      money++;
       if (photonView.isMine)
       {
               if (gameManager == null)
@@ -91,39 +89,90 @@ public class Player :  Photon.MonoBehaviour
 
 
              }
+             gameManager.car.photonView.RequestOwnership();
              if(gameManager != null && (num == numberInList || playerNum == num))
              {
                // gameManager.car.GetComponent<PhotonView>().RequestOwnership();
-               gameManager.car.photonView.RequestOwnership();
+
              }
       }
     }
+
+    [PunRPC]
+    public void JoinGame(string newname, int photonNumber  )
+    {
+        name = newname;
+        playerNum = photonNumber;
+          numberInList = -1;
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+       transform.parent = gameManager.idleplayerManager.transform;
+    }
+
     [PunRPC]
     public void SetNumberInList(int listPlace  )
     {
         numberInList = listPlace;
     }
+
+    public void ServerUpdateScore(int scoreChange  )
+    {
+          score = scoreChange;
+          this.photonView.RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, score  );
+    }
+
     [PunRPC]
     public void UpdateScore(int scoreChange  )
     {
         score = scoreChange;
           if(myScoreCard != null){
+            myScoreCard.active = true;
         myScoreCard.transform.GetChild(1).GetComponent<Text>().text = name + " : ";
-        myScoreCard.transform.GetChild(2).GetComponent<Text>().text = score.ToString() + ":L-" + lives.ToString();
+        myScoreCard.transform.GetChild(2).GetComponent<Text>().text = score.ToString() ;
       }
     }
+
+    public void ServerUpdateLives(int livesChange  )
+    {
+        lives = livesChange;
+          this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, lives  );
+    }
+
     [PunRPC]
     public void UpdateLives(int livesChange  )
     {
         lives = livesChange;
         if(myScoreCard != null){
         myScoreCard.transform.GetChild(1).GetComponent<Text>().text = name + " : ";
-        myScoreCard.transform.GetChild(2).GetComponent<Text>().text = score.ToString() + ":L-" + lives.ToString();
+        myScoreCard.transform.GetChild(3).GetComponent<Text>().text = lives.ToString();
+      }
+    }
+    public void ServerUpdatePower(int powerChange  )
+    {
+        money = powerChange;
+          this.photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, money  );
+    }
+
+    [PunRPC]
+    public void UpdatePower(int powerChange  )
+    {
+        money = powerChange;
+        if(myScoreCard != null){
+        myScoreCard.transform.GetChild(1).GetComponent<Text>().text = name + " : ";
+        myScoreCard.transform.GetChild(4).GetComponent<Text>().text = money.ToString();
       }
     }
     void Update()
     {
-
+      // if(transform.parent == null)
+      // {
+      //   if (gameManager == null)
+      //  {
+      //     // playerNum = photonView.viewID;
+      //    gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+      //
+      //  }
+      //  transform.parent = gameManager.idleplayerManager;
+      // }
     }
 
 

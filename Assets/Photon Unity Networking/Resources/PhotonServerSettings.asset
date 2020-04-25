@@ -53,4 +53,7 @@ MonoBehaviour:
   - ActivateHazardRPC
   - AttemptToActivateHazardRPC
   - UpdateLives
+  - JoinGame
+  - StartRound
+  - UpdatePower
   DisableAutoOpenWizard: 1

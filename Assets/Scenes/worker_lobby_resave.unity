@@ -519,9 +519,9 @@ GUIText:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465271789}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
-  m_Text: Demo Worker Menu
+  m_Text: 
   m_Anchor: 7
   m_Alignment: 0
   m_PixelOffset: {x: 0, y: 0}

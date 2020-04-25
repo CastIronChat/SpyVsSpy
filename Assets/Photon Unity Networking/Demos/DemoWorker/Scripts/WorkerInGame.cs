@@ -24,13 +24,13 @@ public class WorkerInGame : Photon.MonoBehaviour
         PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
     }
 
-    public void OnGUI()
-    {
-        if (GUILayout.Button("Return to Lobby"))
-        {
-            PhotonNetwork.LeaveRoom();  // we will load the menu level when we successfully left the room
-        }
-    }
+    // public void OnGUI()
+    // {
+    //     if (GUILayout.Button("Return to Lobby"))
+    //     {
+    //         PhotonNetwork.LeaveRoom();  // we will load the menu level when we successfully left the room
+    //     }
+    // }
 
     public void OnMasterClientSwitched(PhotonPlayer player)
     {
