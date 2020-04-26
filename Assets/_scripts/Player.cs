@@ -12,69 +12,54 @@ public class Player :  Photon.MonoBehaviour
     public Material myColor;
     void Start()
     {
-      if (!photonView.isMine)
+      if (photonView.isMine)
      {
-       // gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-       // transform.parent = gameManager.idleplayerManager.transform;
-       // playerNum = photonView.viewID;
+
        // this.photonView.RequestOwnership();
-       print("start");
+     //   ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+     // hash.Add("lives", -1);
+
+     // PhotonNetwork.player.SetCustomProperties(hash);
+
      }
 
     }
 	void OnEnable()
 	{
      gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-    transform.parent = gameManager.playerManager.transform;
+     transform.parent = gameManager.playerManager.transform;
       if (photonView.isMine){
 
-              playerNum = photonView.viewID;
+              playerNum = this.photonView.ownerId;
               name = PhotonNetwork.playerName;
-                gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, photonView.viewID , name );
-                // this.photonView.RPC( "JoinGame", PhotonTargets.AllBufferedViaServer, name, photonView.viewID  );
+              gameManager.localPlayer = playerNum;
+              gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerNum , name );
+              this.photonView.RPC( "JoinGame", PhotonTargets.AllBufferedViaServer, name, photonView.ownerId  );
 
-                gameManager.localPlayer = photonView.viewID;
       }
 	}
 
-    void Awake()
-    {
-      // gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-     // transform.parent = gameManager.idleplayerManager.transform;
-         if (photonView.isMine)
-        {
-          // gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-          // playerNum = photonView.viewID;
-          // this.photonView.RequestOwnership();
-          print("Awake");
-        }
-        else
-        {
-
-        }
-
-
-    }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
         {
             //We own this player: send the others our data
-          //  stream.SendNext(score);
-          //  stream.SendNext(name);
+           // stream.SendNext(score);
+           // stream.SendNext(name);
             // stream.SendNext(transform.rotation);
         }
         else
         {
             //Network player, receive data
-        //  score = (int)stream.ReceiveNext();
-        //    name = (string)stream.ReceiveNext();
+         // score = (int)stream.ReceiveNext();
+           // name = (string)stream.ReceiveNext();
             // correctPlayerRot = (Quaternion)stream.ReceiveNext();
 
 
         }
     }
+    [PunRPC]
     public void StartMyTurn(int num)
     {
       if (photonView.isMine)
@@ -90,7 +75,7 @@ public class Player :  Photon.MonoBehaviour
 
              }
              gameManager.car.photonView.RequestOwnership();
-             if(gameManager != null && (num == numberInList || playerNum == num))
+             if(gameManager != null &&  playerNum == num)
              {
                // gameManager.car.GetComponent<PhotonView>().RequestOwnership();
 
@@ -101,11 +86,11 @@ public class Player :  Photon.MonoBehaviour
     [PunRPC]
     public void JoinGame(string newname, int photonNumber  )
     {
-        name = newname;
-        playerNum = photonNumber;
+          name = newname;
+          playerNum = photonNumber;
           numberInList = -1;
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-       transform.parent = gameManager.idleplayerManager.transform;
+          gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+          transform.parent = gameManager.playerManager.transform;
     }
 
     [PunRPC]
@@ -142,8 +127,15 @@ public class Player :  Photon.MonoBehaviour
     {
         lives = livesChange;
         if(myScoreCard != null){
+          int count = 0;
+          string lifeString = "";
+          while(count < lives)
+          {
+            lifeString = lifeString + "X";
+            count ++;
+          }
         myScoreCard.transform.GetChild(1).GetComponent<Text>().text = name + " : ";
-        myScoreCard.transform.GetChild(3).GetComponent<Text>().text = lives.ToString();
+        myScoreCard.transform.GetChild(3).GetComponent<Text>().text = lifeString;
       }
     }
     public void ServerUpdatePower(int powerChange  )

@@ -22,6 +22,7 @@ public class WorkerInGame : Photon.MonoBehaviour
 
         // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
         PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
+        print(this.photonView.ownerId);
     }
 
     // public void OnGUI()

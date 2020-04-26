@@ -73,8 +73,8 @@ public class CarControls : Photon.MonoBehaviour
       if (!photonView.isMine)
       {
         rb.isKinematic = true;
-        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 15  );
-          transform.rotation = Quaternion.Lerp(  transform.rotation, correctPlayerRot, Time.deltaTime * 15);
+        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 115  );
+        transform.rotation = Quaternion.Lerp(  transform.rotation, correctPlayerRot, Time.deltaTime * 115);
 
 
       }
@@ -93,7 +93,9 @@ public class CarControls : Photon.MonoBehaviour
 
             if(Input.GetMouseButtonDown(0) && IsGrounded()){
               // rb.AddForce(Vector3.up * 2500,ForceMode.Impulse);
-              rb.velocity = (rb.velocity + (Vector3.up * jumpheight));}
+              rb.velocity = (rb.velocity +  (transform.forward * jumpheight * 0.2f) + (transform.up * jumpheight));
+
+            }
 
 
     }
@@ -139,6 +141,24 @@ public class CarControls : Photon.MonoBehaviour
       //
       // }
     }
+
+
+//Check requests so that when players join the game they dont
+    public void OnOwnershipRequest(object[] viewAndPlayer)
+  {
+    PhotonView view = viewAndPlayer[0] as PhotonView;
+    PhotonPlayer requestingPlayer = viewAndPlayer[1] as PhotonPlayer;
+
+    Debug.Log("OnOwnershipRequest(): Player " + requestingPlayer + " requests ownership of: " + view + ".");
+    print(">>>> " + requestingPlayer.ID.ToString());
+    if(gameManager.partOfTurn != 0  )
+      {
+          print(requestingPlayer.ToString() + " >>>> GIVING TO >>>> " + requestingPlayer.ID.ToString());
+                view.TransferOwnership(requestingPlayer.ID);
+
+    }
+  }
+
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)

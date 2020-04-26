@@ -56,4 +56,7 @@ MonoBehaviour:
   - JoinGame
   - StartRound
   - UpdatePower
+  - AxisInputFromPlayer
+  - ButtonInputFromPlayer
+  - StartMyTurn
   DisableAutoOpenWizard: 1

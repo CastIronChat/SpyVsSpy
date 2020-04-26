@@ -10,11 +10,12 @@ public class Hazard : MonoBehaviour
   public bool startDisabled,toggleOnOff,stayOn,isOn;
   public bool spin,spring;
   public float actionForce,angularSpeedTarget,currentSpinSpeed;
-  public Vector3 rotationDirection;
+  public Vector3 rotationDirection,startPos;
   private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
+      transform.position = new Vector3(transform.position.x + startPos.x,transform.position.y + startPos.y,transform.position.z + startPos.z);
         rb = GetComponent<Rigidbody>();
     }
 

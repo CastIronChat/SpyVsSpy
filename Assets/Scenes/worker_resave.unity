@@ -810,6 +810,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!1 &57019166
 GameObject:
   m_ObjectHideFlags: 0
@@ -2631,6 +2632,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: -1, z: 0}
 --- !u!65 &481657412
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2639,8 +2641,8 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 481657407}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
+  m_IsTrigger: 1
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -3421,6 +3423,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: -1, z: 0}
 --- !u!65 &689288390
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3690,6 +3693,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!1 &709243677
 GameObject:
   m_ObjectHideFlags: 0
@@ -4941,8 +4945,8 @@ GameObject:
   - component: {fileID: 1020933052}
   - component: {fileID: 1022720638}
   - component: {fileID: 1015640418}
-  - component: {fileID: 1009251862}
   - component: {fileID: 1015640417}
+  - component: {fileID: 1009251862}
   m_Layer: 0
   m_Name: GreenRaceCarCS
   m_TagString: Untagged
@@ -4963,6 +4967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1813329207}
+  myCollider: {fileID: 1015718459}
   acceleration: 0
   distToGround: 0.5
   jumpheight: 15
@@ -4987,7 +4992,7 @@ MonoBehaviour:
   synchronization: 3
   onSerializeTransformOption: 3
   onSerializeRigidBodyOption: 2
-  ownershipTransfer: 1
+  ownershipTransfer: 2
   ObservedComponents:
   - {fileID: 1015640417}
   ObservedComponentsFoldoutOpen: 1
@@ -7850,6 +7855,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1535313122
 GameObject:
   m_ObjectHideFlags: 0
@@ -8668,6 +8674,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1677610926
 GameObject:
   m_ObjectHideFlags: 0
@@ -9026,6 +9033,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: -1, z: 0}
 --- !u!65 &1744935551
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9166,6 +9174,7 @@ MonoBehaviour:
   angularSpeedTarget: 3
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 1, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!65 &1759627642
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9441,7 +9450,7 @@ MonoBehaviour:
   group: 0
   OwnerShipWasTransfered: 0
   prefixBackup: -1
-  synchronization: 3
+  synchronization: 1
   onSerializeTransformOption: 3
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
@@ -9471,6 +9480,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 100000, guid: 306d58f3d17f0bd4082310859a39d5e8, type: 3}
   scoreBoard: {fileID: 1424402384}
   activePlayers: 0
+  currentPlayerPhotonID: 0
   currentPlayer: -1
   currentTurn: -1
   myRenderer: {fileID: 1017899050}
@@ -9487,6 +9497,7 @@ MonoBehaviour:
   roundActive: 0
   switchingPlayers: 0
   partOfTurn: 0
+  currentPlayerName: 
 --- !u!4 &1813329208
 Transform:
   m_ObjectHideFlags: 0
@@ -9621,6 +9632,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1831042315
 GameObject:
   m_ObjectHideFlags: 0
@@ -9816,6 +9828,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1903501867
 GameObject:
   m_ObjectHideFlags: 0
@@ -10201,6 +10214,7 @@ MonoBehaviour:
   angularSpeedTarget: 0
   currentSpinSpeed: 0
   rotationDirection: {x: 0, y: 0, z: 0}
+  startPos: {x: 0, y: -1, z: 0}
 --- !u!65 &2020805787
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -74,9 +74,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
+  numberInList: 0
   playerNum: 0
   score: 0
+  lostScore: 0
+  money: 761
+  lives: 0
+  gamesPlayed: 0
+  wins: 0
   name: 
+  myScoreCard: {fileID: 0}
+  myColor: {fileID: 0}
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0
