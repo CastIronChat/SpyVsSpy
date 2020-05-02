@@ -69,12 +69,12 @@ public class CarControls : Photon.MonoBehaviour
 
     void Update()
     {
-
+      //When not driving, lerp to real position, and remain kinematic to not register impacts which are handled by the master server
       if (!photonView.isMine)
       {
         rb.isKinematic = true;
-        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 115  );
-        transform.rotation = Quaternion.Lerp(  transform.rotation, correctPlayerRot, Time.deltaTime * 115);
+        transform.position = Vector3.Lerp(transform.position, correctPlayerPos, Time.deltaTime * 5);//(115 * Vector3.Distance(correctPlayerPos, transform.position))  );
+        transform.rotation = Quaternion.Lerp(  transform.rotation, correctPlayerRot, Time.deltaTime * 5);
 
 
       }
@@ -89,7 +89,7 @@ public class CarControls : Photon.MonoBehaviour
         rb.isKinematic = false;
           Drive();
           // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
-            Debug.Log( "acceleration = 0.5f" + PhotonNetwork.player.ID.ToString());
+            Debug.Log( "Driving: " + PhotonNetwork.player.ID.ToString());
 
             if(Input.GetMouseButtonDown(0) && IsGrounded()){
               // rb.AddForce(Vector3.up * 2500,ForceMode.Impulse);

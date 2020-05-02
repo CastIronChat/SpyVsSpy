@@ -11,6 +11,7 @@ public class GameManager : Photon.MonoBehaviour
   public TurnManager turnManager;
   public HazardManager hazardManager;
   public CarControls car;
+  public VehicleCameraControl carCamera;
   public GameObject playerPrefab;
   public GameObject scoreBoard;
   public int activePlayers;
@@ -25,6 +26,8 @@ public class GameManager : Photon.MonoBehaviour
   public bool roundActive,switchingPlayers;
   public int partOfTurn; //0 inactive, 1 active, 2 changing players
   public string currentPlayerName;
+
+
     public void Awake()
     {
         if (!PhotonNetwork.connected)

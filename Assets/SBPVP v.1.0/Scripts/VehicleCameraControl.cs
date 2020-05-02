@@ -14,14 +14,18 @@ public class VehicleCameraControl : MonoBehaviour
 	public float defaultFOV = 60f;
 	public float zoomMultiplier = 0.3f;
 
-	//read only
-
+	public bool freeLook;
+	public float mouseSensitivity = 3.0f,clampAngle = 30.0f;
+		public float rotX,rotY;
 	void Start(){
 
 		// Early out if we don't have a target
 		if (!playerCar)
 			return;
 
+			Vector3 rot = transform.localRotation.eulerAngles;
+		rotY = rot.y;
+		rotX = rot.x;
 		playerRigid = playerCar.GetComponent<Rigidbody>();
 
 	}
@@ -32,13 +36,31 @@ public class VehicleCameraControl : MonoBehaviour
 		if(playerRigid != playerCar.GetComponent<Rigidbody>())
 			playerRigid = playerCar.GetComponent<Rigidbody>();
 
-		GetComponent<Camera>().fieldOfView = defaultFOV + playerRigid.velocity.magnitude * zoomMultiplier;
+		// GetComponent<Camera>().fieldOfView = defaultFOV + playerRigid.velocity.magnitude * zoomMultiplier;
 
 	}
 
 	void FixedUpdate (){
 
 		// Early out if we don't have a target
+		if (!playerCar || !playerRigid)
+			return;
+
+			if(freeLook == true){FreeLook();}
+			else{LookAtCar();}
+
+	}
+	public void ToggleFreeLook()
+	{
+		Vector3 rot = transform.localRotation.eulerAngles;
+	rotY = rot.y;
+	rotX = rot.x;
+		if(freeLook == true){freeLook = false;}
+		else{freeLook = true;}
+
+	}
+	public void LookAtCar()
+	{
 		if (!playerCar || !playerRigid)
 			return;
 
@@ -78,7 +100,20 @@ public class VehicleCameraControl : MonoBehaviour
 		Quaternion targetRotation = Quaternion.LookRotation (playerCar.position - transform.position);
 		transform.rotation = Quaternion.Lerp (transform.rotation, targetRotation, 3 * Time.deltaTime);
 	}
+	public void FreeLook()
+	{
+		float speed = (playerRigid.transform.InverseTransformDirection(playerRigid.velocity).z) * 1f;
+			transform.position = playerCar.transform.position;
+			float mouseX = Input.GetAxis("Mouse X");
+		          float mouseY = -Input.GetAxis("Mouse Y");
 
+		          rotY += mouseX * mouseSensitivity * Time.deltaTime;
+		          rotX += mouseY * mouseSensitivity * Time.deltaTime;
 
+		          rotX = Mathf.Clamp(rotX, -clampAngle, clampAngle);
+
+		          Quaternion localRotation = Quaternion.Euler(rotX, rotY, 0.0f);
+		          transform.rotation = localRotation;
+	}
 
 }

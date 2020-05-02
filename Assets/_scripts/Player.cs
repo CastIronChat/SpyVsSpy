@@ -10,6 +10,7 @@ public class Player :  Photon.MonoBehaviour
     public string name;
     public GameObject myScoreCard;
     public Material myColor;
+    public GameObject carFollowCam,freeLookCam;
     void Start()
     {
       if (photonView.isMine)
@@ -155,16 +156,9 @@ public class Player :  Photon.MonoBehaviour
     }
     void Update()
     {
-      // if(transform.parent == null)
-      // {
-      //   if (gameManager == null)
-      //  {
-      //     // playerNum = photonView.viewID;
-      //    gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-      //
-      //  }
-      //  transform.parent = gameManager.idleplayerManager;
-      // }
+      if(Input.GetMouseButtonDown(1))
+      {gameManager.carCamera.ToggleFreeLook();}
+
     }
 
 

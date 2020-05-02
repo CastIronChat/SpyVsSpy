@@ -63,8 +63,8 @@ public class CarControlCS : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		//
-		// if (GetComponent<Rigidbody>().centerOfMass != centerOfGravity)
-		// GetComponent<Rigidbody>().centerOfMass = centerOfGravity;
+		if (GetComponent<Rigidbody>().centerOfMass != centerOfGravity)
+		GetComponent<Rigidbody>().centerOfMass = centerOfGravity;
 
 		AllignWheels ();
 		// Drive ();
@@ -79,8 +79,7 @@ public class CarControlCS : MonoBehaviour {
 	}
 	public void ControlCar () {
 
-		if (GetComponent<Rigidbody>().centerOfMass != centerOfGravity)
-		GetComponent<Rigidbody>().centerOfMass = centerOfGravity;
+
 
 		// AllignWheels ();
 		Drive ();
