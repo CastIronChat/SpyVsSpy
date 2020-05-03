@@ -91,7 +91,7 @@ public class CarControls : Photon.MonoBehaviour
           // this.photonView.RPC( "Accelerate", PhotonTargets.AllBufferedViaServer,1 );
             Debug.Log( "Driving: " + PhotonNetwork.player.ID.ToString());
 
-            if(Input.GetMouseButtonDown(0) && IsGrounded()){
+            if(Input.GetMouseButtonDown(2) && IsGrounded()){
               // rb.AddForce(Vector3.up * 2500,ForceMode.Impulse);
               rb.velocity = (rb.velocity +  (transform.forward * jumpheight * 0.2f) + (transform.up * jumpheight));
 
@@ -134,7 +134,11 @@ public class CarControls : Photon.MonoBehaviour
 
     public void OnCollisionEnter(Collision col)
     {
+      if(col.gameObject.tag != "Hazard")
+      {
         gameManager.photonView.RPC( "HitSomething", PhotonTargets.AllBufferedViaServer,  col.relativeVelocity.magnitude);
+      }
+
       // if( PhotonNetwork.isMasterClient  && col.relativeVelocity.magnitude > 5 )
       // {
       //   gameManager.photonView.RPC( "HitSomething", PhotonTargets.AllBufferedViaServer,   col.relativeVelocity.magnitude);

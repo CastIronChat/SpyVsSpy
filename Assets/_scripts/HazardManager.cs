@@ -19,12 +19,19 @@ public class HazardManager : MonoBehaviour
 
     }
 
+    public int GetHazardCost(int whichHazard)
+    {
+      if(whichHazard < hazards.Count && whichHazard >= 0)
+      {
+        return hazards[whichHazard].GetComponent<Hazard>().costToActivate;
+      }else{return 0;}
+
+    }
     public void ActivateHazard(int whichHazard)
     {
 
       if(hazards.Count > whichHazard)
       {
-        print("disable hazard");
         hazards[whichHazard].GetComponent<Hazard>().Activate();
       }
     }

@@ -6,7 +6,7 @@ public class Hazard : MonoBehaviour
 {
   public GameManager gameManager;
   public bool setInManagerList;
-  public int spotInHazardList = -1;
+  public int spotInHazardList = -1,costToActivate = 1;
   public bool startDisabled,toggleOnOff,stayOn,isOn;
   public bool spin,spring;
   public float actionForce,angularSpeedTarget,currentSpinSpeed;
@@ -59,7 +59,10 @@ public class Hazard : MonoBehaviour
       { isOn = !isOn;}
 
       if(spring == true && rb != null)
-      {rb.velocity = (transform.up * actionForce);}
+      {
+        rb.velocity = (transform.up * actionForce);
+
+      }
     }
     public void Deactivate()
     {

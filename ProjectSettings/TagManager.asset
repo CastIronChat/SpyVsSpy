@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Crate
+  - Hazard
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - DestructibleHazards
   - Decorations
   - Hazard
-  - 
+  - Track
   - 
   - 
   - 

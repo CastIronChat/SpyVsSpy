@@ -21,7 +21,7 @@ public class GameManager : Photon.MonoBehaviour
   public Transform colorBlindShapes;
   public Transform idleplayerManager;
 
-  public int startingLives = 3;
+  public int startingLives = 3,crashMagnitude = 20;
   public int localPlayer; //set to the photonid of the local player via the player script for checking if objects can be activated
   public bool roundActive,switchingPlayers;
   public int partOfTurn; //0 inactive, 1 active, 2 changing players
@@ -406,10 +406,10 @@ public class GameManager : Photon.MonoBehaviour
       {
           foreach(Transform go in playerManager.transform)
           {
-              if(go.GetComponent<Player>().playerNum == whichPlayer && go.GetComponent<Player>().money > -1)
+              if(go.GetComponent<Player>().playerNum == whichPlayer && go.GetComponent<Player>().money > hazardManager.GetHazardCost(hazardToActivate))
               {
-                go.GetComponent<PhotonView>().RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().lives + 1 );
-                  this.photonView.RPC( "ActivateHazardRPC", PhotonTargets.All, whichPlayer, hazardToActivate );
+                go.GetComponent<PhotonView>().RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().lives - hazardManager.GetHazardCost(hazardToActivate) );
+                this.photonView.RPC( "ActivateHazardRPC", PhotonTargets.All, whichPlayer, hazardToActivate );
               }
 
           }
@@ -419,33 +419,38 @@ public class GameManager : Photon.MonoBehaviour
 
     }
 
+    //make sure this RPC is not buffered so that traps dont go off when players join
     [PunRPC]
     public void ActivateHazardRPC( int whichPlayer, int hazardToActivate )
     {
       hazardManager.ActivateHazard(hazardToActivate);
 
-          foreach(Transform go in playerManager.transform)
-          {
-              if(go.GetComponent<Player>().playerNum == whichPlayer )
-              {go.GetComponent<Player>().money -= 1;}
-
-          }
+          // foreach(Transform go in playerManager.transform)
+          // {
+          //     if(go.GetComponent<Player>().playerNum == whichPlayer )
+          //     {
+          //       go.GetComponent<Player>().money -= 1;
+          //     }
+          //
+          // }
 
     }
 
     [PunRPC]
     public void HitSomething( float magnitude)
     {
-      print("hit something: " + magnitude + " " + PhotonNetwork.isMasterClient);
-      if( partOfTurn == 1 && PhotonNetwork.isMasterClient  && magnitude > 5 )
-      {
-            foreach(Transform go in playerManager.transform)
-            {
-            if(go.GetComponent<Player>().numberInList == currentTurn)
-            {go.GetComponent<PhotonView>().RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().lives - 1);}
+        print("hit something: " + magnitude + " " + PhotonNetwork.isMasterClient);
+        if( partOfTurn == 1 && PhotonNetwork.isMasterClient  && magnitude > crashMagnitude )
+        {
+              foreach(Transform go in playerManager.transform)
+              {
+                  if(go.GetComponent<Player>().numberInList == currentTurn)
+                  {
+                    go.GetComponent<PhotonView>().RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().lives - 1);
+                  }
 
-            }
-            EndTurn(true);
+              }
+              EndTurn(true);
         }
 
     }
@@ -481,45 +486,28 @@ public class GameManager : Photon.MonoBehaviour
 
     public void OnPhotonPlayerConnected(PhotonPlayer player)
     {
-        Debug.Log("XXXXXX  OnPhotonPlayerConnected: " + player);
-        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
-    hash.Add("lives", player.ID);
-    hash.Add("score",player.ID);
-    hash.Add("money", player.ID);
-    // PhotonNetwork.playerList[player.ID - 1].SetCustomProperties(hash);
 
-        player.SetCustomProperties(hash);
+        // Debug.Log("XXXXXX  OnPhotonPlayerConnected: " + player);
+        // ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        // hash.Add("lives", player.ID);
+      // PhotonNetwork.playerList[player.ID - 1].SetCustomProperties(hash);
+
+        // player.SetCustomProperties(hash);
         //   player.UpdateCustomProperty("score", player.ID);
         // player.UpdateCustomProperty("lives",player.ID);
         // PhotonNetwork.player.UpdateCustomProperty("Deaths", 1);
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0) ;
 
     }
-    void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps)
-    {
-    PhotonPlayer player = playerAndUpdatedProps[0] as PhotonPlayer;
-    Hashtable props = playerAndUpdatedProps[1] as Hashtable;
-      print(playerAndUpdatedProps[0]);
-        print(playerAndUpdatedProps[1]);
-    // Debug.Log(string.Format("Properties {0} updated for player {1}", SupportClass.DictionaryToString(props), player);
-    if (player.CustomProperties.ContainsKey("lives"))
-    {
-        Debug.Log("it works 1");
-        Debug.Log(player.ID + " " + player.CustomProperties["money"] + " " + player);
-    }
-    if (props.ContainsKey("score"))
-    {
-        Debug.Log("it works 2");
-    }
-  }
+
     public void OnPhotonPlayerDisconnected(PhotonPlayer player)
     {
-        Debug.Log("XXXXXXXXXOnPlayerDisconneced: " + player);
+        Debug.Log("OnPlayerDisconneced: " + player);
     }
 
     public void OnFailedToConnectToPhoton()
     {
-        Debug.Log("XXXXXXXXXXOnFailedToConnectToPhoton");
+        Debug.Log("OnFailedToConnectToPhoton");
 
         // back to main menu
         // SceneManager.LoadScene(WorkerMenu.SceneNameMenu);
