@@ -5,23 +5,38 @@ using UnityEngine;
 public class Hazard : MonoBehaviour
 {
   public GameManager gameManager;
+  public HazardManager hazardManager;
+  public string buttonToListenFor = "A";
   public bool setInManagerList;
   public int spotInHazardList = -1,costToActivate = 1;
-  public bool startDisabled,toggleOnOff,stayOn,isOn;
+  public bool listenForButtonPress = true,startDisabled,toggleOnOff,stayOn,isOn;
   public bool spin,spring;
   public float actionForce,angularSpeedTarget,currentSpinSpeed;
+  public GameObject buttonIndicator;
   public Vector3 rotationDirection,startPos;
-  private Rigidbody rb;
+  public Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
-      transform.position = new Vector3(transform.position.x + startPos.x,transform.position.y + startPos.y,transform.position.z + startPos.z);
-        rb = GetComponent<Rigidbody>();
+      // transform.position = new Vector3(transform.position.x + startPos.x,transform.position.y + startPos.y,transform.position.z + startPos.z);
+      if(rb == null){rb = GetComponent<Rigidbody>();}
+
     }
 
     // Update is called once per frame
     void Update()
     {
+      if(listenForButtonPress == true)
+      {
+        if(Input.GetButtonDown(buttonToListenFor))
+        {
+          AttemptToActivate();
+          print(this.gameObject.name + " " + buttonToListenFor);
+
+        }
+      }
+      // else{if(GetComponent<Renderer>().isVisible){hazardManager.HazardRequestButton(GetComponent<Hazard>());}}
+
       if(isOn == true)
       {
         if(spin == true)
@@ -29,6 +44,25 @@ public class Hazard : MonoBehaviour
 
       }
     }
+    public void StopListening()
+    {
+      listenForButtonPress = false;
+      buttonIndicator = null;
+    }
+    void OnBecameVisible()
+    {
+
+      listenForButtonPress = true;
+      hazardManager.HazardRequestButton(GetComponent<Hazard>());
+      // if(buttonIndicator != null){buttonIndicator.active = true;}
+    }
+
+    void OnBecameInvisible()
+    {
+        listenForButtonPress = false;
+        if(buttonIndicator != null){buttonIndicator.active = false;}
+    }
+
     public void SetSpotInList(int newplace, GameManager newGM)
     {
       gameManager = newGM;

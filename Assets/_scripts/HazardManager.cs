@@ -6,7 +6,9 @@ public class HazardManager : MonoBehaviour
 {
   public GameManager gameManager;
   public Transform hazardsParent;
-  public List<GameObject> hazards;
+  public List<GameObject> hazards,buttonObjectDisplays;
+  public List<int> hazardsListeningForButtonPress;
+  private int hazardButtonTracking = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +19,28 @@ public class HazardManager : MonoBehaviour
     void Update()
     {
 
+    }
+    public void HazardRequestButton(Hazard visibleHazard)
+    {
+      if(hazardsListeningForButtonPress.Count < buttonObjectDisplays.Count){hazardsListeningForButtonPress.Add(-1);}
+      if(hazardButtonTracking == 0){visibleHazard.buttonToListenFor = "A";}
+      else if(hazardButtonTracking == 1){visibleHazard.buttonToListenFor = "B";}
+      else if(hazardButtonTracking == 2){visibleHazard.buttonToListenFor = "X";}
+      else if(hazardButtonTracking == 3){visibleHazard.buttonToListenFor = "Y";}
+      else{}
+      if(hazardsListeningForButtonPress.Count > 0 && hazardsListeningForButtonPress[hazardButtonTracking] != -1)
+      {
+        hazards[hazardsListeningForButtonPress[hazardButtonTracking]].GetComponent<Hazard>().StopListening();
+      }
+      hazardsListeningForButtonPress[hazardButtonTracking] = visibleHazard.spotInHazardList;
+      visibleHazard.buttonIndicator = buttonObjectDisplays[hazardButtonTracking];
+      buttonObjectDisplays[hazardButtonTracking].transform.position = visibleHazard.transform.position;
+        buttonObjectDisplays[hazardButtonTracking].transform.LookAt(gameManager.carCamera.transform.position);
+buttonObjectDisplays[hazardButtonTracking].active = true;
+      hazardButtonTracking++;
+
+      if(hazardButtonTracking >= buttonObjectDisplays.Count)
+      {hazardButtonTracking = 0;}
     }
 
     public int GetHazardCost(int whichHazard)

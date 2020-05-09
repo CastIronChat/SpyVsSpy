@@ -156,9 +156,11 @@ public class Player :  Photon.MonoBehaviour
     }
     void Update()
     {
-      if(Input.GetMouseButtonDown(1))
-      {gameManager.carCamera.ToggleFreeLook();}
-
+      if (photonView.isMine)
+      {
+        if(Input.GetMouseButtonDown(1))
+        {gameManager.carCamera.ToggleFreeLook();}
+      }
     }
 
 

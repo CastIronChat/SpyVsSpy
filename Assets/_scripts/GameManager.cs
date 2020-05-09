@@ -230,15 +230,15 @@ public class GameManager : Photon.MonoBehaviour
         {
           foreach(PhotonPlayer go in PhotonNetwork.playerList)
           {
-            if(go.IsLocal){
-              ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
-          hash.Add("lives", (int)go.customProperties["lives"] + 1);
-          hash.Add("score",(int)go.customProperties["score"]);
-          hash.Add("money",(int)go.customProperties["money"]);
-          // PhotonNetwork.playerList[player.ID - 1].SetCustomProperties(hash);
+                if(go.IsLocal){
+                        // ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+                    // hash.Add("lives", (int)go.customProperties["lives"] + 1);
+                    // hash.Add("score",(int)go.customProperties["score"]);
+                    // hash.Add("money",(int)go.customProperties["money"]);
+                    // PhotonNetwork.playerList[player.ID - 1].SetCustomProperties(hash);
 
-              go.SetCustomProperties(hash);
-            }
+                        // go.SetCustomProperties(hash);
+                }
             }
       }
 
