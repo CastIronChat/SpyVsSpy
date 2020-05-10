@@ -10,39 +10,45 @@ public class Hazard : MonoBehaviour
   public bool setInManagerList;
   public int spotInHazardList = -1,costToActivate = 1;
   public bool listenForButtonPress = true,startDisabled,toggleOnOff,stayOn,isOn;
-  public bool spin,spring;
-  public float actionForce,angularSpeedTarget,currentSpinSpeed;
+  public bool spin,spring,piston,pistonOut;
+  public float actionDistance,actionForce,cooldownLoop, angularSpeedTarget,currentSpinSpeed, timer;
   public GameObject buttonIndicator;
   public Vector3 rotationDirection,startPos;
   public Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
+
       // transform.position = new Vector3(transform.position.x + startPos.x,transform.position.y + startPos.y,transform.position.z + startPos.z);
       if(rb == null){rb = GetComponent<Rigidbody>();}
-
+      startPos = rb.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-      if(listenForButtonPress == true)
-      {
-        if(Input.GetButtonDown(buttonToListenFor))
+        if(listenForButtonPress == true)
         {
-          AttemptToActivate();
-          print(this.gameObject.name + " " + buttonToListenFor);
+            if(Input.GetButtonDown(buttonToListenFor))
+            {
+              AttemptToActivate();
 
+            }
         }
-      }
-      // else{if(GetComponent<Renderer>().isVisible){hazardManager.HazardRequestButton(GetComponent<Hazard>());}}
+        // else{if(GetComponent<Renderer>().isVisible){hazardManager.HazardRequestButton(GetComponent<Hazard>());}}
 
-      if(isOn == true)
-      {
-        if(spin == true)
-        {Spin();}
+        if(isOn == true)
+        {
+          if(spin == true)
+          {Spin();}
+          if(piston == true)
+          {
+            if(timer<= 0)
+            {Piston(pistonOut);}
+              else{timer -= Time.deltaTime;}
 
-      }
+          }
+        }
     }
     public void StopListening()
     {
@@ -80,6 +86,30 @@ public class Hazard : MonoBehaviour
       //   // rb.AddTorque(new Vector3(1,1,1) * actionForce * Time.deltaTime);
       //
       // }
+    }
+
+    public void Piston(bool moveOut)
+    {
+      if(moveOut == true)
+      {
+          rb.velocity = transform.up * actionForce;
+          if(Vector3.Distance(startPos, rb.transform.position) > actionDistance)
+          {
+            timer = cooldownLoop;
+            pistonOut = false;
+          }
+      }
+      else
+      {
+        rb.velocity = transform.up * -actionForce;
+        if(Vector3.Distance(startPos, rb.transform.position) <= 0.1f)
+        {
+          timer = cooldownLoop;
+          pistonOut = true;
+        }
+      }
+
+
     }
 
 

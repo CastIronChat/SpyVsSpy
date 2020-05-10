@@ -7,8 +7,8 @@ public class PowerManager : MonoBehaviour
 
   public GameObject car;
   public GameObject greenShell,redShell;
-  public float distanceIfFrontOfCar,distanceAboveOfCar;//where to spawn stuff
-  public float redShellForce;
+  public float distanceIfFrontOfCar,distanceAboveOfCar,timer;//where to spawn stuff
+  public float redShellForce,carSlideForce;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +22,17 @@ public class PowerManager : MonoBehaviour
       {UsePower(0);}
       if(Input.GetKeyDown(KeyCode.Alpha2))
       {UsePower(1);}
+      if(Input.GetKeyDown(KeyCode.Alpha3))
+      {UsePower(2);}
+      if(Input.GetKeyDown(KeyCode.Alpha4))
+      {UsePower(3);}
+      if(Input.GetKeyDown(KeyCode.Alpha5))
+      {UsePower(4);}
+      if(timer > 0)
+      {
+        timer -= Time.deltaTime;
+
+      }
     }
 
 
@@ -43,8 +54,13 @@ public class PowerManager : MonoBehaviour
               redclone.GetComponent<Missile>().target = car;
               break;
             case 2:
+            car.GetComponent<Rigidbody>().velocity = car.GetComponent<Rigidbody>().velocity + (car.transform.right * carSlideForce);
               break;
             case 3:
+            car.GetComponent<Rigidbody>().velocity = car.GetComponent<Rigidbody>().velocity + (car.transform.right * -carSlideForce);
+              break;
+            case 4:
+            car.GetComponent<Rigidbody>().velocity = -car.GetComponent<Rigidbody>().velocity;
               break;
             default:
               break;
