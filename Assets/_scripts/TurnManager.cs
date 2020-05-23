@@ -5,13 +5,14 @@ using UnityEngine.UI;
 public class TurnManager :  Photon.MonoBehaviour
 {
   public GameManager gameManager;
-    public Transform car;
+    public Transform car,checkpoint;
     public bool switchingPlayers;
     public Vector3 startPosition,lastPosition;
     public float safeSpotTimer, timer,turnTime = 10.0f;
     public float totalDistance,totalDisplacement;
     public Text distanceText,displacementText;
-    public float carReturnSpeed = 5.0f;
+    public float carReturnSpeed = 5.0f,checkpointDist = 5.0f;
+    public int currentCheckpoint,checkPointsCrossed,checkPointsNeededPerRound;
     public Quaternion lastSafeRotation,secondLastSafeRotation;
     public Vector3 lastSafeSpot,secondLastSafeSpot;
     // Start is called before the first frame update
@@ -52,7 +53,19 @@ public class TurnManager :  Photon.MonoBehaviour
           lastSafeRotation = car.rotation;
           lastSafeSpot = car.position;
       }
+      if(Vector3.Distance(car.position,gameManager.currentTrack.checkpoints.GetChild(currentCheckpoint).position) < checkpointDist)
+      {NextCheckPoint();}
       TrackDistance();
+    }
+
+    public void NextCheckPoint()
+    {
+      checkPointsCrossed++;
+      gameManager.currentTrack.checkpoints.GetChild(currentCheckpoint).gameObject.active = false;
+        currentCheckpoint++;
+        if(currentCheckpoint > gameManager.currentTrack.checkpoints.childCount)
+        {currentCheckpoint = 0;}
+        gameManager.currentTrack.checkpoints.GetChild(currentCheckpoint).gameObject.active = true;
     }
 
     public bool ReturnCarToSafeSpot()
@@ -74,6 +87,7 @@ public class TurnManager :  Photon.MonoBehaviour
     [PunRPC]
     public void NewTurn()
     {
+      checkPointsCrossed = 0;
       startPosition = car.position;
       lastPosition = car.position;
       totalDistance = 0;
@@ -91,6 +105,7 @@ public class TurnManager :  Photon.MonoBehaviour
       distanceText.text =  Mathf.Round(totalDistance).ToString();
       displacementText.text = Mathf.Round(totalDisplacement).ToString();
     }
+
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

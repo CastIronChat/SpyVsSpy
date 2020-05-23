@@ -6,11 +6,12 @@ public class Hazard : MonoBehaviour
 {
   public GameManager gameManager;
   public HazardManager hazardManager;
+
   public string buttonToListenFor = "A";
   public bool setInManagerList;
   public int spotInHazardList = -1,costToActivate = 1;
   public bool listenForButtonPress = true,startDisabled,toggleOnOff,stayOn,isOn;
-  public bool spin,spring,piston,pistonOut;
+  public bool spin,spring,piston,pistonOut,isTrap;
   public float actionDistance,actionForce,cooldownLoop, angularSpeedTarget,currentSpinSpeed, timer;
   public GameObject buttonIndicator;
   public Vector3 rotationDirection,startPos;
@@ -45,7 +46,12 @@ public class Hazard : MonoBehaviour
           {
             if(timer<= 0)
             {Piston(pistonOut);}
+
               else{timer -= Time.deltaTime;}
+
+          }
+          if(isTrap == true)
+          {
 
           }
         }
@@ -112,7 +118,14 @@ public class Hazard : MonoBehaviour
 
     }
 
+    public void PerformAction()
+    {
+      if(spring == true && rb != null)
+      {
+        rb.velocity = (transform.up * actionForce);
 
+      }
+    }
     public void Activate()
     {
 
@@ -122,11 +135,11 @@ public class Hazard : MonoBehaviour
       if(toggleOnOff == true)
       { isOn = !isOn;}
 
-      if(spring == true && rb != null)
-      {
-        rb.velocity = (transform.up * actionForce);
-
-      }
+      // if(spring == true && rb != null)
+      // {
+      //   rb.velocity = (transform.up * actionForce);
+      //
+      // }
     }
     public void Deactivate()
     {
@@ -150,5 +163,14 @@ public class Hazard : MonoBehaviour
     public void OnTriggerExit(Collider col)
     {
       currentSpinSpeed = currentSpinSpeed * 0.3f;
+    }
+    public void OnTriggerEnter(Collider col)
+    {
+      if(isTrap == true && isOn == true)
+      {
+            PerformAction();
+            isOn = false;
+      }
+
     }
 }

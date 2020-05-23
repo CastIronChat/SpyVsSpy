@@ -10,18 +10,19 @@ public class GameManager : Photon.MonoBehaviour
   public PlayerManager playerManager;
   public TurnManager turnManager;
   public HazardManager hazardManager;
+  public Track currentTrack;
   public CarControls car;
   public VehicleCameraControl carCamera;
   public GameObject playerPrefab;
   public GameObject scoreBoard;
   public int activePlayers;
-  public int currentPlayerPhotonID,currentPlayer = -1,currentTurn = -1;//turn is 0-x and player is their photonid
+  public int currentPlayerPhotonID,currentPlayer = -1,currentTurn = -1,currentCheckpoint;//turn is 0-x and player is their photonid
   public Renderer myRenderer;
   public List<Material> colors;
   public Transform colorBlindShapes;
   public Transform idleplayerManager;
 
-  public int startingLives = 3,crashMagnitude = 20;
+  public int startingLives = 3,crashMagnitude = 20, checkpointDist = 1;
   public int localPlayer; //set to the photonid of the local player via the player script for checking if objects can be activated
   public bool roundActive,switchingPlayers;
   public int partOfTurn; //0 inactive, 1 active, 2 changing players
@@ -36,11 +37,7 @@ public class GameManager : Photon.MonoBehaviour
         }
         if (PhotonNetwork.isMasterClient)
         {
-      //     ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
-      // hash.Add("lives", 0);
-      // hash.Add("score", 0);
-      // hash.Add("money", 0);
-      // PhotonNetwork.player.SetCustomProperties(hash);
+
         }
 
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
@@ -161,7 +158,7 @@ public class GameManager : Photon.MonoBehaviour
     }
      void Update()
     {
-
+        //0 inactive, 1 active, 2 changing players
             if(partOfTurn == 2)
             {
 
@@ -174,6 +171,7 @@ public class GameManager : Photon.MonoBehaviour
               {}
 
             }
+            //0 inactive, 1 active, 2 changing players
             else if(partOfTurn == 1)
             {
               if(car.GetComponent<PhotonView>().isMine){  car.DriveCar();}
@@ -187,6 +185,7 @@ public class GameManager : Photon.MonoBehaviour
           // turnManager.timer = 10;
           // turnManager.switchingPlayers = true;
 
+          //0 inactive, 1 active, 2 changing players
           if(partOfTurn == 0){
             roundActive = true;
             partOfTurn = 1;
@@ -197,52 +196,18 @@ public class GameManager : Photon.MonoBehaviour
 
         }
 
-        if( PhotonNetwork.isMasterClient   && Input.GetKeyDown(KeyCode.P)   )
+        if( PhotonNetwork.isMasterClient )
         {
-
-          foreach(PhotonPlayer go in PhotonNetwork.playerList)
-          {
-            print("======");
-
-            // scoreBoard.GetChild(count).GetChild(1).GetComponent<Text>().text = go.name;
-            // scoreBoard.GetChild(count).GetChild(2).GetComponent<Text>().text = go.score;
-            // scoreBoard.GetChild(count).GetChild(3).GetComponent<Text>().text = go.ID;
-            // scoreBoard.GetChild(count).GetChild(4).GetComponent<Text>().text = ;
-            print ( go.ID + " : " + go.name + "money:" + go.customProperties["money"] + "score:" + go.customProperties["score"] + "lives:" +go.customProperties["lives"]);
-              print ( go.CustomProperties);
-            // print ( go.userId );
-            // print ( go.ID );
-            // print ( "money:" + go.customProperties["money"] );
-            // print ("score:" + go.customProperties["score"] );
-            // print ("lives:" +go.customProperties["lives"] );
-
-            print("======");
-
-          }
-
-          // turnManager.timer = 10;
-          // turnManager.switchingPlayers = true;
-            // roundActive = false;
 
 
         }
-        if( PhotonNetwork.isMasterClient   && Input.GetKeyDown(KeyCode.Q)   )
-        {
-          foreach(PhotonPlayer go in PhotonNetwork.playerList)
-          {
-                if(go.IsLocal){
-                        // ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
-                    // hash.Add("lives", (int)go.customProperties["lives"] + 1);
-                    // hash.Add("score",(int)go.customProperties["score"]);
-                    // hash.Add("money",(int)go.customProperties["money"]);
-                    // PhotonNetwork.playerList[player.ID - 1].SetCustomProperties(hash);
 
-                        // go.SetCustomProperties(hash);
-                }
-            }
-      }
 
     }
+
+
+
+
     [PunRPC]
     public void StartRound()
     {
@@ -326,8 +291,8 @@ public class GameManager : Photon.MonoBehaviour
       partOfTurn = 2;
       switchingPlayers = returnCarToSafeSpot;
 
-      //take the car and move it to the safe location
 
+      //have the server take the car
       car.photonView.RequestOwnership();
       car.GetComponent<Rigidbody>().isKinematic = true;
       foreach(Transform go in playerManager.transform)
@@ -338,14 +303,24 @@ public class GameManager : Photon.MonoBehaviour
             {
                 //if the car is returning to a safe spot it means the player crashed and does not score
                 if(returnCarToSafeSpot == false){
+
+                    //if the player didnt travel far enough
+                  if(turnManager.checkPointsCrossed < turnManager.checkPointsNeededPerRound)
+                  {
+                    go.GetComponent<PhotonView>().RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer,
+                        go.GetComponent<Player>().score - 1 );
+                  }
+
                   go.GetComponent<PhotonView>().RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer,
-                  go.GetComponent<Player>().score + (int)(turnManager.totalDistance * turnManager.totalDisplacement * 0.1f) );
+                      go.GetComponent<Player>().score + (int)(turnManager.totalDisplacement * 0.1f) * turnManager.checkPointsCrossed );
+
+
                 }
                 // not scoring gives the player more power/money
                 else
                 {
                       go.GetComponent<PhotonView>().RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer,
-                      go.GetComponent<Player>().money + (int)(turnManager.totalDistance * turnManager.totalDisplacement * 0.1f) );
+                            go.GetComponent<Player>().money + (int)(turnManager.totalDisplacement * 0.1f) * turnManager.checkPointsCrossed );
                 }
           }
       }

@@ -79,12 +79,14 @@ MonoBehaviour:
   score: 0
   lostScore: 0
   money: 761
-  lives: 0
+  lives: 3
   gamesPlayed: 0
   wins: 0
   name: 
   myScoreCard: {fileID: 0}
   myColor: {fileID: 0}
+  carFollowCam: {fileID: 0}
+  freeLookCam: {fileID: 0}
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0

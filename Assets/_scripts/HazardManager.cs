@@ -5,6 +5,7 @@ using UnityEngine;
 public class HazardManager : MonoBehaviour
 {
   public GameManager gameManager;
+  public ScrollingText scrollingText;
   public Transform hazardsParent;
   public List<GameObject> hazards,buttonObjectDisplays;
   public List<int> hazardsListeningForButtonPress;
@@ -57,6 +58,10 @@ buttonObjectDisplays[hazardButtonTracking].active = true;
       if(hazards.Count > whichHazard)
       {
         hazards[whichHazard].GetComponent<Hazard>().Activate();
+        if(hazards[whichHazard].GetComponent<Hazard>().isOn == true)
+        {  scrollingText.NewLine(hazards[whichHazard].transform.name + " Activated");}
+        else{  scrollingText.NewLine(hazards[whichHazard].transform.name + " Disabled");}
+
       }
     }
 
