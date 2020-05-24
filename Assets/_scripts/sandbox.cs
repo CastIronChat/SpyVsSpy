@@ -23,6 +23,7 @@ public class sandbox : MonoBehaviour
     {
       foreach(Transform go in parentObj)
       {
+        Destroy(go.GetChild(0).gameObject);
         GameObject clone = Instantiate(spawnthis,go.position,go.rotation) as GameObject;
         clone.transform.parent = go;
         clone.transform.position = go.position;

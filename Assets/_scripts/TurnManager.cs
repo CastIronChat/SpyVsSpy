@@ -60,12 +60,15 @@ public class TurnManager :  Photon.MonoBehaviour
 
     public void NextCheckPoint()
     {
+      int lastcheckpoint = checkPointsCrossed;
       checkPointsCrossed++;
       gameManager.currentTrack.checkpoints.GetChild(currentCheckpoint).gameObject.active = false;
         currentCheckpoint++;
         if(currentCheckpoint > gameManager.currentTrack.checkpoints.childCount)
         {currentCheckpoint = 0;}
         gameManager.currentTrack.checkpoints.GetChild(currentCheckpoint).gameObject.active = true;
+        Vector3 lastcheckpointpos = gameManager.currentTrack.checkpoints.GetChild(lastcheckpoint).position;
+        gameManager.currentTrack.checkpoints.GetChild(currentCheckpoint).LookAt(new Vector3(lastcheckpointpos.x,gameManager.currentTrack.checkpoints.GetChild(currentCheckpoint).position.y,lastcheckpointpos.z));
     }
 
     public bool ReturnCarToSafeSpot()

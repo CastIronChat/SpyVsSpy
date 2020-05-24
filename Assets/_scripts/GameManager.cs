@@ -180,7 +180,7 @@ public class GameManager : Photon.MonoBehaviour
 
             }
 
-        if( PhotonNetwork.isMasterClient   && Input.GetKeyDown(KeyCode.Space)   )
+        if( PhotonNetwork.isMasterClient   && Input.GetKeyDown(KeyCode.RightShift)   )
         {
           // turnManager.timer = 10;
           // turnManager.switchingPlayers = true;

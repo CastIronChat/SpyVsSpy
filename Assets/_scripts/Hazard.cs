@@ -13,7 +13,7 @@ public class Hazard : MonoBehaviour
   public bool listenForButtonPress = true,startDisabled,toggleOnOff,stayOn,isOn;
   public bool spin,spring,piston,pistonOut,isTrap;
   public float actionDistance,actionForce,cooldownLoop, angularSpeedTarget,currentSpinSpeed, timer;
-  public GameObject buttonIndicator;
+  public GameObject buttonIndicator,objToActivate;
   public Vector3 rotationDirection,startPos;
   public Rigidbody rb;
     // Start is called before the first frame update
@@ -44,10 +44,11 @@ public class Hazard : MonoBehaviour
           {Spin();}
           if(piston == true)
           {
-            if(timer<= 0)
-            {Piston(pistonOut);}
-
-              else{timer -= Time.deltaTime;}
+            Piston(pistonOut);
+            // if(timer<= 0)
+            // {Piston(pistonOut);}
+            //
+            //   else{timer -= Time.deltaTime;}
 
           }
           if(isTrap == true)
@@ -130,11 +131,11 @@ public class Hazard : MonoBehaviour
     {
 
 
-      if(startDisabled == true)
-      {    gameObject.active = true;} //neutral on for objects that when activated dissappear
+
       if(toggleOnOff == true)
       { isOn = !isOn;}
-
+      if(startDisabled == true)
+      {    objToActivate.active = isOn;} //neutral on for objects that when activated dissappear
       // if(spring == true && rb != null)
       // {
       //   rb.velocity = (transform.up * actionForce);
@@ -144,7 +145,7 @@ public class Hazard : MonoBehaviour
     public void Deactivate()
     {
       if(startDisabled == true)
-      {    gameObject.active = false;} //neutral on for objects that when activated dissappear
+      {    objToActivate.active = false;} //neutral on for objects that when activated dissappear
       if(toggleOnOff == true)
       {isOn = false;}
 

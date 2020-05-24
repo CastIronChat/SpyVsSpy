@@ -137,6 +137,8 @@ public class CarControlCS : MonoBehaviour {
 
 	void Drive()
 	{
+		float gasaxis = Input.GetAxis("3rd");
+
 		if (mobileInput)
 			return;
 		//dont call this function if mobile input is checked in the editor
@@ -158,8 +160,8 @@ public class CarControlCS : MonoBehaviour {
 		//no matter how much you increase the max torque.
 		if (DriveTrain == DriveType.RWD)
 		{
-			wheels.wheelRR.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
-			wheels.wheelRL.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
+			wheels.wheelRR.motorTorque = maxTorque * gasaxis * gasMultiplier;
+			wheels.wheelRL.motorTorque = maxTorque * gasaxis * gasMultiplier;
 
 			if (localCurrentSpeed.z < -0.1f && wheels.wheelRL.rpm < 10) {//in local space, if the car is travelling in the direction of the -z axis, (or in reverse), reversing will be true
 				reversing = true;
@@ -169,8 +171,8 @@ public class CarControlCS : MonoBehaviour {
 		}
 		if (DriveTrain == DriveType.FWD)
 		{
-			wheels.wheelFL.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
-			wheels.wheelFR.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
+			wheels.wheelFL.motorTorque = maxTorque * gasaxis * gasMultiplier;
+			wheels.wheelFR.motorTorque = maxTorque * gasaxis * gasMultiplier;
 
 			if (localCurrentSpeed.z < -0.1f && wheels.wheelFL.rpm < 10) {//in local space, if the car is travelling in the direction of the -z axis, (or in reverse), reversing will be true
 				reversing = true;
@@ -181,10 +183,10 @@ public class CarControlCS : MonoBehaviour {
 		if (DriveTrain == DriveType.AWD)
 		{
 
-			wheels.wheelFL.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
-			wheels.wheelFR.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
-			wheels.wheelRL.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
-			wheels.wheelRR.motorTorque = maxTorque * Input.GetAxis("Vertical") * gasMultiplier;
+			wheels.wheelFL.motorTorque = maxTorque * gasaxis * gasMultiplier;
+			wheels.wheelFR.motorTorque = maxTorque * gasaxis * gasMultiplier;
+			wheels.wheelRL.motorTorque = maxTorque * gasaxis * gasMultiplier;
+			wheels.wheelRR.motorTorque = maxTorque * gasaxis * gasMultiplier;
 
 			if (localCurrentSpeed.z < -0.1f && wheels.wheelRL.rpm < 10) {//in local space, if the car is travelling in the direction of the -z axis, (or in reverse), reversing will be true
 				reversing = true;

@@ -110,8 +110,8 @@ public class CarControls : Photon.MonoBehaviour
    }
    public void AirControl()
    {
-
-     transform.Rotate(transform.forward * (-Input.GetAxis("Horizontal") * airControlPower) + transform.right * (Input.GetAxis("Vertical")  * airControlPower));
+//+ transform.right * (Input.GetAxis("Vertical")  * airControlPower)
+     transform.Rotate(transform.forward * (-Input.GetAxis("Horizontal") * airControlPower) );
    }
 
 
