@@ -13,6 +13,8 @@ public class Player :  Photon.MonoBehaviour
     public GameObject carFollowCam,freeLookCam;
     void Start()
     {
+      gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+      transform.parent = gameManager.playerManager.transform;
       if (photonView.isMine)
      {
 

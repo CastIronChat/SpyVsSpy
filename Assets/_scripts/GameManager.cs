@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameManager : Photon.MonoBehaviour
 {
   public PlayerManager playerManager;
   public TurnManager turnManager;
+  public RoundManager roundManager;
   public HazardManager hazardManager;
   public Track currentTrack;
   public CarControls car;
@@ -187,8 +187,7 @@ public class GameManager : Photon.MonoBehaviour
 
           //0 inactive, 1 active, 2 changing players
           if(partOfTurn == 0){
-            roundActive = true;
-            partOfTurn = 1;
+
             StartTurn();
             // this.GetComponent<PhotonView>().RPC( "StartRound", PhotonTargets.AllBufferedViaServer );
           }else{  EndTurn(true);}
@@ -206,12 +205,28 @@ public class GameManager : Photon.MonoBehaviour
     }
 
 
+    public void VoteForNewRoundType(int rndtype, int fromplayer)
+    {
+      photonView.RPC( "rpcVoteForNewRoundType", PhotonTargets.AllBufferedViaServer, rndtype,fromplayer );
+    }
 
+    [PunRPC]
+    public void rpcVoteForNewRoundType(int rndtype, int fromplayer)
+    {
+      if( partOfTurn == 0 && playerManager.transform.childCount > 1)
+      {
+        StartRound();
+      }
+
+    }
 
     [PunRPC]
     public void StartRound()
     {
+      roundManager.DisableUi();
       roundActive = true;
+
+      partOfTurn = 1;
       int playercount = 0;
       foreach(Transform go in idleplayerManager)
       {go.transform.parent = playerManager.transform;}
@@ -262,10 +277,10 @@ public class GameManager : Photon.MonoBehaviour
                 nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild(playercount).gameObject;
                 nextPlayerInOrder.parent = playerManager.transform;
                 if( PhotonNetwork.isMasterClient  )
-                {}
+                {
                     nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
                     nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
-
+                }
 
 
 
@@ -279,10 +294,15 @@ public class GameManager : Photon.MonoBehaviour
                playercount++;
            }
 
-           if( PhotonNetwork.isMasterClient  )
-           {}
+
+
            turnManager.GetComponent<PhotonView>().photonView.RPC( "NewTurn", PhotonTargets.AllBufferedViaServer );
-           playerManager.transform.GetChild(0).GetComponent<Player>().StartMyTurn(0);
+           // playerManager.transform.GetChild(0).GetComponent<Player>().StartMyTurn(0);
+           if( PhotonNetwork.isMasterClient  )
+           {this.photonView.RPC( "NextTurn", PhotonTargets.AllViaServer, 0 );}
+
+
+
 
     }
     public void EndTurn(bool returnCarToSafeSpot)
