@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3758f8f58fdef43803eb9be1df0608, type: 3}
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
-  AppID: 597ac2c0-a70a-4447-b4fc-1514cef5c9ad
+  AppID: 1ff1543a-fa0a-4fee-8964-53101ffdec05
   VoiceAppID: 
   ChatAppID: 
   HostType: 1
@@ -28,36 +28,35 @@ MonoBehaviour:
   NetworkLogging: 1
   RunInBackground: 1
   RpcList:
+  - Accelerate
+  - ActivateHazardRPC
+  - AttemptToActivateHazardRPC
   - Chat
   - ColorRpc
   - DestroyRpc
   - DoJump
   - Flash
+  - HitSomething
   - InstantiateRpc
+  - JoinGame
   - Marco
+  - NewTurn
+  - NextTurn
   - PickupItemInit
+  - PlayerJoinGame
   - Polo
   - PunPickup
   - PunPickupSimple
   - PunRespawn
   - RequestForPickupItems
   - RequestForPickupTimes
-  - TaggedPlayer
-  - Accelerate
-  - PlayerJoinGame
-  - NextTurn
-  - SetNumberInList
-  - HitSomething
-  - NewTurn
-  - UpdateScore
-  - ActivateHazardRPC
-  - AttemptToActivateHazardRPC
-  - UpdateLives
-  - JoinGame
-  - StartRound
-  - UpdatePower
-  - AxisInputFromPlayer
-  - ButtonInputFromPlayer
-  - StartMyTurn
   - rpcVoteForNewRoundType
+  - SetNumberInList
+  - StartMyTurn
+  - StartRound
+  - TaggedPlayer
+  - UpdateLives
+  - UpdatePower
+  - UpdateScore
+  - SetSpriteFlip
   DisableAutoOpenWizard: 1

@@ -7,12 +7,11 @@ using UnityEngine.UI;
 public class GameManager : Photon.MonoBehaviour
 {
   public PlayerManager playerManager;
-  public TurnManager turnManager;
   public RoundManager roundManager;
   public HazardManager hazardManager;
-  public Track currentTrack;
-  public CarControls car;
-  public VehicleCameraControl carCamera;
+
+
+
   public GameObject playerPrefab;
   public GameObject scoreBoard;
   public int activePlayers;
@@ -21,12 +20,6 @@ public class GameManager : Photon.MonoBehaviour
   public List<Material> colors;
   public Transform colorBlindShapes;
   public Transform idleplayerManager;
-
-  public int startingLives = 3,crashMagnitude = 20, checkpointDist = 1;
-  public int localPlayer; //set to the photonid of the local player via the player script for checking if objects can be activated
-  public bool roundActive,switchingPlayers;
-  public int partOfTurn; //0 inactive, 1 active, 2 changing players
-  public string currentPlayerName;
 
 
     public void Awake()
@@ -43,37 +36,7 @@ public class GameManager : Photon.MonoBehaviour
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
         // clone.GetComponent<Player>().gameManager = GetComponent<GameManager>();
     }
-    [PunRPC]
-    public void NextTurn(int setTurn)
-    {
 
-        foreach(Transform child in colorBlindShapes)
-        {child.gameObject.active = false;}
-        colorBlindShapes.GetChild(setTurn).gameObject.active = true;
-        // colorBlindShapes.GetChild(setTurn).GetComponent<Renderer>().material = colors[setTurn]
-        myRenderer.material = colors[setTurn];
-        currentPlayer = setTurn;
-        foreach(Transform go in playerManager.transform)
-        {
-
-          if(go.GetComponent<Player>().numberInList == setTurn)
-          {
-
-            currentPlayerName = go.GetComponent<Player>().name;
-            currentPlayerPhotonID = go.GetComponent<PhotonView>().ownerId;
-            if(PhotonNetwork.isMasterClient)
-            {
-                go.GetComponent<Player>().photonView.RPC( "StartMyTurn", PhotonTargets.All, setTurn );
-              // go.GetComponent<Player>().StartMyTurn(setTurn);
-
-            }
-
-
-          }
-
-        }
-
-    }
 
     [PunRPC]
     public void PlayerJoinGame(int newPlayer,string newname  )
@@ -108,8 +71,7 @@ public class GameManager : Photon.MonoBehaviour
 
             foreach(Transform go in playerManager.transform)
             {
-              // go.GetComponent<Player>().playerNum = go.GetComponent<PlayerPlayer>().ID;
-              // go.GetComponent<Player>().name = go.GetComponent<PlayerPlayer>().name;
+
               //So the new players has their name when they join
               if(go.GetComponent<Player>().name.Length <= 0){
                 go.GetComponent<Player>().name = newname;
@@ -130,8 +92,6 @@ public class GameManager : Photon.MonoBehaviour
             lowestPlayerNum = 99999;
 
             scoreBoard.transform.GetChild(playercount).gameObject.active = true;
-            // scoreBoard.transform.GetChild(playercount).GetChild(1).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().name + " : ";
-            // scoreBoard.transform.GetChild(playercount).GetChild(2).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().score.ToString();
 
             nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild(playercount).gameObject;
             // nextPlayerInOrder.parent = playerManager.transform;
@@ -144,8 +104,9 @@ public class GameManager : Photon.MonoBehaviour
             }
 
 
+            scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId] ;
 
-            scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = colors[playercount].color;
+            // scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = colors[playercount].color;
             playercount++;
             if(playercount >= scoreBoard.transform.childCount){return;}
        }
@@ -158,39 +119,12 @@ public class GameManager : Photon.MonoBehaviour
     }
      void Update()
     {
-        //0 inactive, 1 active, 2 changing players
-            if(partOfTurn == 2)
-            {
 
-              if(turnManager.ReturnCarToSafeSpot() == true)
-              {
-                partOfTurn = 1;
-                switchingPlayers = false;
-                StartTurn();
-              }else
-              {}
 
-            }
-            //0 inactive, 1 active, 2 changing players
-            else if(partOfTurn == 1)
-            {
-              if(car.GetComponent<PhotonView>().isMine){  car.DriveCar();}
 
-              turnManager.TurnActive();
-
-            }
 
         if( PhotonNetwork.isMasterClient   && Input.GetKeyDown(KeyCode.RightShift)   )
         {
-          // turnManager.timer = 10;
-          // turnManager.switchingPlayers = true;
-
-          //0 inactive, 1 active, 2 changing players
-          if(partOfTurn == 0){
-
-            StartTurn();
-            // this.GetComponent<PhotonView>().RPC( "StartRound", PhotonTargets.AllBufferedViaServer );
-          }else{  EndTurn(true);}
 
 
         }
@@ -213,7 +147,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void rpcVoteForNewRoundType(int rndtype, int fromplayer)
     {
-      if( partOfTurn == 0 && playerManager.transform.childCount > 1)
+      if(playerManager.transform.childCount > 1)
       {
         StartRound();
       }
@@ -224,9 +158,7 @@ public class GameManager : Photon.MonoBehaviour
     public void StartRound()
     {
       roundManager.DisableUi();
-      roundActive = true;
 
-      partOfTurn = 1;
       int playercount = 0;
       foreach(Transform go in idleplayerManager)
       {go.transform.parent = playerManager.transform;}
@@ -284,8 +216,7 @@ public class GameManager : Photon.MonoBehaviour
 
 
 
-                scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = colors[playercount].color;
-                playercount++;
+                scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId] ;
                 if(playercount >= scoreBoard.transform.childCount){return;}
            }
            while(playercount < scoreBoard.transform.childCount)
@@ -296,7 +227,7 @@ public class GameManager : Photon.MonoBehaviour
 
 
 
-           turnManager.GetComponent<PhotonView>().photonView.RPC( "NewTurn", PhotonTargets.AllBufferedViaServer );
+           // turnManager.GetComponent<PhotonView>().photonView.RPC( "NewTurn", PhotonTargets.AllBufferedViaServer );
            // playerManager.transform.GetChild(0).GetComponent<Player>().StartMyTurn(0);
            if( PhotonNetwork.isMasterClient  )
            {this.photonView.RPC( "NextTurn", PhotonTargets.AllViaServer, 0 );}
@@ -305,69 +236,8 @@ public class GameManager : Photon.MonoBehaviour
 
 
     }
-    public void EndTurn(bool returnCarToSafeSpot)
-    {
-      roundActive = false;
-      partOfTurn = 2;
-      switchingPlayers = returnCarToSafeSpot;
 
 
-      //have the server take the car
-      car.photonView.RequestOwnership();
-      car.GetComponent<Rigidbody>().isKinematic = true;
-      foreach(Transform go in playerManager.transform)
-      {
-
-
-            if(go.GetComponent<Player>().numberInList == currentTurn)
-            {
-                //if the car is returning to a safe spot it means the player crashed and does not score
-                if(returnCarToSafeSpot == false){
-
-                    //if the player didnt travel far enough
-                  if(turnManager.checkPointsCrossed < turnManager.checkPointsNeededPerRound)
-                  {
-                    go.GetComponent<PhotonView>().RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer,
-                        go.GetComponent<Player>().score - 1 );
-                  }
-
-                  go.GetComponent<PhotonView>().RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer,
-                      go.GetComponent<Player>().score + (int)(turnManager.totalDisplacement * 0.1f) * turnManager.checkPointsCrossed );
-
-
-                }
-                // not scoring gives the player more power/money
-                else
-                {
-                      go.GetComponent<PhotonView>().RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer,
-                            go.GetComponent<Player>().money + (int)(turnManager.totalDisplacement * 0.1f) * turnManager.checkPointsCrossed );
-                }
-          }
-      }
-
-      if(returnCarToSafeSpot == false){partOfTurn = 1;}
-
-    }
-    public void StartTurn( )
-    {
-      roundActive = true;
-      switchingPlayers = false;
-      //take the car and move it to the safe location
-
-      // car.photonView.RequestOwnership();
-      car.GetComponent<Rigidbody>().isKinematic = false;
-
-
-          currentTurn = currentTurn - 1;
-          if(currentTurn < 0){currentTurn = playerManager.transform.childCount - 1;}
-          myRenderer.material = colors[currentTurn];
-
-          this.photonView.RPC( "NextTurn", PhotonTargets.AllBufferedViaServer, currentTurn );
-
-          turnManager.GetComponent<PhotonView>().photonView.RPC( "NewTurn", PhotonTargets.AllBufferedViaServer );
-            roundActive = true;
-
-    }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -375,13 +245,13 @@ public class GameManager : Photon.MonoBehaviour
           if (stream.isWriting)
           {
 
-              stream.SendNext(partOfTurn);
+              // stream.SendNext(1);
               // stream.SendNext(roundActive);
           }
           else
           {
 
-            partOfTurn = (int)stream.ReceiveNext();
+            // partOfTurn = (int)stream.ReceiveNext();
             // roundActive = (bool)stream.ReceiveNext();
 
 
@@ -391,7 +261,7 @@ public class GameManager : Photon.MonoBehaviour
 
     public void AttemptToActivateHazard(int hazardToActivate)
     {
-              this.photonView.RPC( "AttemptToActivateHazardRPC", PhotonTargets.AllBufferedViaServer, localPlayer, hazardToActivate );
+              this.photonView.RPC( "AttemptToActivateHazardRPC", PhotonTargets.AllBufferedViaServer, 1, hazardToActivate );
     }
 
     [PunRPC]
@@ -420,14 +290,6 @@ public class GameManager : Photon.MonoBehaviour
     {
       hazardManager.ActivateHazard(hazardToActivate);
 
-          // foreach(Transform go in playerManager.transform)
-          // {
-          //     if(go.GetComponent<Player>().playerNum == whichPlayer )
-          //     {
-          //       go.GetComponent<Player>().money -= 1;
-          //     }
-          //
-          // }
 
     }
 
@@ -435,7 +297,7 @@ public class GameManager : Photon.MonoBehaviour
     public void HitSomething( float magnitude)
     {
         print("hit something: " + magnitude + " " + PhotonNetwork.isMasterClient);
-        if( partOfTurn == 1 && PhotonNetwork.isMasterClient  && magnitude > crashMagnitude )
+        if(  PhotonNetwork.isMasterClient  )
         {
               foreach(Transform go in playerManager.transform)
               {
@@ -445,7 +307,6 @@ public class GameManager : Photon.MonoBehaviour
                   }
 
               }
-              EndTurn(true);
         }
 
     }

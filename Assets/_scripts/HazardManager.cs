@@ -36,7 +36,6 @@ public class HazardManager : MonoBehaviour
       hazardsListeningForButtonPress[hazardButtonTracking] = visibleHazard.spotInHazardList;
       visibleHazard.buttonIndicator = buttonObjectDisplays[hazardButtonTracking];
       buttonObjectDisplays[hazardButtonTracking].transform.position = visibleHazard.transform.position;
-        buttonObjectDisplays[hazardButtonTracking].transform.LookAt(gameManager.carCamera.transform.position);
 buttonObjectDisplays[hazardButtonTracking].active = true;
       hazardButtonTracking++;
 

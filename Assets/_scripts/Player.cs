@@ -7,12 +7,21 @@ public class Player :  Photon.MonoBehaviour
   public GameManager gameManager;
     public int numberInList,playerNum,score,lostScore,money;
     public int lives,gamesPlayed,wins;
+    public float speed;
     public string name;
     public GameObject myScoreCard;
     public Material myColor;
-    public GameObject carFollowCam,freeLookCam;
+    public List<Color> colors;
+private KeyCode lastKeyDown;
+    private Animator anim;
+    private Rigidbody2D rb;
     void Start()
     {
+      if(this.photonView.ownerId < colors.Count)
+      {GetComponent<SpriteRenderer>().color = colors[this.photonView.ownerId];}
+
+      anim = GetComponent<Animator>();
+      rb = GetComponent<Rigidbody2D>();
       gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
       transform.parent = gameManager.playerManager.transform;
       if (photonView.isMine)
@@ -29,13 +38,14 @@ public class Player :  Photon.MonoBehaviour
     }
 	void OnEnable()
 	{
+    anim = GetComponent<Animator>();
+    rb = GetComponent<Rigidbody2D>();
      gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
      transform.parent = gameManager.playerManager.transform;
       if (photonView.isMine){
 
               playerNum = this.photonView.ownerId;
               name = PhotonNetwork.playerName;
-              gameManager.localPlayer = playerNum;
               gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerNum , name );
               this.photonView.RPC( "JoinGame", PhotonTargets.AllBufferedViaServer, name, photonView.ownerId  );
 
@@ -57,34 +67,12 @@ public class Player :  Photon.MonoBehaviour
             //Network player, receive data
          // score = (int)stream.ReceiveNext();
            // name = (string)stream.ReceiveNext();
-            // correctPlayerRot = (Quaternion)stream.ReceiveNext();
+            // correctPlayerRot = (Vector3)stream.ReceiveNext();
 
 
         }
     }
-    [PunRPC]
-    public void StartMyTurn(int num)
-    {
-      if (photonView.isMine)
-      {
-              if (gameManager == null)
-             {
-                // playerNum = photonView.viewID;
-               gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-             }else
-             {
-
-
-             }
-             gameManager.car.photonView.RequestOwnership();
-             if(gameManager != null &&  playerNum == num)
-             {
-               // gameManager.car.GetComponent<PhotonView>().RequestOwnership();
-
-             }
-      }
-    }
 
     [PunRPC]
     public void JoinGame(string newname, int photonNumber  )
@@ -160,11 +148,88 @@ public class Player :  Photon.MonoBehaviour
     {
       if (photonView.isMine)
       {
-        if(Input.GetMouseButtonDown(1))
-        {gameManager.carCamera.ToggleFreeLook();}
+          Move();
       }
     }
 
+    [PunRPC]
+    public void SetSpriteFlip(bool flip ,float rot )
+    {
+      GetComponent<SpriteRenderer>().flipX = flip;
+      transform.eulerAngles = new Vector3(0,0,rot);
+    }
 
+    public void Move()
+    {
+
+      if(Input.GetKeyDown(KeyCode.W))
+      {
+        lastKeyDown = KeyCode.W;
+        rb.velocity = Vector3.up * speed  * Time.deltaTime;
+        this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false ,270.0f );
+
+      }
+      if(Input.GetKeyDown(KeyCode.S))
+      {
+        lastKeyDown = KeyCode.S;
+        rb.velocity = Vector3.up * -speed  * Time.deltaTime;
+        this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false ,90.0f );
+      }
+      if(Input.GetKeyDown(KeyCode.A))
+      {
+        lastKeyDown = KeyCode.A;
+        rb.velocity = Vector3.right * -speed *  Time.deltaTime;
+          this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false  ,0.0f);
+      }
+      if(Input.GetKeyDown(KeyCode.D))
+      {
+        lastKeyDown = KeyCode.D;
+        rb.velocity = Vector3.right * speed  * Time.deltaTime;
+          this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, true ,0.0f );
+      }
+
+      if(Input.GetKeyUp(KeyCode.W) && lastKeyDown == KeyCode.W)
+      {
+        rb.velocity = Vector3.zero;
+      }
+      if(Input.GetKeyUp(KeyCode.S)&& lastKeyDown == KeyCode.S)
+      {
+        rb.velocity = Vector3.zero;
+      }
+      if(Input.GetKeyUp(KeyCode.A)&& lastKeyDown == KeyCode.A)
+      {
+        rb.velocity = Vector3.zero;
+      }
+      if(Input.GetKeyUp(KeyCode.D)&& lastKeyDown == KeyCode.D)
+      {
+        rb.velocity = Vector3.zero;
+      }
+      // float vert = Input.GetAxis("Vertical");
+      // float hort = Input.GetAxis("Horizontal");
+
+      // if(vert != 0 && Mathf.Abs(vert) >= Mathf.Abs(hort))
+      // {
+      //   anim.SetFloat("vert",vert);
+      //   anim.SetFloat("hort",0);
+      //   rb.velocity = Vector3.up * speed * vert * Time.deltaTime;
+      // }else if(hort != 0 && Mathf.Abs(hort) > Mathf.Abs(vert))
+      // {
+      //   anim.SetFloat("vert",0);
+      //   anim.SetFloat("hort",hort);
+      //     rb.velocity = Vector3.right * speed * hort * Time.deltaTime;
+      // }else
+      // {
+      //   anim.SetFloat("vert",0);
+      //   anim.SetFloat("hort",0);
+      //   rb.velocity = Vector3.zero;
+      // }
+
+    }
+    public void OnTriggerStay2D(Collider2D col)
+    {
+      if(Input.GetKeyDown(KeyCode.Space) && col.transform.tag == "interact")
+      {  col.transform.position = col.transform.position + Vector3.up;}
+
+    }
 
 }
