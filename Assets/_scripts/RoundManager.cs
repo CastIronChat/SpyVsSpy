@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class RoundManager : MonoBehaviour
 {
-  public GameManager gameManager;
-  public int localPlayer;
-  public GameObject roundUI;
+    public GameManager gameManager;
+    public int localPlayer;
+    public GameObject roundUI;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,27 +21,27 @@ public class RoundManager : MonoBehaviour
     }
     public void DisableUi()
     {
-      roundUI.active = false;
+        roundUI.active = false;
     }
     public void EnableUi()
     {
-      roundUI.active = true;
+        roundUI.active = true;
     }
 
     public void SelectRound(int rndtype)
     {
-      gameManager.VoteForNewRoundType(rndtype,localPlayer);
+        gameManager.VoteForNewRoundType( rndtype, localPlayer );
     }
     public void SetRound(int rndtype)
     {
 
     }
     public int GetStartingLives()
-    {return 3;}
+    { return 3; }
     public int GetStartingScore()
-    {return 0;}
+    { return 0; }
     public int GetStartingMoney()
-    {return 0;}
+    { return 0; }
 
 
 }
