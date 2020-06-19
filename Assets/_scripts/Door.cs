@@ -5,7 +5,7 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     public Transform oppositeDoor;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,8 +19,8 @@ public class Door : MonoBehaviour
     }
     public void OnTriggerEnter2D(Collider2D col)
     {
-      if(col.GetComponent<Player>()!= null)
-      {  col.transform.position = oppositeDoor.position;}
+        if ( col.GetComponent<Player>() != null )
+        { col.transform.position = oppositeDoor.position; }
 
     }
 

@@ -2,111 +2,112 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class TurnManager :  Photon.MonoBehaviour
+public class TurnManager : Photon.MonoBehaviour
 {
-  public GameManager gameManager;
-    public Transform car,checkpoint;
+    public GameManager gameManager;
+    public Transform car, checkpoint;
     public bool switchingPlayers;
-    public Vector3 startPosition,lastPosition;
-    public float safeSpotTimer, timer,turnTime = 10.0f;
-    public float totalDistance,totalDisplacement;
-    public Text distanceText,displacementText;
-    public float carReturnSpeed = 5.0f,checkpointDist = 5.0f;
-    public int currentCheckpoint,checkPointsCrossed,checkPointsNeededPerRound;
-    public Quaternion lastSafeRotation,secondLastSafeRotation;
-    public Vector3 lastSafeSpot,secondLastSafeSpot;
+    public Vector3 startPosition, lastPosition;
+    public float safeSpotTimer, timer, turnTime = 10.0f;
+    public float totalDistance, totalDisplacement;
+    public Text distanceText, displacementText;
+    public float carReturnSpeed = 5.0f, checkpointDist = 5.0f;
+    public int currentCheckpoint, checkPointsCrossed, checkPointsNeededPerRound;
+    public Quaternion lastSafeRotation, secondLastSafeRotation;
+    public Vector3 lastSafeSpot, secondLastSafeSpot;
     // Start is called before the first frame update
     void Start()
     {
-      secondLastSafeSpot = car.position;
-      secondLastSafeRotation = car.rotation;
-      lastSafeRotation = car.rotation;
-      lastSafeSpot = car.position;
+        secondLastSafeSpot = car.position;
+        secondLastSafeRotation = car.rotation;
+        lastSafeRotation = car.rotation;
+        lastSafeSpot = car.position;
     }
 
     // Update is called once per frame
     void Update()
     {
 
-      // if(switchingPlayers == false)
-      // {
-      //   timer -= Time.deltaTime;
-      //   if(timer > 0)
-      //   {TrackDistance();}
-      //   else{
-      //     switchingPlayers = true;
-      //     // gameManager.SwitchTurn();
-      //   }
+        // if(switchingPlayers == false)
+        // {
+        //   timer -= Time.deltaTime;
+        //   if(timer > 0)
+        //   {TrackDistance();}
+        //   else{
+        //     switchingPlayers = true;
+        //     // gameManager.SwitchTurn();
+        //   }
 
-      // }
+        // }
 
     }
 
     public void TurnActive()
     {
-      safeSpotTimer += Time.deltaTime;
-      if(safeSpotTimer > 2.0f)
-      {
-          safeSpotTimer = 0;
-          secondLastSafeSpot = lastSafeSpot;
-          secondLastSafeRotation = lastSafeRotation;
-          lastSafeRotation = car.rotation;
-          lastSafeSpot = car.position;
-      }
+        safeSpotTimer += Time.deltaTime;
+        if ( safeSpotTimer > 2.0f )
+        {
+            safeSpotTimer = 0;
+            secondLastSafeSpot = lastSafeSpot;
+            secondLastSafeRotation = lastSafeRotation;
+            lastSafeRotation = car.rotation;
+            lastSafeSpot = car.position;
+        }
 
-      TrackDistance();
+        TrackDistance();
     }
 
     public void NextCheckPoint()
     {
-      int lastcheckpoint = checkPointsCrossed;
-      checkPointsCrossed++;
+        int lastcheckpoint = checkPointsCrossed;
+        checkPointsCrossed++;
         currentCheckpoint++;
 
     }
 
     public bool ReturnCarToSafeSpot()
     {
-      if(car.position != secondLastSafeSpot)
-      {
-        car.rotation = Quaternion.Slerp(car.rotation, secondLastSafeRotation, carReturnSpeed * Time.deltaTime);
-        car.position = Vector3.MoveTowards(car.position, secondLastSafeSpot, carReturnSpeed  * Time.deltaTime);
-        return false;
-      }else{    return true;}
+        if ( car.position != secondLastSafeSpot )
+        {
+            car.rotation = Quaternion.Slerp( car.rotation, secondLastSafeRotation, carReturnSpeed * Time.deltaTime );
+            car.position = Vector3.MoveTowards( car.position, secondLastSafeSpot, carReturnSpeed * Time.deltaTime );
+            return false;
+        }
+        else { return true; }
 
     }
-    public void HitSomething( float magnitude)
+    public void HitSomething(float magnitude)
     {
-      switchingPlayers = true;
+        switchingPlayers = true;
     }
 
 
     [PunRPC]
     public void NewTurn()
     {
-      checkPointsCrossed = 0;
-      startPosition = car.position;
-      lastPosition = car.position;
-      totalDistance = 0;
-      totalDisplacement = 0;
-      timer = turnTime;
+        checkPointsCrossed = 0;
+        startPosition = car.position;
+        lastPosition = car.position;
+        totalDistance = 0;
+        totalDisplacement = 0;
+        timer = turnTime;
         switchingPlayers = false;
     }
     public void TrackDistance()
     {
-      //NOTE: think about total distance traveled and distance from start position
-      totalDistance += Vector3.Distance(car.position,lastPosition);
-      lastPosition = car.position;
-      totalDisplacement = Vector3.Distance(car.position,startPosition);
+        //NOTE: think about total distance traveled and distance from start position
+        totalDistance += Vector3.Distance( car.position, lastPosition );
+        lastPosition = car.position;
+        totalDisplacement = Vector3.Distance( car.position, startPosition );
 
-      distanceText.text =  Mathf.Round(totalDistance).ToString();
-      displacementText.text = Mathf.Round(totalDisplacement).ToString();
+        distanceText.text = Mathf.Round( totalDistance ).ToString();
+        displacementText.text = Mathf.Round( totalDisplacement ).ToString();
     }
 
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.isWriting)
+        if ( stream.isWriting )
         {
 
         }
