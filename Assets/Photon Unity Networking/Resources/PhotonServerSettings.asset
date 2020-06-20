@@ -59,4 +59,9 @@ MonoBehaviour:
   - UpdatePower
   - UpdateScore
   - SetSpriteFlip
+  - ActivateHidingSpot
+  - OpenHidingSpot
+  - rpcSetCollectibleForHidingSpot
+  - rpcSetTrapForHidingSpot
+  - rpcNewScrollLine
   DisableAutoOpenWizard: 1

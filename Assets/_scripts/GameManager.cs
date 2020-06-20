@@ -7,15 +7,15 @@ using UnityEngine.UI;
 public class GameManager : Photon.MonoBehaviour
 {
     public PlayerManager playerManager;
+    public HidingspotManager hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
+    public ScrollingText scrollingText;
     public RoundManager roundManager;
-    public HazardManager hazardManager;
 
 
 
     public GameObject playerPrefab;
     public GameObject scoreBoard;
     public int activePlayers;
-    public int currentPlayerPhotonID, currentPlayer = -1, currentTurn = -1, currentCheckpoint;//turn is 0-x and player is their photonid
     public Renderer myRenderer;
     public List<Material> colors;
     public Transform colorBlindShapes;
@@ -41,84 +41,12 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void PlayerJoinGame(int newPlayer, string newname)
     {
-        int count = 0;
-
         print( "new player Number: " + newPlayer );
         PopulateScoreBoard( newPlayer, newname );
 
-
-
     }
 
-    public void PopulateScoreBoard(int newPlayer, string newname)
-    {
-        int cardcount = 0;
-        int playercount = 0;
 
-        Transform nextPlayerInOrder = playerManager.transform.GetChild( 0 );
-        if ( nextPlayerInOrder.GetComponent<Player>().playerNum <= 0 )
-        {
-            // nextPlayerInOrder.GetComponent<Player>().lives = startingLives;
-
-            nextPlayerInOrder.GetComponent<Player>().playerNum = nextPlayerInOrder.GetComponent<PhotonView>().ownerId;
-        }
-        int lowestPlayerNum = 99999;
-        int lastPlayerNum = -1;
-
-        while ( playercount < playerManager.transform.childCount )
-        {
-
-
-            foreach ( Transform go in playerManager.transform )
-            {
-
-                //So the new players has their name when they join
-                if ( go.GetComponent<Player>().name.Length <= 0 )
-                {
-                    go.GetComponent<Player>().name = newname;
-
-                }
-                if ( go.GetComponent<Player>().playerNum <= 0 )
-                {
-                    go.GetComponent<Player>().playerNum = go.GetComponent<PhotonView>().ownerId;
-
-                }
-                if ( go.GetComponent<Player>().playerNum > lastPlayerNum && go.GetComponent<Player>().playerNum < lowestPlayerNum )
-                {
-                    nextPlayerInOrder = go;
-                    lowestPlayerNum = go.GetComponent<Player>().playerNum;
-                }
-
-            }
-            lastPlayerNum = lowestPlayerNum;
-            lowestPlayerNum = 99999;
-
-            scoreBoard.transform.GetChild( playercount ).gameObject.active = true;
-
-            nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild( playercount ).gameObject;
-            // nextPlayerInOrder.parent = playerManager.transform;
-            if ( PhotonNetwork.isMasterClient )
-            {
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().score );
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().money );
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
-            }
-
-
-            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
-
-            // scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = colors[playercount].color;
-            playercount++;
-            if ( playercount >= scoreBoard.transform.childCount ) { return; }
-        }
-        while ( playercount < scoreBoard.transform.childCount )
-        {
-            scoreBoard.transform.GetChild( playercount ).gameObject.active = false;
-            playercount++;
-        }
-
-    }
     void Update()
     {
 
@@ -165,8 +93,6 @@ public class GameManager : Photon.MonoBehaviour
         foreach ( Transform go in idleplayerManager )
         { go.transform.parent = playerManager.transform; }
 
-        currentTurn = 0;
-        myRenderer.material = colors[currentTurn];
         foreach ( Transform child in colorBlindShapes )
         { child.gameObject.active = false; }
         colorBlindShapes.GetChild( 0 ).gameObject.active = true;
@@ -262,54 +188,154 @@ public class GameManager : Photon.MonoBehaviour
 
     }
 
-    public void AttemptToActivateHazard(int hazardToActivate)
+    [PunRPC]
+    public void rpcSetTrapForHidingSpot(int whichHidingSpot, int whattrap)
     {
-        this.photonView.RPC( "AttemptToActivateHazardRPC", PhotonTargets.AllBufferedViaServer, 1, hazardToActivate );
+      hidingSpotManager.SetTrapForHidingSpot(whichHidingSpot,whattrap);
     }
 
     [PunRPC]
-    public void AttemptToActivateHazardRPC(int whichPlayer, int hazardToActivate)
+    public void rpcSetCollectibleForHidingSpot(int whichHidingSpot, int whatitem)
     {
+      hidingSpotManager.SetCollectibleForHidingSpot(whichHidingSpot,whatitem);
+    }
+
+    [PunRPC]
+    public void rpcNewScrollLine(string newline)
+    {
+      scrollingText.NewLine(newline);
+    }
+
+    [PunRPC]
+    public void OpenHidingSpot(int whichPlayer, int whichHidingSpot)
+    {
+
         if ( PhotonNetwork.isMasterClient )
         {
-            foreach ( Transform go in playerManager.transform )
-            {
-                if ( go.GetComponent<Player>().playerNum == whichPlayer && go.GetComponent<Player>().money > hazardManager.GetHazardCost( hazardToActivate ) )
-                {
-                    go.GetComponent<PhotonView>().RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().lives - hazardManager.GetHazardCost( hazardToActivate ) );
-                    this.photonView.RPC( "ActivateHazardRPC", PhotonTargets.All, whichPlayer, hazardToActivate );
-                }
+              Player actingPlayer = null;
+              foreach(Transform go in playerManager.transform)
+              {
+                  if(go.GetComponent<PhotonView>().ownerId == whichPlayer)
+                  {
+                    actingPlayer = go.GetComponent<Player>();
 
-            }
 
+                  }
+              }
+
+              //check that the hiding spot is in the list range
+              if(whichHidingSpot < hidingSpotManager.hidingSpots.Count)
+              {
+
+                  HidingSpot activatedHidingSpot = hidingSpotManager.hidingSpots[whichHidingSpot];
+                  //if trapped, activate, otherwise check for hidden object
+                  // TODO: question - placing a trap requires the playing to be holding it out?
+                    if(activatedHidingSpot.GetTrap() != 0)
+                    {
+
+                      //TODO: trap logic
+                      actingPlayer.ServerUpdateLives(1);
+                      //set the spot to no longer be trapped since it was just used
+                      this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
+                      this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                    }
+                    else
+                    {
+
+                          if(activatedHidingSpot.GetCollectible() != 0)
+                          {
+
+
+                                    if(actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
+                                    {
+
+                                      //TODO: add item to player inventory
+
+                                      this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found");
+                                      //move the item in the hiding spot to the players inventory
+                                      this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                                    }
+
+                        }
+                    }
+                }//end of size check - if block
+
+
+          }//end of if server
+
+
+    }
+
+
+
+
+
+    public void PopulateScoreBoard(int newPlayer, string newname)
+    {
+        int cardcount = 0;
+        int playercount = 0;
+
+        Transform nextPlayerInOrder = playerManager.transform.GetChild( 0 );
+        if ( nextPlayerInOrder.GetComponent<Player>().playerNum <= 0 )
+        {
+            // nextPlayerInOrder.GetComponent<Player>().lives = startingLives;
+
+            nextPlayerInOrder.GetComponent<Player>().playerNum = nextPlayerInOrder.GetComponent<PhotonView>().ownerId;
         }
+        int lowestPlayerNum = 99999;
+        int lastPlayerNum = -1;
 
-
-    }
-
-    //make sure this RPC is not buffered so that traps dont go off when players join
-    [PunRPC]
-    public void ActivateHazardRPC(int whichPlayer, int hazardToActivate)
-    {
-        hazardManager.ActivateHazard( hazardToActivate );
-
-
-    }
-
-    [PunRPC]
-    public void HitSomething(float magnitude)
-    {
-        print( "hit something: " + magnitude + " " + PhotonNetwork.isMasterClient );
-        if ( PhotonNetwork.isMasterClient )
+        while ( playercount < playerManager.transform.childCount )
         {
+
+
             foreach ( Transform go in playerManager.transform )
             {
-                if ( go.GetComponent<Player>().numberInList == currentTurn )
+
+                //So the new players has their name when they join
+                if ( go.GetComponent<Player>().name.Length <= 0 )
                 {
-                    go.GetComponent<PhotonView>().RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, go.GetComponent<Player>().lives - 1 );
+                    go.GetComponent<Player>().name = newname;
+
+                }
+                if ( go.GetComponent<Player>().playerNum <= 0 )
+                {
+                    go.GetComponent<Player>().playerNum = go.GetComponent<PhotonView>().ownerId;
+
+                }
+                if ( go.GetComponent<Player>().playerNum > lastPlayerNum && go.GetComponent<Player>().playerNum < lowestPlayerNum )
+                {
+                    nextPlayerInOrder = go;
+                    lowestPlayerNum = go.GetComponent<Player>().playerNum;
                 }
 
             }
+            lastPlayerNum = lowestPlayerNum;
+            lowestPlayerNum = 99999;
+
+            scoreBoard.transform.GetChild( playercount ).gameObject.active = true;
+
+            nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild( playercount ).gameObject;
+            // nextPlayerInOrder.parent = playerManager.transform;
+            if ( PhotonNetwork.isMasterClient )
+            {
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().score );
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().money );
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
+            }
+
+
+            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
+
+            // scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = colors[playercount].color;
+            playercount++;
+            if ( playercount >= scoreBoard.transform.childCount ) { return; }
+        }
+        while ( playercount < scoreBoard.transform.childCount )
+        {
+            scoreBoard.transform.GetChild( playercount ).gameObject.active = false;
+            playercount++;
         }
 
     }
