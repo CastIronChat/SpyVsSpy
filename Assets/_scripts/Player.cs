@@ -18,6 +18,8 @@ public class Player : Photon.MonoBehaviour
     private Animator anim;
     private Rigidbody2D rb;
     private PlayerInput input = new PlayerInput();
+    private Inventory inventory;
+
     void Start()
     {
         if ( this.photonView.ownerId < colors.Count )
@@ -30,11 +32,6 @@ public class Player : Photon.MonoBehaviour
         if ( photonView.isMine )
         {
 
-            // this.photonView.RequestOwnership();
-            //   ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
-            // hash.Add("lives", -1);
-
-            // PhotonNetwork.player.SetCustomProperties(hash);
 
         }
 
@@ -43,6 +40,11 @@ public class Player : Photon.MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        inventory = new Inventory();
+        inventory.traps = new List<int>();
+        inventory.traps.Add(0);
+        inventory.traps.Add(1);
+        inventory.traps.Add(2);
         gameManager = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
         transform.parent = gameManager.playerManager.transform;
         if ( photonView.isMine )
@@ -114,7 +116,7 @@ public class Player : Photon.MonoBehaviour
 
     public void ServerUpdateLives(int livesChange)
     {
-        lives = livesChange;
+        lives -= livesChange;
         this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, lives );
     }
 
@@ -135,35 +137,35 @@ public class Player : Photon.MonoBehaviour
             myScoreCard.transform.GetChild( 3 ).GetComponent<Text>().text = lifeString;
         }
     }
-    public void ServerUpdatePower(int powerChange)
-    {
-        money = powerChange;
-        this.photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, money );
-    }
 
-    [PunRPC]
-    public void UpdatePower(int powerChange)
-    {
-        money = powerChange;
-        if ( myScoreCard != null )
-        {
-            myScoreCard.transform.GetChild( 1 ).GetComponent<Text>().text = name + " : ";
-            myScoreCard.transform.GetChild( 4 ).GetComponent<Text>().text = money.ToString();
-        }
-    }
+
+
+
     void Update()
     {
         if ( photonView.isMine )
         {
             Move();
+            UseTraps();
+
         }
     }
+
+
 
     [PunRPC]
     public void SetSpriteFlip(bool flip, float rot)
     {
         GetComponent<SpriteRenderer>().flipX = flip;
         transform.eulerAngles = new Vector3( 0, 0, rot );
+    }
+
+    public void UseTraps()
+    {
+      if(Input.GetKeyDown(KeyCode.Alpha1) && inventory.SelectTrap(1))
+      {inventory.equippedTrap = 1; gameManager.scrollingText.NewLine("equiped trap 1");}
+        if(Input.GetKeyDown(KeyCode.Alpha2) && inventory.SelectTrap(2))
+        {inventory.equippedTrap = 2; gameManager.scrollingText.NewLine("equiped trap 2");}
     }
 
     public void Move()
@@ -218,32 +220,27 @@ public class Player : Photon.MonoBehaviour
             default: break;
         }
 
-        // float vert = Input.GetAxis("Vertical");
-        // float hort = Input.GetAxis("Horizontal");
 
-        // if(vert != 0 && Mathf.Abs(vert) >= Mathf.Abs(hort))
-        // {
-        //   anim.SetFloat("vert",vert);
-        //   anim.SetFloat("hort",0);
-        //   rb.velocity = Vector3.up * speed * vert * Time.deltaTime;
-        // }else if(hort != 0 && Mathf.Abs(hort) > Mathf.Abs(vert))
-        // {
-        //   anim.SetFloat("vert",0);
-        //   anim.SetFloat("hort",hort);
-        //     rb.velocity = Vector3.right * speed * hort * Time.deltaTime;
-        // }else
-        // {
-        //   anim.SetFloat("vert",0);
-        //   anim.SetFloat("hort",0);
-        //   rb.velocity = Vector3.zero;
-        // }
 
     }
     public void OnTriggerStay2D(Collider2D col)
     {
-        if ( Input.GetKeyDown( KeyCode.Space ) && col.transform.tag == "interact" )
-        { col.transform.position = col.transform.position + Vector3.up; }
+        if ( Input.GetKeyDown( KeyCode.Space ) && col.GetComponent<HidingSpot>() != null )
+        {
+            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, playerNum, col.GetComponent<HidingSpot>().GetPlaceInList() );
+          col.transform.position = col.transform.position + Vector3.up;
+        }
 
+        if ( Input.GetKeyDown( KeyCode.Alpha3 ) && col.GetComponent<HidingSpot>() != null )
+        {
+            gameManager.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  col.GetComponent<HidingSpot>().GetPlaceInList(), 3 );
+          col.transform.position = col.transform.position - Vector3.up;
+        }
     }
 
+
+    public Inventory GetInventory()
+    {
+      return inventory;
+    }
 }
