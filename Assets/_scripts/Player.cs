@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,9 +13,11 @@ public class Player : Photon.MonoBehaviour
     public GameObject myScoreCard;
     public Material myColor;
     public List<Color> colors;
-    private KeyCode lastKeyDown;
+    /// TODO support diagonal movement?
+    private CardinalDirection movementDirection = CardinalDirection.None;
     private Animator anim;
     private Rigidbody2D rb;
+    private PlayerInput input = new PlayerInput();
     void Start()
     {
         if ( this.photonView.ownerId < colors.Count )
@@ -165,49 +168,56 @@ public class Player : Photon.MonoBehaviour
 
     public void Move()
     {
+        // If a movement key is pressed that was not previously, it takes precedence and resets movement to be in that direction.
+        // Otherwise movement remains in the same direction as it was before.
+        var leftHeld = input.GetDirectionPressed(CardinalDirection.Left);
+        var rightHeld = input.GetDirectionPressed(CardinalDirection.Right);
+        var upHeld = input.GetDirectionPressed(CardinalDirection.Up);
+        var downHeld = input.GetDirectionPressed(CardinalDirection.Down);
 
-        if ( Input.GetKeyDown( KeyCode.W ) )
-        {
-            lastKeyDown = KeyCode.W;
-            rb.velocity = Vector3.up * speed * Time.deltaTime;
-            this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 270.0f );
+        // If no keys held, default to None
+        var newDirection = CardinalDirection.None;
 
-        }
-        if ( Input.GetKeyDown( KeyCode.S ) )
-        {
-            lastKeyDown = KeyCode.S;
-            rb.velocity = Vector3.up * -speed * Time.deltaTime;
-            this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 90.0f );
-        }
-        if ( Input.GetKeyDown( KeyCode.A ) )
-        {
-            lastKeyDown = KeyCode.A;
-            rb.velocity = Vector3.right * -speed * Time.deltaTime;
-            this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 0.0f );
-        }
-        if ( Input.GetKeyDown( KeyCode.D ) )
-        {
-            lastKeyDown = KeyCode.D;
-            rb.velocity = Vector3.right * speed * Time.deltaTime;
-            this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, true, 0.0f );
+        if(leftHeld && !rightHeld) newDirection = CardinalDirection.Left;
+        if(!leftHeld && rightHeld) newDirection = CardinalDirection.Right;
+        if(upHeld && !downHeld) newDirection = CardinalDirection.Up;
+        if(!upHeld && downHeld) newDirection = CardinalDirection.Down;
+
+        // keep same movement direction if possible
+        if(movementDirection != CardinalDirection.None && input.GetDirectionPressed(movementDirection)) {
+            newDirection = movementDirection;
         }
 
-        if ( Input.GetKeyUp( KeyCode.W ) && lastKeyDown == KeyCode.W )
-        {
-            rb.velocity = Vector3.zero;
+        // Newly-pressed keys override the movement direction
+        foreach (CardinalDirection direction in Enum.GetValues(typeof(CardinalDirection))) {
+            if(direction == CardinalDirection.None) continue;
+            if(input.GetDirectionDown(direction)) {
+                newDirection = direction;
+            }
         }
-        if ( Input.GetKeyUp( KeyCode.S ) && lastKeyDown == KeyCode.S )
-        {
-            rb.velocity = Vector3.zero;
+        movementDirection = newDirection;
+
+        // Update velocity
+        var movementUnitVector = CardinalDirectionHelper.ToVector3(movementDirection);
+        rb.velocity = movementUnitVector * speed * Time.deltaTime;
+
+        // Update sprite
+        switch(movementDirection) {
+            case CardinalDirection.Up:
+                this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 270.0f );
+                break;
+            case CardinalDirection.Down:
+                this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 270.0f );
+                break;
+            case CardinalDirection.Left:
+                this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 0f );
+                break;
+            case CardinalDirection.Right:
+                this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, true, 0f );
+                break;
+            default: break;
         }
-        if ( Input.GetKeyUp( KeyCode.A ) && lastKeyDown == KeyCode.A )
-        {
-            rb.velocity = Vector3.zero;
-        }
-        if ( Input.GetKeyUp( KeyCode.D ) && lastKeyDown == KeyCode.D )
-        {
-            rb.velocity = Vector3.zero;
-        }
+
         // float vert = Input.GetAxis("Vertical");
         // float hort = Input.GetAxis("Horizontal");
 
