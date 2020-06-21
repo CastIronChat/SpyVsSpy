@@ -8,18 +8,19 @@ public class Player : Photon.MonoBehaviour
     public GameManager gameManager;
     public int numberInList, playerNum, score, lostScore, money;
     public int lives, gamesPlayed, wins;
-    public float speed;
+    public float speed,interactDistance = 0.4f;
     public string name;
-    public GameObject myScoreCard;
+    public GameObject myScoreCard,cam;
     public Material myColor;
     public List<Color> colors;
     /// TODO support diagonal movement?
-    private CardinalDirection movementDirection = CardinalDirection.None;
+    private CardinalDirection movementDirection = CardinalDirection.None,facingDirection = CardinalDirection.None;
     private Animator anim;
     private Rigidbody2D rb;
     private PlayerInput input = new PlayerInput();
     private Inventory inventory;
-
+    private Vector3 serverPos;
+    private Quaternion serverRot;
     void Start()
     {
         if ( this.photonView.ownerId < colors.Count )
@@ -49,7 +50,7 @@ public class Player : Photon.MonoBehaviour
         transform.parent = gameManager.playerManager.transform;
         if ( photonView.isMine )
         {
-
+          cam = GameObject.Find("Main Camera");
             playerNum = this.photonView.ownerId;
             name = PhotonNetwork.playerName;
             gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerNum, name );
@@ -66,14 +67,17 @@ public class Player : Photon.MonoBehaviour
             //We own this player: send the others our data
             // stream.SendNext(score);
             // stream.SendNext(name);
-            // stream.SendNext(transform.rotation);
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
         }
         else
         {
             //Network player, receive data
             // score = (int)stream.ReceiveNext();
             // name = (string)stream.ReceiveNext();
-            // correctPlayerRot = (Vector3)stream.ReceiveNext();
+            serverPos = (Vector3)stream.ReceiveNext();
+            serverRot = (Quaternion)stream.ReceiveNext();
+
 
 
         }
@@ -109,11 +113,21 @@ public class Player : Photon.MonoBehaviour
         if ( myScoreCard != null )
         {
             myScoreCard.active = true;
-            myScoreCard.transform.GetChild( 1 ).GetComponent<Text>().text = name + " : ";
-            myScoreCard.transform.GetChild( 2 ).GetComponent<Text>().text = score.ToString();
+
         }
     }
 
+    [PunRPC]
+    public void UpdateTraps(int trapUsed)
+    {
+        inventory.UseTrap(trapUsed);
+        if ( myScoreCard != null )
+        {
+            myScoreCard.active = true;
+            myScoreCard.transform.GetChild( 1 ).GetComponent<Text>().text = name + " : ";
+            myScoreCard.transform.GetChild( 2 ).GetComponent<Text>().text = inventory.GetTrapsString();
+        }
+    }
     public void ServerUpdateLives(int livesChange)
     {
         lives -= livesChange;
@@ -145,8 +159,24 @@ public class Player : Photon.MonoBehaviour
     {
         if ( photonView.isMine )
         {
+          if(Input.GetKeyDown(KeyCode.Alpha5))
+          {
+            inventory.traps = new List<int>();
+            inventory.traps.Add(1);
+            inventory.traps.Add(1);
+            inventory.traps.Add(1);
+          }
             Move();
             UseTraps();
+            if ( Input.GetKeyDown( KeyCode.Space )  ){TryToInteract();}
+        }
+        else
+        {
+          transform.rotation = serverRot;
+          if(Vector3.Distance(serverPos,transform.position) > 0.1f)
+          {
+            transform.position = Vector3.MoveTowards(transform.position, serverPos, speed  *  Time.deltaTime);
+          }
 
         }
     }
@@ -159,6 +189,11 @@ public class Player : Photon.MonoBehaviour
         GetComponent<SpriteRenderer>().flipX = flip;
         transform.eulerAngles = new Vector3( 0, 0, rot );
     }
+    [PunRPC]
+    public void SetVelocity(Vector3 newvel)
+    {
+        rb.velocity = newvel * speed * Time.deltaTime;
+    }
 
     public void UseTraps()
     {
@@ -167,6 +202,7 @@ public class Player : Photon.MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Alpha2) && inventory.SelectTrap(2))
         {inventory.equippedTrap = 2; gameManager.scrollingText.NewLine("equiped trap 2");}
     }
+
 
     public void Move()
     {
@@ -199,10 +235,13 @@ public class Player : Photon.MonoBehaviour
         }
         movementDirection = newDirection;
 
+
+        if(movementDirection != CardinalDirection.None)
+        {facingDirection = movementDirection;}
         // Update velocity
         var movementUnitVector = CardinalDirectionHelper.ToVector3(movementDirection);
         rb.velocity = movementUnitVector * speed * Time.deltaTime;
-
+        this.photonView.RPC( "SetVelocity", PhotonTargets.AllViaServer, movementUnitVector );
         // Update sprite
         switch(movementDirection) {
             case CardinalDirection.Up:
@@ -223,19 +262,87 @@ public class Player : Photon.MonoBehaviour
 
 
     }
-    public void OnTriggerStay2D(Collider2D col)
+
+    [PunRPC]
+    public void rpcInteract(Vector3 dir)
     {
-        if ( Input.GetKeyDown( KeyCode.Space ) && col.GetComponent<HidingSpot>() != null )
+      // add .1 for leniency with being out of sync with the server. is this a good idea?
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir,interactDistance + 0.1f);
+
+        if (hit)
         {
-            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, playerNum, col.GetComponent<HidingSpot>().GetPlaceInList() );
-          col.transform.position = col.transform.position + Vector3.up;
+          gameManager.scrollingText.NewLine(hit.transform.name);
+          if (hit.transform.GetComponent<Door>() != null)
+          {
+            hit.transform.GetComponent<Door>().SetOpen(!hit.transform.GetComponent<Collider2D>().isTrigger );
+
+          }
+          if (hit.transform.GetComponent<HidingSpot>() != null)
+          {
+            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+
+          }
         }
 
-        if ( Input.GetKeyDown( KeyCode.Alpha3 ) && col.GetComponent<HidingSpot>() != null )
+    }
+
+    public void TryToPlantTrap(int whattrap)
+    {
+
+      RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance);
+
+        // if (hit.transform.GetComponent<HidingSpot>() != null)
+        if (hit.transform.GetComponent<HidingSpot>() != null)
         {
-            gameManager.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  col.GetComponent<HidingSpot>().GetPlaceInList(), 3 );
-          col.transform.position = col.transform.position - Vector3.up;
+          gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(),whattrap );
+
         }
+    }
+
+    public void TryToInteract()
+    {
+
+      RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance);
+
+        // if (hit.transform.GetComponent<HidingSpot>() != null)
+        if (hit)
+        {
+          // this.photonView.RPC( "rpcInteract", PhotonTargets.AllViaServer, CardinalDirectionHelper.ToVector3(facingDirection) );
+          if (hit.transform.GetComponent<HidingSpot>() != null)
+          {
+            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+
+          }
+          if (hit.transform.GetComponent<Door>() != null)
+          {
+            gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer,  hit.transform.GetComponent<Door>().GetPlaceInList() ,true);
+
+          }
+        }
+    }
+
+    public void OnTriggerStay2D(Collider2D col)
+    {
+          if ( col.GetComponent<HidingSpot>() != null )
+          {
+                // if ( Input.GetKeyDown( KeyCode.Space )  )
+                // {
+                //   gameManager.scrollingText.NewLine("space");
+                //     gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, playerNum, col.GetComponent<HidingSpot>().GetPlaceInList() );
+                // }
+
+                 if ( Input.GetKeyDown( KeyCode.Alpha3 )  )
+                {
+                    gameManager.scrollingText.NewLine("33333");
+                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), 1 );
+                }
+                 if ( Input.GetKeyDown( KeyCode.Alpha4 )  )
+                {
+                    gameManager.scrollingText.NewLine("44444");
+                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), 2 );
+
+                }
+          }
     }
 
 

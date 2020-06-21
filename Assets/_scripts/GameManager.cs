@@ -189,8 +189,33 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     [PunRPC]
+    public void rpcPlayerSetTrapForHidingSpot(int player, int whichHidingSpot, int whattrap)
+    {
+      if ( PhotonNetwork.isMasterClient )
+      {
+        foreach(Transform el in playerManager.transform)
+        {
+            //check that the player has the trap to use
+            if(el.GetComponent<PhotonView>().ownerId == player )
+            {
+              //check that the hiding spot exists and isnt already trapped
+              HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
+              if(temphidingspot != null && el.GetComponent<Player>().GetInventory().SelectTrap(whattrap) && temphidingspot.trapValue == 0)
+              {
+                  el.GetComponent<PhotonView>().RPC( "UpdateTraps", PhotonTargets.AllBufferedViaServer, whattrap );
+                  this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,whattrap );
+              }
+              return;
+            }
+        }
+
+      }
+    }
+
+    [PunRPC]
     public void rpcSetTrapForHidingSpot(int whichHidingSpot, int whattrap)
     {
+
       hidingSpotManager.SetTrapForHidingSpot(whichHidingSpot,whattrap);
     }
 
@@ -204,6 +229,12 @@ public class GameManager : Photon.MonoBehaviour
     public void rpcNewScrollLine(string newline)
     {
       scrollingText.NewLine(newline);
+    }
+
+    [PunRPC]
+    public void OpenDoor( int whichDoor,bool open)
+    {
+      hidingSpotManager.OpenDoor(whichDoor,open);
     }
 
     [PunRPC]
@@ -320,8 +351,8 @@ public class GameManager : Photon.MonoBehaviour
             if ( PhotonNetwork.isMasterClient )
             {
                 nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().score );
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().money );
+                // nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().score );
+                // nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().money );
                 nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
             }
 
@@ -373,14 +404,9 @@ public class GameManager : Photon.MonoBehaviour
     {
 
         // Debug.Log("XXXXXX  OnPhotonPlayerConnected: " + player);
-        // ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
-        // hash.Add("lives", player.ID);
+
         // PhotonNetwork.playerList[player.ID - 1].SetCustomProperties(hash);
 
-        // player.SetCustomProperties(hash);
-        //   player.UpdateCustomProperty("score", player.ID);
-        // player.UpdateCustomProperty("lives",player.ID);
-        // PhotonNetwork.player.UpdateCustomProperty("Deaths", 1);
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0) ;
 
     }

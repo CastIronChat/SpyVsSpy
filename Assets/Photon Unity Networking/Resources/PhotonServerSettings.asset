@@ -64,4 +64,9 @@ MonoBehaviour:
   - rpcSetCollectibleForHidingSpot
   - rpcSetTrapForHidingSpot
   - rpcNewScrollLine
+  - UpdateTraps
+  - rpcPlayerSetTrapForHidingSpot
+  - rpcInteract
+  - SetVelocity
+  - OpenDoor
   DisableAutoOpenWizard: 1
