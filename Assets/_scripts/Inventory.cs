@@ -8,6 +8,7 @@ public class Inventory  {
     public int inventorySize,equippedTrap;
     public List<int> collectibles,traps;
 
+    
 
     public bool CanHoldMoreCollectibles()
     {
@@ -22,6 +23,19 @@ public class Inventory  {
 
       return false;
     }
-
+    public void UseTrap(int whattrap)
+    {
+      if(traps.Count > whattrap && traps[whattrap] != 0)
+      {traps[whattrap] = 0;}
+    }
+    public string GetTrapsString()
+    {
+      string trapstring = "";
+      foreach(int el in traps)
+      {
+        trapstring += el.ToString();
+      }
+      return trapstring;
+    }
 
 }
