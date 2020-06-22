@@ -18,8 +18,8 @@ public class HidingspotManager : MonoBehaviour
     }
     void OnEnable()
     {
-      SetHidingspotList();
-      SetDoorList();
+      // SetHidingspotList();
+      // SetDoorList();
     }
     // Update is called once per frame
     void Update()
@@ -63,24 +63,30 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
-        while ( doors.Count < doorsParent.childCount )
-        {
-            Transform closestDoor =  doorsParent.GetChild( 0 );
-            float dist = Vector3.Distance( closestDoor.position, transform.position );
-            foreach ( Transform go in doorsParent )
-            {
-                if (Vector3.Distance( go.transform.position, transform.position ) < dist || closestDoor.GetComponent<Door>().spotInList != -1)
-                {
-                    closestDoor = go;
-                    dist = Vector3.Distance( go.transform.position, transform.position );
-                }
-            }
+      foreach ( Transform go in doorsParent )
+      {
+        go.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
+        doors.Add( go.GetComponent<Door>() );
+      }
 
-
-            closestDoor.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
-
-            doors.Add( closestDoor.GetComponent<Door>() );
-        }
+        // while ( doors.Count < doorsParent.childCount )
+        // {
+        //     Transform closestDoor =  doorsParent.GetChild( 0 );
+        //     float dist = Vector3.Distance( closestDoor.position, transform.position );
+        //     foreach ( Transform go in doorsParent )
+        //     {
+        //         if (closestDoor.GetComponent<Door>().spotInList != -1 || Vector3.Distance( go.transform.position, transform.position ) < dist  )
+        //         {
+        //             closestDoor = go;
+        //             dist = Vector3.Distance( go.transform.position, transform.position );
+        //         }
+        //     }
+        //
+        //
+        //     closestDoor.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
+        //
+        //     doors.Add( closestDoor.GetComponent<Door>() );
+        // }
 
     }
 
