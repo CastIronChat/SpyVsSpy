@@ -10,7 +10,7 @@ public class GameManager : Photon.MonoBehaviour
     public HidingspotManager hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
     public ScrollingText scrollingText;
     public RoundManager roundManager;
-
+    public GameConstants gameConstants;
 
 
     public GameObject playerPrefab;

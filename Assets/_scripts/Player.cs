@@ -21,6 +21,8 @@ public class Player : Photon.MonoBehaviour
     private Inventory inventory;
     private Vector3 serverPos;
     private Quaternion serverRot;
+    private SpriteRenderer heldSprite;
+
     void Start()
     {
         if ( this.photonView.ownerId < colors.Count )
@@ -32,7 +34,7 @@ public class Player : Photon.MonoBehaviour
         transform.parent = gameManager.playerManager.transform;
         if ( photonView.isMine )
         {
-
+          heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
         }
 
@@ -173,7 +175,7 @@ public class Player : Photon.MonoBehaviour
         else
         {
           transform.rotation = serverRot;
-          if(Vector3.Distance(serverPos,transform.position) > 0.1f)
+          if(Vector3.Distance(serverPos,transform.position) > 0.01f)
           {
             transform.position = Vector3.MoveTowards(transform.position, serverPos, speed  *  Time.deltaTime);
           }
@@ -192,15 +194,22 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     public void SetVelocity(Vector3 newvel)
     {
-        rb.velocity = newvel * speed * Time.deltaTime;
+        // rb.velocity = newvel * speed * Time.deltaTime;
     }
 
     public void UseTraps()
     {
       if(Input.GetKeyDown(KeyCode.Alpha1) && inventory.SelectTrap(1))
-      {inventory.equippedTrap = 1; gameManager.scrollingText.NewLine("equiped trap 1");}
+      {
+
+        inventory.equippedTrap = 1;
+        gameManager.scrollingText.NewLine("equiped trap 1");
+        heldSprite.sprite = gameManager.gameConstants.trapSprites[0];
+      }
         if(Input.GetKeyDown(KeyCode.Alpha2) && inventory.SelectTrap(2))
-        {inventory.equippedTrap = 2; gameManager.scrollingText.NewLine("equiped trap 2");}
+        {inventory.equippedTrap = 2; gameManager.scrollingText.NewLine("equiped trap 2");
+          heldSprite.sprite = gameManager.gameConstants.trapSprites[1];
+      }
     }
 
 
@@ -246,15 +255,19 @@ public class Player : Photon.MonoBehaviour
         switch(movementDirection) {
             case CardinalDirection.Up:
                 this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 270.0f );
+                transform.GetChild(0).localPosition = new Vector3(-0.1f,0,0);
                 break;
             case CardinalDirection.Down:
-                this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 270.0f );
+                this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, true, 270.0f );
+                  transform.GetChild(0).localPosition = new Vector3(0.1f,0,0);
                 break;
             case CardinalDirection.Left:
                 this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 0f );
+                  transform.GetChild(0).localPosition = new Vector3(-0.1f,0,0);
                 break;
             case CardinalDirection.Right:
                 this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, true, 0f );
+                  transform.GetChild(0).localPosition = new Vector3(0.1f,0,0);
                 break;
             default: break;
         }

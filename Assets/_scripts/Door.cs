@@ -48,7 +48,7 @@ public class Door : MonoBehaviour
 
                     Transform cam = col.GetComponent<Player>().cam.transform;
 
-                    if( Vector3.Distance(col.transform.position,transform.position + openDirection) < Vector3.Distance(col.transform.position,transform.position ))
+                    if( Vector3.Distance(col.transform.position,transform.position + (0.1f * openDirection)) < Vector3.Distance(col.transform.position,transform.position ))
                     {
 
                         cam.position = new Vector3(transform.position.x,transform.position.y,cam.position.z) + (openDirection * roomsize );
