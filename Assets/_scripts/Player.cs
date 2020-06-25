@@ -8,7 +8,7 @@ public class Player : Photon.MonoBehaviour
     public GameManager gameManager;
     public int numberInList, playerNum, score, lostScore, money;
     public int lives, gamesPlayed, wins;
-    public float speed,interactDistance = 0.4f;
+    public float speed,networkspeed = 12.0f,interactDistance = 0.4f;
     public string name;
     public GameObject myScoreCard,cam;
     public Material myColor;
@@ -32,10 +32,11 @@ public class Player : Photon.MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         gameManager = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
         transform.parent = gameManager.playerManager.transform;
+        heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         if ( photonView.isMine )
         {
-          heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
+            rb.isKinematic = false;
         }
 
     }
@@ -47,7 +48,10 @@ public class Player : Photon.MonoBehaviour
         inventory.traps = new List<int>();
         inventory.traps.Add(0);
         inventory.traps.Add(1);
-        inventory.traps.Add(2);
+        inventory.traps.Add(1);
+        inventory.traps.Add(1);
+        heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+
         gameManager = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
         transform.parent = gameManager.playerManager.transform;
         if ( photonView.isMine )
@@ -119,10 +123,8 @@ public class Player : Photon.MonoBehaviour
         }
     }
 
-    [PunRPC]
-    public void UpdateTraps(int trapUsed)
+    public void UpdateTraps( )
     {
-        inventory.UseTrap(trapUsed);
         if ( myScoreCard != null )
         {
             myScoreCard.active = true;
@@ -130,6 +132,15 @@ public class Player : Photon.MonoBehaviour
             myScoreCard.transform.GetChild( 2 ).GetComponent<Text>().text = inventory.GetTrapsString();
         }
     }
+
+    [PunRPC]
+    public void AddorRemoveTrap(int trapUsed,int setto)
+    {
+        inventory.AddTrap(trapUsed,setto);
+        UpdateTraps();
+    }
+
+
     public void ServerUpdateLives(int livesChange)
     {
         lives -= livesChange;
@@ -177,7 +188,7 @@ public class Player : Photon.MonoBehaviour
           transform.rotation = serverRot;
           if(Vector3.Distance(serverPos,transform.position) > 0.01f)
           {
-            transform.position = Vector3.MoveTowards(transform.position, serverPos, speed  *  Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, serverPos, Time.deltaTime * networkspeed);
           }
 
         }
@@ -197,19 +208,38 @@ public class Player : Photon.MonoBehaviour
         // rb.velocity = newvel * speed * Time.deltaTime;
     }
 
+    [PunRPC]
+    public void SetHeldSprite(int newsprite)
+    {
+      heldSprite.sprite = gameManager.gameConstants.trapSprites[newsprite];
+    }
+
+
     public void UseTraps()
     {
-      if(Input.GetKeyDown(KeyCode.Alpha1) && inventory.SelectTrap(1))
+      if(Input.GetKeyDown(KeyCode.Alpha1) )
       {
 
-        inventory.equippedTrap = 1;
-        gameManager.scrollingText.NewLine("equiped trap 1");
-        heldSprite.sprite = gameManager.gameConstants.trapSprites[0];
+        inventory.equippedTrap = 0;
+        gameManager.scrollingText.NewLine("equiped trap 0");
+        this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 0 );
+
       }
-        if(Input.GetKeyDown(KeyCode.Alpha2) && inventory.SelectTrap(2))
-        {inventory.equippedTrap = 2; gameManager.scrollingText.NewLine("equiped trap 2");
-          heldSprite.sprite = gameManager.gameConstants.trapSprites[1];
+        if(Input.GetKeyDown(KeyCode.Alpha2) && inventory.SelectTrap(1))
+        {
+          inventory.equippedTrap = 1; gameManager.scrollingText.NewLine("equiped trap 1");
+            this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 1 );
+       }
+       if(Input.GetKeyDown(KeyCode.Alpha3) && inventory.SelectTrap(2))
+       {
+         inventory.equippedTrap = 2; gameManager.scrollingText.NewLine("equiped trap 2");
+           this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 2 );
       }
+      if(Input.GetKeyDown(KeyCode.Alpha4) && inventory.SelectTrap(3))
+      {
+        inventory.equippedTrap = 3; gameManager.scrollingText.NewLine("equiped trap 3");
+          this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 3 );
+     }
     }
 
 
@@ -277,6 +307,16 @@ public class Player : Photon.MonoBehaviour
     }
 
     [PunRPC]
+    public void rpcSetEquippedTrap(int whattrap)
+    {
+      if(GetInventory().SelectTrap(whattrap) == true || whattrap == 0)
+      {
+        GetInventory().equippedTrap = whattrap;
+        heldSprite.sprite = gameManager.gameConstants.trapSprites[whattrap];
+      }
+    }
+
+    [PunRPC]
     public void rpcInteract(Vector3 dir)
     {
       // add .1 for leniency with being out of sync with the server. is this a good idea?
@@ -323,7 +363,17 @@ public class Player : Photon.MonoBehaviour
           // this.photonView.RPC( "rpcInteract", PhotonTargets.AllViaServer, CardinalDirectionHelper.ToVector3(facingDirection) );
           if (hit.transform.GetComponent<HidingSpot>() != null)
           {
-            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+            //if the player has a trap equipped, try to plant it
+            if(inventory.equippedTrap != 0)
+            {
+                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), inventory.equippedTrap );
+            }
+            else//if not holding a trap, try to open the spot
+            {
+              gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+            }
+
+
 
           }
           if (hit.transform.GetComponent<Door>() != null)

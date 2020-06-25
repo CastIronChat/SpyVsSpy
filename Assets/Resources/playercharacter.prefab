@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.2}
+  m_Size: {x: 0.15, y: 0.15}
   m_EdgeRadius: 0
 --- !u!50 &6541319070722673851
 Rigidbody2D:
@@ -139,7 +139,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6541319070722673844}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -174,6 +174,7 @@ MonoBehaviour:
   gamesPlayed: 0
   wins: 0
   speed: 100
+  networkspeed: 12
   interactDistance: 0.4
   name: 
   myScoreCard: {fileID: 0}

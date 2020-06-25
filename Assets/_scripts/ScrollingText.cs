@@ -21,10 +21,7 @@ public class ScrollingText : MonoBehaviour
             timer -= Time.deltaTime;
             if ( timer <= 0 ) { NewLine( "" ); }
         }
-        if ( Input.GetKeyDown( KeyCode.Space ) )
-        {
-            NewLine( Random.Range( 0, 100 ).ToString() );
-        }
+
     }
 
     public void NewLine(string newline)
