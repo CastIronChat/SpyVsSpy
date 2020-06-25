@@ -69,4 +69,7 @@ MonoBehaviour:
   - rpcInteract
   - SetVelocity
   - OpenDoor
+  - AddorRemoveTrap
+  - SetHeldSprite
+  - rpcSetEquippedTrap
   DisableAutoOpenWizard: 1

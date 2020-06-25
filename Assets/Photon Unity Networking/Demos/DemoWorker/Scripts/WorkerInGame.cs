@@ -38,23 +38,23 @@ public class WorkerInGame : Photon.MonoBehaviour
         Debug.Log("OnMasterClientSwitched: " + player);
 
         string message;
-        InRoomChat chatComponent = GetComponent<InRoomChat>();  // if we find a InRoomChat component, we print out a short message
+        // InRoomChat chatComponent = GetComponent<InRoomChat>();  // if we find a InRoomChat component, we print out a short message
 
-        if (chatComponent != null)
-        {
-            // to check if this client is the new master...
-            if (player.IsLocal)
-            {
-                message = "You are Master Client now.";
-            }
-            else
-            {
-                message = player.NickName + " is Master Client now.";
-            }
-
-
-            chatComponent.AddLine(message); // the Chat method is a RPC. as we don't want to send an RPC and neither create a PhotonMessageInfo, lets call AddLine()
-        }
+        // if (chatComponent != null)
+        // {
+        //     // to check if this client is the new master...
+        //     if (player.IsLocal)
+        //     {
+        //         message = "You are Master Client now.";
+        //     }
+        //     else
+        //     {
+        //         message = player.NickName + " is Master Client now.";
+        //     }
+        //
+        //
+        //     chatComponent.AddLine(message); // the Chat method is a RPC. as we don't want to send an RPC and neither create a PhotonMessageInfo, lets call AddLine()
+        // }
     }
 
     public void OnLeftRoom()

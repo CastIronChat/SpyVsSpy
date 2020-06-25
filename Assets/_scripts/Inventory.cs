@@ -8,7 +8,7 @@ public class Inventory  {
     public int inventorySize,equippedTrap;
     public List<int> collectibles,traps;
 
-    
+
 
     public bool CanHoldMoreCollectibles()
     {
@@ -28,6 +28,16 @@ public class Inventory  {
       if(traps.Count > whattrap && traps[whattrap] != 0)
       {traps[whattrap] = 0;}
     }
+
+    //0 is none: the number of that trap in inventory
+    public void AddTrap(int whattrap,int setto)
+    {
+      while(traps.Count <= whattrap )
+      {    traps.Add(0);}
+
+      {traps[whattrap] = setto;}
+    }
+
     public string GetTrapsString()
     {
       string trapstring = "";

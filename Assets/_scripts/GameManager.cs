@@ -14,11 +14,11 @@ public class GameManager : Photon.MonoBehaviour
 
 
     public GameObject playerPrefab;
-    public GameObject scoreBoard;
+    public GameObject scoreBoard,startbutton;
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
-    public Transform colorBlindShapes;
+    public Transform colorBlindShapes,rooms;
     public Transform idleplayerManager;
 
 
@@ -30,7 +30,7 @@ public class GameManager : Photon.MonoBehaviour
         }
         if ( PhotonNetwork.isMasterClient )
         {
-
+                startbutton.active = true;
         }
 
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
@@ -74,6 +74,16 @@ public class GameManager : Photon.MonoBehaviour
         photonView.RPC( "rpcVoteForNewRoundType", PhotonTargets.AllBufferedViaServer, rndtype, fromplayer );
     }
 
+
+    public void TryToStartRound(int rndtype)
+    {
+        if ( PhotonNetwork.isMasterClient )
+        {
+          photonView.RPC( "StartRound", PhotonTargets.AllBufferedViaServer );
+        }
+    }
+
+
     [PunRPC]
     public void rpcVoteForNewRoundType(int rndtype, int fromplayer)
     {
@@ -87,15 +97,14 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void StartRound()
     {
-        roundManager.DisableUi();
+
+        startbutton.active = false;
 
         int playercount = 0;
         foreach ( Transform go in idleplayerManager )
         { go.transform.parent = playerManager.transform; }
 
-        foreach ( Transform child in colorBlindShapes )
-        { child.gameObject.active = false; }
-        colorBlindShapes.GetChild( 0 ).gameObject.active = true;
+
 
 
         Transform nextPlayerInOrder = playerManager.transform.GetChild( 0 );
@@ -108,20 +117,15 @@ public class GameManager : Photon.MonoBehaviour
         int lowestPlayerNum = 99999;
         int lastPlayerNum = -1;
 
+        //sort players by their ownerid so that the transform has the same child order for all players
         while ( playercount < playerManager.transform.childCount )
         {
 
 
             foreach ( Transform go in playerManager.transform )
             {
-                //So the new players has their name when they join
 
-                if ( go.GetComponent<Player>().playerNum <= 0 )
-                {
-                    go.GetComponent<Player>().playerNum = go.GetComponent<PhotonView>().ownerId;
-
-                }
-                if ( go.GetComponent<Player>().playerNum > lastPlayerNum && go.GetComponent<Player>().playerNum < lowestPlayerNum )
+                if ( go.GetComponent<PhotonView>().ownerId > lastPlayerNum && go.GetComponent<PhotonView>().ownerId < lowestPlayerNum )
                 {
                     nextPlayerInOrder = go;
                     lowestPlayerNum = go.GetComponent<Player>().playerNum;
@@ -139,15 +143,34 @@ public class GameManager : Photon.MonoBehaviour
             nextPlayerInOrder.parent = playerManager.transform;
             if ( PhotonNetwork.isMasterClient )
             {
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
+                int addtraps = gameConstants.startingTraps;
+                while(addtraps > 0)
+                {
+                  nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, addtraps,1 );
+                  addtraps--;
+                }
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, gameConstants.playerMaxDeaths );
+
                 nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
             }
 
 
 
             scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
+
+            nextPlayerInOrder.transform.position = rooms.GetChild(playercount).position;
+            if(nextPlayerInOrder.GetComponent<Player>().cam != null){
+              //set the camera to the player spawn location while keeping it's Z coordinate
+                Transform playercam = nextPlayerInOrder.GetComponent<Player>().cam.transform;
+              playercam.position = new Vector3( nextPlayerInOrder.transform.position.x, nextPlayerInOrder.transform.position.y,playercam.position.z) ;
+            }
+
+              playercount++;
+              //if there is somehow more players than there are scoreboard elements break out of the loop
             if ( playercount >= scoreBoard.transform.childCount ) { return; }
+
         }
+        //disable all unused scorecards
         while ( playercount < scoreBoard.transform.childCount )
         {
             scoreBoard.transform.GetChild( playercount ).gameObject.active = false;
@@ -156,10 +179,6 @@ public class GameManager : Photon.MonoBehaviour
 
 
 
-        // turnManager.GetComponent<PhotonView>().photonView.RPC( "NewTurn", PhotonTargets.AllBufferedViaServer );
-        // playerManager.transform.GetChild(0).GetComponent<Player>().StartMyTurn(0);
-        if ( PhotonNetwork.isMasterClient )
-        { this.photonView.RPC( "NextTurn", PhotonTargets.AllViaServer, 0 ); }
 
 
 
@@ -200,10 +219,24 @@ public class GameManager : Photon.MonoBehaviour
             {
               //check that the hiding spot exists and isnt already trapped
               HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
-              if(temphidingspot != null && el.GetComponent<Player>().GetInventory().SelectTrap(whattrap) && temphidingspot.trapValue == 0)
+              if(temphidingspot != null )
               {
-                  el.GetComponent<PhotonView>().RPC( "UpdateTraps", PhotonTargets.AllBufferedViaServer, whattrap );
-                  this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,whattrap );
+                if( temphidingspot.trapValue != 0)
+                {
+                  el.GetComponent<Player>().ServerUpdateLives(1);
+                  //set the spot to no longer be trapped since it was just used
+                  this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
+                  this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                }
+                  else
+                {
+                      if(el.GetComponent<Player>().GetInventory().SelectTrap(whattrap))
+                      {
+                        el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, 0);
+                        el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, whattrap ,0);
+                        this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,whattrap );
+                      }
+                }
               }
               return;
             }
