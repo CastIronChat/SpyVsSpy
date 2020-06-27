@@ -210,7 +210,7 @@ public class Player : Photon.MonoBehaviour
           }
             Move();
             UseTraps();
-            if ( Input.GetKeyDown( KeyCode.Space )  ){TryToInteract();}
+            if ( input.GetInteractDown() ){TryToInteract();}
         }
         else
         {
@@ -240,35 +240,24 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     public void SetHeldSprite(int newsprite)
     {
-      heldSprite.sprite = gameManager.gameConstants.trapSprites[newsprite];
+      heldSprite.sprite = gameManager.gameConstants.trapTypes[newsprite].sprite;
     }
 
 
     public void UseTraps()
     {
-      if(Input.GetKeyDown(KeyCode.Alpha1) )
-      {
+        var trapSelectionPressed = input.getChooseTrapByIndexDown();
+        if(trapSelectionPressed.HasValue) {
+            var trapIndexPressed = trapSelectionPressed.Value;
+            if(trapIndexPressed <= 3) {
+            inventory.equippedTrap = trapIndexPressed;
+            gameManager.scrollingText.NewLine("equiped trap " + trapIndexPressed);
+            this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, trapIndexPressed );
+            }
+        }
+        if(input.GetChooseNextTrapDown()) {
 
-        inventory.equippedTrap = 0;
-        gameManager.scrollingText.NewLine("equiped trap 0");
-        this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 0 );
-
-      }
-        if(Input.GetKeyDown(KeyCode.Alpha2) && inventory.SelectTrap(1))
-        {
-          inventory.equippedTrap = 1; gameManager.scrollingText.NewLine("equiped trap 1");
-            this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 1 );
-       }
-       if(Input.GetKeyDown(KeyCode.Alpha3) && inventory.SelectTrap(2))
-       {
-         inventory.equippedTrap = 2; gameManager.scrollingText.NewLine("equiped trap 2");
-           this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 2 );
-      }
-      if(Input.GetKeyDown(KeyCode.Alpha4) && inventory.SelectTrap(3))
-      {
-        inventory.equippedTrap = 3; gameManager.scrollingText.NewLine("equiped trap 3");
-          this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, 3 );
-     }
+        }
     }
 
 
@@ -341,7 +330,7 @@ public class Player : Photon.MonoBehaviour
       if(GetInventory().SelectTrap(whattrap) == true || whattrap == 0)
       {
         GetInventory().equippedTrap = whattrap;
-        heldSprite.sprite = gameManager.gameConstants.trapSprites[whattrap];
+        heldSprite.sprite = gameManager.gameConstants.trapTypes[whattrap].sprite;
       }
     }
 
