@@ -12,5 +12,5 @@ public class GameConstants : MonoBehaviour
     public int roundMaxTimeSeconds = 60 * 3;
     public int startingTraps = 3;
     public bool roundTimeIsLimited = true;
-    public List<Sprite> trapSprites;
+    public List<Sprite> trapSprites,collectibleSprites;
 }

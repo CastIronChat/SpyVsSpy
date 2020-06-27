@@ -14,8 +14,7 @@ public class HidingSpot : MonoBehaviour
 
     void Update()
     {
-      if(Input.GetKeyDown(KeyCode.P))
-      {SetTrap(1);}
+
         if(Input.GetKeyDown(KeyCode.Q))
         {SetCollectible(1);}
     }

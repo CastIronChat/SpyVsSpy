@@ -46,10 +46,12 @@ public class Player : Photon.MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         inventory = new Inventory();
         inventory.traps = new List<int>();
+        inventory.collectibles = new List<int>();
         inventory.traps.Add(0);
         inventory.traps.Add(1);
         inventory.traps.Add(1);
         inventory.traps.Add(1);
+        inventory.collectibles.Add(0);
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
         gameManager = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
@@ -106,6 +108,12 @@ public class Player : Photon.MonoBehaviour
         numberInList = listPlace;
     }
 
+    [PunRPC]
+    public void SetBriefcase(bool setHasBriefcase)
+    {
+      GetInventory().hasBriefcase = setHasBriefcase;
+    }
+
     public void ServerUpdateScore(int scoreChange)
     {
         score = scoreChange;
@@ -131,6 +139,14 @@ public class Player : Photon.MonoBehaviour
             myScoreCard.transform.GetChild( 1 ).GetComponent<Text>().text = name + " : ";
             myScoreCard.transform.GetChild( 2 ).GetComponent<Text>().text = inventory.GetTrapsString();
         }
+
+        if ( photonView.isMine )
+        {
+          //update the local players inventory visuals for what traps they have
+          inventory.UpdateInventorySprites(gameManager.gameConstants,gameManager.playertrapimages,true);
+          inventory.UpdateInventorySprites(gameManager.gameConstants,gameManager.playerinventoryimages,false);
+        }
+
     }
 
     [PunRPC]
@@ -140,6 +156,19 @@ public class Player : Photon.MonoBehaviour
         UpdateTraps();
     }
 
+    [PunRPC]
+    public void RemoveCollectible(int whichCollectible,int setto)
+    {
+        inventory.RemoveCollectible(whichCollectible);
+        UpdateTraps();
+    }
+
+    [PunRPC]
+    public void AddCollectible(int whichCollectible,int setto)
+    {
+        inventory.AddCollectible(whichCollectible,setto);
+        UpdateTraps();
+    }
 
     public void ServerUpdateLives(int livesChange)
     {
