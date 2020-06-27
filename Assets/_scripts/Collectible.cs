@@ -7,5 +7,5 @@ using UnityEngine;
 /// Hide the GameObject and store a reference in the player's inventory?
 public class Collectible : MonoBehaviour
 {
-
+    public CollectibleType type;
 }

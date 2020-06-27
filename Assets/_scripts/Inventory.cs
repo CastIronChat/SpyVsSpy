@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 /// All the stuff a player is holding.
@@ -74,7 +75,7 @@ public class Inventory  {
     {
       //if change traps is true set the list to the traps inventory list
       List<int> tempInventory = changeTraps ? traps : collectibles;
-      List<Sprite> tempSpriteList = changeTraps ? gameConstants.trapSprites : gameConstants.collectibleSprites;
+      List<Sprite> tempSpriteList = (changeTraps ? from type in gameConstants.trapTypes select type.sprite: from type in gameConstants.collectibleTypes select type.sprite).ToList();
       int count = 1;
       int slotsUsed = 0;
       while(slotsUsed < inventoryImages.childCount && count < tempInventory.Count)
