@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HidingSpot : MonoBehaviour
+public class HidingSpotRegistry : Registry<HidingSpotRegistry, HidingSpot> {}
+public class HidingSpot : MonoBehaviour, Entity<HidingSpotRegistry, HidingSpot>
 {
     public GameManager gameManager;
     public HidingspotManager hidingspotManager;
-    public int spotInList = -1,trapValue = 0,collectibleValue = 0;
+    public int trapValue = 0,collectibleValue = 0;
 
     public Collectible hiddenItem;
 
     public Trap trap;
 
+    public int uniqueId {get; set;}
+    public HidingSpotRegistry registry {get; set;}
     void Update()
     {
       if(Input.GetKeyDown(KeyCode.P))
@@ -33,12 +36,4 @@ public class HidingSpot : MonoBehaviour
 
 
 
-    public int GetPlaceInList()
-    {return spotInList;}
-    //have all hiding spots set on the server so that when interacting each player will check/update through the hiding spot manager, rather than each item.
-    public void SetSpotInList(int newplace, GameManager newGM)
-    {
-        gameManager = newGM;
-        spotInList = newplace;
-    }
 }

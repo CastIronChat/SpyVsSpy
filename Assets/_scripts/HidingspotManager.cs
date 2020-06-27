@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HidingspotManager : MonoBehaviour
@@ -7,12 +8,13 @@ public class HidingspotManager : MonoBehaviour
 
   public GameManager gameManager;
   public ScrollingText scrollingText;
-  public Transform hidingSpotParent,doorsParent;
-  public List<HidingSpot> hidingSpots;
-  public List<Door> doors;
+  public Transform hidingSpotParent, doorsParent;
+  public HidingSpotRegistry hidingSpots = new HidingSpotRegistry();
+  public DoorRegistry doors;
     // Start is called before the first frame update
     void Start()
     {
+        doors = new DoorRegistry(gameManager);
       SetHidingspotList();
       SetDoorList();
     }
@@ -30,24 +32,22 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetCollectibleForHidingSpot(int whichspot,int whatitem)
     {
-        if(whichspot < hidingSpots.Count)
-        {
-          hidingSpots[whichspot].SetCollectible(whatitem);
+        if(hidingSpots.hasEntity(whichspot)) {
+            hidingSpots.getEntity(whichspot).SetCollectible(whatitem);
         }
     }
 
     public HidingSpot GetHidingSpot(int whichspot)
     {
-        if(whichspot < hidingSpots.Count)
-        {
-          return hidingSpots[whichspot];
+        if(hidingSpots.hasEntity(whichspot)) {
+        return hidingSpots.getEntity(whichspot);
         }
         return null;
     }
 
     public void OpenDoor(int whichdoor,bool open)
     {
-      if(whichdoor < doors.Count)
+        if(doors.hasEntity(whichdoor))
       {
          doors[whichdoor].SetOpen(open);
       }
@@ -55,7 +55,7 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetTrapForHidingSpot(int whichspot,int whattrap)
     {
-        if(whichspot < hidingSpots.Count)
+        if(hidingSpots.hasEntity(whichspot))
         {
           hidingSpots[whichspot].SetTrap(whattrap);
         }
@@ -65,8 +65,7 @@ public class HidingspotManager : MonoBehaviour
     {
       foreach ( Transform go in doorsParent )
       {
-        go.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
-        doors.Add( go.GetComponent<Door>() );
+        doors.addEntity(go.GetComponent<Door>());
       }
 
         // while ( doors.Count < doorsParent.childCount )
@@ -92,25 +91,11 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetHidingspotList()
     {
-
-        while ( hidingSpots.Count < hidingSpotParent.childCount )
-        {
-            Transform closestHidingSpot = hidingSpotParent.GetChild( 0 );
-            float dist = Vector3.Distance( closestHidingSpot.position, transform.position );
-            foreach ( Transform go in hidingSpotParent )
-            {
-                if (Vector3.Distance( go.position, transform.position ) < dist || closestHidingSpot.GetComponent<HidingSpot>().spotInList != -1)
-                {
-                    closestHidingSpot = go;
-                    dist = Vector3.Distance( go.position, transform.position );
-                }
-            }
-
-
-            closestHidingSpot.GetComponent<HidingSpot>().SetSpotInList( hidingSpots.Count, gameManager );
-
-            hidingSpots.Add( closestHidingSpot.GetComponent<HidingSpot>() );
+        var hidingSpotTransforms = hidingSpotParent.getChildTransformEnumerator().ToEnumerable().ToArray();
+        var sortedHidingSpotTransforms =
+            hidingSpotTransforms.OrderBy(hidingSpotTransform => Vector3.Distance(hidingSpotTransform.position, transform.position));
+        foreach(var hidingSpotTransform in sortedHidingSpotTransforms) {
+            hidingSpots.addEntity(hidingSpotTransform.GetComponent<HidingSpot>());
         }
-
     }
 }

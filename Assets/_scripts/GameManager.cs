@@ -267,7 +267,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void OpenDoor( int whichDoor,bool open)
     {
-      hidingSpotManager.OpenDoor(whichDoor,open);
+        hidingSpotManager.OpenDoor(whichDoor,open);
     }
 
     [PunRPC]
@@ -288,7 +288,7 @@ public class GameManager : Photon.MonoBehaviour
               }
 
               //check that the hiding spot is in the list range
-              if(whichHidingSpot < hidingSpotManager.hidingSpots.Count)
+              if(hidingSpotManager.hidingSpots.hasEntity(whichHidingSpot))
               {
 
                   HidingSpot activatedHidingSpot = hidingSpotManager.hidingSpots[whichHidingSpot];

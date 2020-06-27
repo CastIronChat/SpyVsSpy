@@ -332,7 +332,7 @@ public class Player : Photon.MonoBehaviour
           }
           if (hit.transform.GetComponent<HidingSpot>() != null)
           {
-            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().uniqueId );
 
           }
         }
@@ -347,7 +347,7 @@ public class Player : Photon.MonoBehaviour
         // if (hit.transform.GetComponent<HidingSpot>() != null)
         if (hit.transform.GetComponent<HidingSpot>() != null)
         {
-          gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(),whattrap );
+          gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().uniqueId, whattrap );
 
         }
     }
@@ -366,11 +366,11 @@ public class Player : Photon.MonoBehaviour
             //if the player has a trap equipped, try to plant it
             if(inventory.equippedTrap != 0)
             {
-                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), inventory.equippedTrap );
+                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().uniqueId, inventory.equippedTrap );
             }
             else//if not holding a trap, try to open the spot
             {
-              gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+              gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().uniqueId );
             }
 
 
@@ -378,7 +378,7 @@ public class Player : Photon.MonoBehaviour
           }
           if (hit.transform.GetComponent<Door>() != null)
           {
-            gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer,  hit.transform.GetComponent<Door>().GetPlaceInList() ,true);
+            gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer,  hit.transform.GetComponent<Door>().uniqueId ,true);
 
           }
         }
@@ -397,12 +397,12 @@ public class Player : Photon.MonoBehaviour
                  if ( Input.GetKeyDown( KeyCode.Alpha3 )  )
                 {
                     gameManager.scrollingText.NewLine("33333");
-                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), 1 );
+                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().uniqueId, 1 );
                 }
                  if ( Input.GetKeyDown( KeyCode.Alpha4 )  )
                 {
                     gameManager.scrollingText.NewLine("44444");
-                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), 2 );
+                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().uniqueId, 2 );
 
                 }
           }
