@@ -12,13 +12,12 @@ public class GameManager : Photon.MonoBehaviour
     public RoundManager roundManager;
     public GameConstants gameConstants;
 
-
     public GameObject playerPrefab;
     public GameObject scoreBoard,startbutton;
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
-    public Transform colorBlindShapes,rooms;
+    public Transform mcguffinimages,playerinventoryimages,playertrapimages,rooms;
     public Transform idleplayerManager;
 
 
@@ -218,26 +217,26 @@ public class GameManager : Photon.MonoBehaviour
             if(el.GetComponent<PhotonView>().ownerId == player )
             {
               //check that the hiding spot exists and isnt already trapped
-              HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
-              if(temphidingspot != null )
-              {
-                if( temphidingspot.trapValue != 0)
-                {
-                  el.GetComponent<Player>().ServerUpdateLives(1);
-                  //set the spot to no longer be trapped since it was just used
-                  this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
-                  this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
-                }
-                  else
-                {
-                      if(el.GetComponent<Player>().GetInventory().SelectTrap(whattrap))
-                      {
-                        el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, 0);
-                        el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, whattrap ,0);
-                        this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,whattrap );
-                      }
-                }
-              }
+                  HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
+                  if(temphidingspot != null )
+                  {
+                        if( temphidingspot.trapValue != 0)
+                        {
+                          el.GetComponent<Player>().ServerUpdateLives(1);
+                          //set the spot to no longer be trapped since it was just used
+                          this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
+                          this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                        }
+                          else
+                        {
+                              if(el.GetComponent<Player>().GetInventory().SelectTrap(whattrap))
+                              {
+                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, 0);
+                                el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, whattrap ,0);
+                                this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,whattrap );
+                              }
+                        }
+                  }
               return;
             }
         }
@@ -308,17 +307,29 @@ public class GameManager : Photon.MonoBehaviour
 
                           if(activatedHidingSpot.GetCollectible() != 0)
                           {
+                            //-1 is the briefcase | use negative numbers for special conditions
+                            if(activatedHidingSpot.GetCollectible() == -1)
+                            {
+                              this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Briefcase Found");
+                              //set the hiding spot to no longer have a collectible
+                              this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                            }
+                              else
+                              {
+                                if(actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
+                                {
+                                  actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible", PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue,activatedHidingSpot.collectibleValue);
 
 
-                                    if(actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
-                                    {
+                                  this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found");
 
-                                      //TODO: add item to player inventory
 
-                                      this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found");
-                                      //move the item in the hiding spot to the players inventory
-                                      this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
-                                    }
+                                  //move the item in the hiding spot to the players inventory
+                                  this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                                }
+                              }
+
+
 
                         }
                     }

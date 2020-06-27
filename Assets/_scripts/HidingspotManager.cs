@@ -7,7 +7,7 @@ public class HidingspotManager : MonoBehaviour
 
   public GameManager gameManager;
   public ScrollingText scrollingText;
-  public Transform hidingSpotParent,doorsParent;
+  public Transform hidingSpotParent,doorsParent,activeHidingSpots;
   public List<HidingSpot> hidingSpots;
   public List<Door> doors;
     // Start is called before the first frame update
@@ -38,7 +38,7 @@ public class HidingspotManager : MonoBehaviour
 
     public HidingSpot GetHidingSpot(int whichspot)
     {
-        if(whichspot < hidingSpots.Count)
+        if(whichspot < hidingSpots.Count && whichspot >= 0)
         {
           return hidingSpots[whichspot];
         }
@@ -93,23 +93,27 @@ public class HidingspotManager : MonoBehaviour
     public void SetHidingspotList()
     {
 
-        while ( hidingSpots.Count < hidingSpotParent.childCount )
+        while ( 0 < hidingSpotParent.childCount )
         {
             Transform closestHidingSpot = hidingSpotParent.GetChild( 0 );
             float dist = Vector3.Distance( closestHidingSpot.position, transform.position );
             foreach ( Transform go in hidingSpotParent )
             {
-                if (Vector3.Distance( go.position, transform.position ) < dist || closestHidingSpot.GetComponent<HidingSpot>().spotInList != -1)
+                if (Vector3.Distance( go.position, transform.position ) <= dist || closestHidingSpot.GetComponent<HidingSpot>().spotInList != -1)
                 {
                     closestHidingSpot = go;
                     dist = Vector3.Distance( go.position, transform.position );
                 }
             }
 
+          //  if(closestHidingSpot.GetComponent<HidingSpot>().spotInList == -1)
+          //  {
+              closestHidingSpot.GetComponent<HidingSpot>().SetSpotInList( hidingSpots.Count, gameManager );
 
-            closestHidingSpot.GetComponent<HidingSpot>().SetSpotInList( hidingSpots.Count, gameManager );
+              hidingSpots.Add( closestHidingSpot.GetComponent<HidingSpot>() );
+              closestHidingSpot.parent = activeHidingSpots;
+          //  }
 
-            hidingSpots.Add( closestHidingSpot.GetComponent<HidingSpot>() );
         }
 
     }

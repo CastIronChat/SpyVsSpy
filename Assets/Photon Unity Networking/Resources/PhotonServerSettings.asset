@@ -72,4 +72,7 @@ MonoBehaviour:
   - AddorRemoveTrap
   - SetHeldSprite
   - rpcSetEquippedTrap
+  - SetBriefcase
+  - AddCollectible
+  - RemoveCollectible
   DisableAutoOpenWizard: 1
