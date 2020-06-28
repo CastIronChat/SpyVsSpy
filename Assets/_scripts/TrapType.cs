@@ -11,7 +11,7 @@ public class TrapTypeRegistry : Registry<TrapTypeRegistry, TrapType> {}
 /// Declared as a MonoBehavior so that we can configure fields via the editor.
 public class TrapType : MonoBehaviour, Entity<TrapTypeRegistry, TrapType>
 {
-    public TrapTypeRegistry registry { get; set; }
+    public object registry { get; set; }
     public int uniqueId { get; set; }
     public string name;
     public Sprite sprite;

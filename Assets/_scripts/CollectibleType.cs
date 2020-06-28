@@ -9,5 +9,5 @@ public class CollectibleType : MonoBehaviour, Entity<CollectibleTypeRegistry, Co
     public Sprite sprite;
 
     public int uniqueId { get; set; }
-    public CollectibleTypeRegistry registry { get; set; }
+    public object registry { get; set; }
 }

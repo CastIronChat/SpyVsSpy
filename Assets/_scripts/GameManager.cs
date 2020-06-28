@@ -37,7 +37,7 @@ public class GameManager : Photon.MonoBehaviour
         // on the receiving end.
         // Can enable the others if/when we start using a Registry to track them
         // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
-        PhotonPeer.RegisterType(typeof(TrapType), (byte)2, gameConstants.trapTypes.SerializeEntityReference, gameConstants.trapTypes.DeserializeEntityReference);
+        PhotonPeer.RegisterType(typeof(TrapType), (byte)2, RegistryHelper.SerializeEntityReference, RegistryHelper.DeserializeEntityReference);
         // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
         if ( !PhotonNetwork.connected )
         {
@@ -247,7 +247,7 @@ public class GameManager : Photon.MonoBehaviour
                         {
                               if(el.GetComponent<Player>().GetInventory().HasTrap(trapType))
                               {
-                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, null);
+                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, (TrapType)null);
                                 el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
                                 this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
                               }
