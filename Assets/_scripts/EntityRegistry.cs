@@ -19,7 +19,10 @@ where E : Entity<R, E>
         this.idAllocator = idAllocator;
     }
     private IdAllocator idAllocator;
-    private Dictionary<Id, E> entities = new Dictionary<Id, E>();
+
+    /// Use a sorted dictionary so that entities are stored in Id order, like we did with the List<> prior.
+    /// Sometimes sorting is important to make sure inventory items appear in predictable order.
+    private SortedDictionary<Id, E> entities = new SortedDictionary<Id, E>();
 
     public E this[Id id]
     {
@@ -28,7 +31,7 @@ where E : Entity<R, E>
             return getEntity( id );
         }
     }
-    public Dictionary<Id, E> __getDict() { return entities; }
+    public SortedDictionary<Id, E> __getDict() { return entities; }
     public bool hasEntity(Id id)
     {
         return entities.ContainsKey( id );
