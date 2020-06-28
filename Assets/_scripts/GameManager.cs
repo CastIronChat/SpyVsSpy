@@ -1,11 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : Photon.MonoBehaviour
 {
+    /// HACK anyone can use this method to get a reference to the GameManager assuming it is a global singleton
+    public static GameManager getGlobalSingletonGameManager() {
+        var gm = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
+        Debug.Assert(gm != null);
+        return gm;
+    }
     public PlayerManager playerManager;
     public HidingspotManager hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
     public ScrollingText scrollingText;
@@ -17,12 +24,21 @@ public class GameManager : Photon.MonoBehaviour
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
-    public Transform mcguffinimages,playerinventoryimages,playertrapimages,rooms;
+    public Transform mcguffinimages;
+    public IconRowHUD playerinventoryimages;
+    public IconRowHUD playertrapimages;
+    public Transform rooms;
     public Transform idleplayerManager;
 
 
     public void Awake()
     {
+        // Tell photon how to send a `TrapType` over the network, by transmitting the TrapType's Id and looking up the TrapType instance
+        // on the receiving end.
+        // Can enable the others if/when we start using a Registry to track them
+        // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
+        PhotonPeer.RegisterType(typeof(TrapType), (byte)2, gameConstants.trapTypes.SerializeEntityReference, gameConstants.trapTypes.DeserializeEntityReference);
+        // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
         if ( !PhotonNetwork.connected )
         {
 
@@ -145,7 +161,7 @@ public class GameManager : Photon.MonoBehaviour
                 int addtraps = gameConstants.startingTraps;
                 while(addtraps > 0)
                 {
-                  nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, addtraps,1 );
+                  nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[addtraps],1 );
                   addtraps--;
                 }
                 nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, gameConstants.playerMaxDeaths );
@@ -207,7 +223,7 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void rpcPlayerSetTrapForHidingSpot(int player, int whichHidingSpot, int whattrap)
+    public void rpcPlayerSetTrapForHidingSpot(int player, int whichHidingSpot, TrapType trapType)
     {
       if ( PhotonNetwork.isMasterClient )
       {
@@ -220,20 +236,20 @@ public class GameManager : Photon.MonoBehaviour
                   HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
                   if(temphidingspot != null )
                   {
-                        if( temphidingspot.trapValue != 0)
+                        if( temphidingspot.trapValue != null)
                         {
                           el.GetComponent<Player>().ServerUpdateLives(1);
                           //set the spot to no longer be trapped since it was just used
                           this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
-                          this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                          this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
                         }
                           else
                         {
-                              if(el.GetComponent<Player>().GetInventory().SelectTrap(whattrap))
+                              if(el.GetComponent<Player>().GetInventory().HasTrap(trapType))
                               {
-                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, 0);
-                                el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, whattrap ,0);
-                                this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,whattrap );
+                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, null);
+                                el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
+                                this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
                               }
                         }
                   }
@@ -245,10 +261,9 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void rpcSetTrapForHidingSpot(int whichHidingSpot, int whattrap)
+    public void rpcSetTrapForHidingSpot(int whichHidingSpot, TrapType trapType)
     {
-
-      hidingSpotManager.SetTrapForHidingSpot(whichHidingSpot,whattrap);
+        hidingSpotManager.SetTrapForHidingSpot(whichHidingSpot, trapType);
     }
 
     [PunRPC]
@@ -264,9 +279,9 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void OpenDoor( int whichDoor,bool open)
+    public void OpenDoor( int whichDoor, bool open )
     {
-      hidingSpotManager.OpenDoor(whichDoor,open);
+      hidingSpotManager.OpenDoor(whichDoor, open);
     }
 
     [PunRPC]
@@ -293,14 +308,14 @@ public class GameManager : Photon.MonoBehaviour
                   HidingSpot activatedHidingSpot = hidingSpotManager.hidingSpots[whichHidingSpot];
                   //if trapped, activate, otherwise check for hidden object
                   // TODO: question - placing a trap requires the playing to be holding it out?
-                    if(activatedHidingSpot.GetTrap() != 0)
+                    if(activatedHidingSpot.GetTrap() != null)
                     {
 
                       //TODO: trap logic
                       actingPlayer.ServerUpdateLives(1);
                       //set the spot to no longer be trapped since it was just used
                       this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
-                      this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                      this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
                     }
                     else
                     {

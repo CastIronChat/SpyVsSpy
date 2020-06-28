@@ -1,93 +1,150 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 /// All the stuff a player is holding.
-public class Inventory  {
+public class Inventory {
     public HashSet<Collectible> items = new HashSet<Collectible>();
 
-    public int inventorySize = 3,equippedTrap;
+    private GameManager gameManager = GameManager.getGlobalSingletonGameManager();
+    public int inventorySize,equippedTrap;
     public bool hasBriefcase = false;
-    public List<int> collectibles,traps;
+    public Dictionary<CollectibleType, int> collectibles;
+    public Dictionary<TrapType, int> traps;
 
+    private TrapTypeRegistry trapTypes {
+        get => gameManager.gameConstants.trapTypes;
+    }
+    private CollectibleTypeRegistry collectibleTypes {
+        get => gameManager.gameConstants.collectibleTypes;
+    }
 
+    public Inventory() {
+        inventorySize = gameManager.gameConstants.playerMaxInventorySpace;
+        traps = new Dictionary<TrapType, int>();
+        foreach(var trapType in trapTypes) {
+            traps.Add(trapType, 0);
+        }
+        collectibles = new Dictionary<CollectibleType, int>();
+        foreach(var collectibleType in collectibleTypes) {
+            collectibles.Add(collectibleType, 0);
+        }
+    }
 
+    /// Total number of collectibles held.  Sum of quantity held of each type.
+    public int CollectiblesHeldCount {
+        get => (from count in collectibles.Values select count).Sum();
+    }
+    public int MaxCarryingCapacity {
+        get {
+            var maxCanBeHeld = inventorySize;
+            if(hasBriefcase) maxCanBeHeld += gameManager.gameConstants.briefcaseGrantsExtraInventorySpace;
+            return maxCanBeHeld;
+        }
+    }
     public bool CanHoldMoreCollectibles()
     {
-      if(inventorySize > collectibles.Count){return true;}
-      if(hasBriefcase == true)
-      {
-        if(inventorySize + 1 > collectibles.Count){return true;}
-      }
-
-      return false;
+        return MaxCarryingCapacity > CollectiblesHeldCount;
     }
 
-    public bool SelectTrap(int whattrap)
+    public bool HasTrap(TrapType type)
     {
-
-      if(traps.Count > whattrap && traps[whattrap] != 0)
-      {return true;}
-
-      return false;
+        int countHeld;
+        traps.TryGetValue(type, out countHeld);
+        return countHeld > 0;
     }
-    public void UseTrap(int whattrap)
+    public void UseTrap(TrapType type)
     {
-      if(traps.Count > whattrap && traps[whattrap] != 0)
-      {traps[whattrap] = 0;}
+        int countHeld;
+        traps.TryGetValue(type, out countHeld);
+        if(countHeld > 0) {
+            traps.Add(type, countHeld - 1);
+        }
     }
 
-    public void RemoveCollectible(int whatcollectible)
+    public void RemoveCollectible(CollectibleType type)
     {
-      if(collectibles.Count > whatcollectible && collectibles[whatcollectible] != 0)
-      {collectibles[whatcollectible] = 0;}
+        int countHeld;
+        collectibles.TryGetValue(type, out countHeld);
+        if(countHeld > 0) {
+            collectibles.Add(type, countHeld - 1);
+        }
     }
 
     //0 is none: the number of that trap in inventory
-    public void AddTrap(int whattrap,int setto)
+    public void AddTrap(TrapType type, int count)
     {
-      while(traps.Count <= whattrap )
-      {    traps.Add(0);}
-
-      {traps[whattrap] = setto;}
+      traps[type] = count;
     }
 
-    public void AddCollectible(int whatCollectible,int setto)
+    public void AddCollectible(CollectibleType type, int count)
     {
-      while(collectibles.Count <= whatCollectible )
-      {    collectibles.Add(0);}
-
-      {collectibles[whatCollectible] = setto;}
+      collectibles[type] = count;
     }
 
     public string GetTrapsString()
     {
       string trapstring = "";
-      foreach(int el in traps)
+      foreach(var el in traps)
       {
-        trapstring += el.ToString();
+        trapstring += el.Value.ToString();
       }
       return trapstring;
     }
 
-    public void UpdateInventorySprites(GameConstants gameConstants, Transform inventoryImages,bool changeTraps)
+    public void UpdateInventoryHud()
     {
-      //if change traps is true set the list to the traps inventory list
-      List<int> tempInventory = changeTraps ? traps : collectibles;
-      List<Sprite> tempSpriteList = changeTraps ? gameConstants.trapSprites : gameConstants.collectibleSprites;
-      int count = 1;
-      int slotsUsed = 0;
-      while(slotsUsed < inventoryImages.childCount && count < tempInventory.Count)
-      {
-        if(tempInventory[count] > 0)
         {
-          inventoryImages.GetChild(slotsUsed).GetComponent<RawImage>().texture = tempSpriteList[count].texture;
-          slotsUsed ++;
+            IconRowHUD inventoryImages = gameManager.playertrapimages;
+        int index = 0;
+        foreach(var type in trapTypes) {
+            var count = traps[type];
+            inventoryImages.setIconVisibility(index, count > 0);
+            inventoryImages.setIcon(index, type.sprite);
+            if(equippedTrap == index) {
+                inventoryImages.setCursorVisibility(true);
+                inventoryImages.setCursorPosition(index);
+            }
+            index++;
         }
-        count++;
-      }
-      //set the rest of the sprites to blank
-      while(slotsUsed <  inventoryImages.childCount) {inventoryImages.GetChild(slotsUsed).GetComponent<RawImage>().texture = tempSpriteList[0].texture;   slotsUsed ++;}
+        }
+        {
+            IconRowHUD inventoryImages = gameManager.playerinventoryimages;
+        int index = 0;
+        int slot = 0;
+        inventoryImages.setCursorVisibility(false);
+        foreach(var type in collectibleTypes) {
+            var count = collectibles[type];
+            if(count > 0) {
+                inventoryImages.setIconVisibility(slot, true);
+                inventoryImages.setIcon(slot, type.sprite);
+                slot++;
+            }
+            index++;
+        }
+        for(; slot < inventoryImages.getIconCount(); slot++) {
+            inventoryImages.setIconVisibility(slot, false);
+        }
+        }
+
+    //   //if change traps is true set the list to the traps inventory list
+    //   Dictionary<Object, int> tempInventory = changeTraps ? traps : collectibles;
+    //   List<Sprite> tempSpriteList = (changeTraps ? from type in gameManager.gameConstants.trapTypes select type.sprite : from type in gameManager.gameConstants.collectibleTypes select type.sprite).ToList();
+    //   int count = 1;
+    //   int slotsUsed = 0;
+    //   while(slotsUsed < inventoryImages.childCount && count < tempInventory.Count)
+    //   {
+    //     if(tempInventory[count] > 0)
+    //     {
+    //       inventoryImages.GetChild(slotsUsed).GetComponent<RawImage>().texture = tempSpriteList[count].texture;
+    //       slotsUsed ++;
+    //     }
+    //     count++;
+    //   }
+    //   //set the rest of the sprites to blank
+    //   while(slotsUsed <  inventoryImages.childCount) {inventoryImages.GetChild(slotsUsed).GetComponent<RawImage>().texture = tempSpriteList[0].texture;   slotsUsed ++;}
     }
 
 }

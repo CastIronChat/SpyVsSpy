@@ -53,11 +53,11 @@ public class HidingspotManager : MonoBehaviour
       }
     }
 
-    public void SetTrapForHidingSpot(int whichspot,int whattrap)
+    public void SetTrapForHidingSpot(int whichspot, TrapType trapType)
     {
         if(whichspot < hidingSpots.Count)
         {
-          hidingSpots[whichspot].SetTrap(whattrap);
+          hidingSpots[whichspot].SetTrap(trapType);
         }
     }
 

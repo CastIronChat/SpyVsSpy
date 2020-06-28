@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "ms-dotnettools.csharp",
-        "EditorConfig.EditorConfig"
+        "EditorConfig.EditorConfig",
+        "Unity.unity-debug"
     ]
 }
