@@ -30,7 +30,7 @@ public class Player : Photon.MonoBehaviour
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        gameManager = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
+        gameManager = GameManager.getGlobalSingletonGameManager();
         transform.parent = gameManager.playerManager.transform;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         if ( photonView.isMine )
@@ -42,19 +42,16 @@ public class Player : Photon.MonoBehaviour
     }
     void OnEnable()
     {
+        gameManager = GameManager.getGlobalSingletonGameManager();
+
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         inventory = new Inventory();
-        inventory.traps = new List<int>();
-        inventory.collectibles = new List<int>();
-        inventory.traps.Add(0);
-        inventory.traps.Add(1);
-        inventory.traps.Add(1);
-        inventory.traps.Add(1);
-        inventory.collectibles.Add(0);
+        inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
+        inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
+        inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
-        gameManager = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
         transform.parent = gameManager.playerManager.transform;
         if ( photonView.isMine )
         {
@@ -131,7 +128,8 @@ public class Player : Photon.MonoBehaviour
         }
     }
 
-    public void UpdateTraps( )
+    /// Modify HUD UI to match player's inventory
+    public void UpdateTrapHUD( )
     {
         if ( myScoreCard != null )
         {
@@ -143,31 +141,29 @@ public class Player : Photon.MonoBehaviour
         if ( photonView.isMine )
         {
           //update the local players inventory visuals for what traps they have
-          inventory.UpdateInventorySprites(gameManager.gameConstants,gameManager.playertrapimages,true);
-          inventory.UpdateInventorySprites(gameManager.gameConstants,gameManager.playerinventoryimages,false);
+          inventory.UpdateInventoryHud();
         }
 
     }
 
     [PunRPC]
-    public void AddorRemoveTrap(int trapUsed,int setto)
+    public void AddorRemoveTrap(TrapType trapType,int setto)
     {
-        inventory.AddTrap(trapUsed,setto);
-        UpdateTraps();
+        inventory.AddTrap(trapType, setto);
     }
 
     [PunRPC]
     public void RemoveCollectible(int whichCollectible,int setto)
     {
-        inventory.RemoveCollectible(whichCollectible);
-        UpdateTraps();
+        var collectible = gameManager.gameConstants.collectibleTypes[whichCollectible];
+        inventory.RemoveCollectible(collectible);
     }
 
     [PunRPC]
     public void AddCollectible(int whichCollectible,int setto)
     {
-        inventory.AddCollectible(whichCollectible,setto);
-        UpdateTraps();
+        var collectible = gameManager.gameConstants.collectibleTypes[whichCollectible];
+        inventory.AddCollectible(collectible,setto);
     }
 
     public void ServerUpdateLives(int livesChange)
@@ -201,12 +197,12 @@ public class Player : Photon.MonoBehaviour
     {
         if ( photonView.isMine )
         {
-          if(Input.GetKeyDown(KeyCode.Alpha5))
+          if(input.__debugInventoryResetDown())
           {
-            inventory.traps = new List<int>();
-            inventory.traps.Add(1);
-            inventory.traps.Add(1);
-            inventory.traps.Add(1);
+            inventory.traps[gameManager.gameConstants.trapTypes[0]] = 0;
+            inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
+            inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
+            inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
           }
             Move();
             UseTraps();
@@ -221,6 +217,8 @@ public class Player : Photon.MonoBehaviour
           }
 
         }
+        // Try doing this every frame.  It's so much easier to think about this way.
+        UpdateTrapHUD();
     }
 
 
@@ -246,16 +244,35 @@ public class Player : Photon.MonoBehaviour
 
     public void UseTraps()
     {
+        if(inventory.traps.Count == 0) return;
+        int? trapToEquip = null;
         var trapSelectionPressed = input.getChooseTrapByIndexDown();
         if(trapSelectionPressed.HasValue) {
             var trapIndexPressed = trapSelectionPressed.Value;
             if(trapIndexPressed <= 3) {
-            inventory.equippedTrap = trapIndexPressed;
-            gameManager.scrollingText.NewLine("equiped trap " + trapIndexPressed);
-            this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, trapIndexPressed );
+                trapToEquip = trapIndexPressed;
             }
         }
         if(input.GetChooseNextTrapDown()) {
+            trapToEquip = inventory.equippedTrap + 1;
+            if(trapToEquip > inventory.traps.Count) {
+                trapToEquip = 0;
+            }
+        }
+        if(input.GetChoosePreviousTrapDown()) {
+            trapToEquip = inventory.equippedTrap - 1;
+            if(trapToEquip < 0) {
+                trapToEquip = inventory.traps.Count - 1;
+            }
+        }
+        if(trapToEquip.HasValue) {
+            var v = trapToEquip.Value;
+            inventory.equippedTrap = v;
+            gameManager.scrollingText.NewLine("Equipped trap #" + v + ": " + gameManager.gameConstants.trapTypes[v].name);
+            this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, v );
+        }
+
+        if(input.GetUseTrapDown() && inventory.traps[gameManager.gameConstants.trapTypes[inventory.equippedTrap]] > 0) {
 
         }
     }
@@ -325,9 +342,10 @@ public class Player : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void rpcSetEquippedTrap(int whattrap)
+    public void rpcSetEquippedTrap(TrapType trapType)
     {
-      if(GetInventory().SelectTrap(whattrap) == true || whattrap == 0)
+        var whattrap= trapType.uniqueId;
+      if(GetInventory().HasTrap(trapType) == true || whattrap == 0)
       {
         GetInventory().equippedTrap = whattrap;
         heldSprite.sprite = gameManager.gameConstants.trapTypes[whattrap].sprite;
@@ -357,7 +375,7 @@ public class Player : Photon.MonoBehaviour
 
     }
 
-    public void TryToPlantTrap(int whattrap)
+    public void TryToPlantTrap(TrapType whattrap)
     {
 
       RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance);
@@ -384,7 +402,7 @@ public class Player : Photon.MonoBehaviour
             //if the player has a trap equipped, try to plant it
             if(inventory.equippedTrap != 0)
             {
-                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), inventory.equippedTrap );
+                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), gameManager.gameConstants.trapTypes[inventory.equippedTrap] );
             }
             else//if not holding a trap, try to open the spot
             {
@@ -415,12 +433,12 @@ public class Player : Photon.MonoBehaviour
                  if ( Input.GetKeyDown( KeyCode.Alpha3 )  )
                 {
                     gameManager.scrollingText.NewLine("33333");
-                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), 1 );
+                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), gameManager.gameConstants.trapTypes[1] );
                 }
                  if ( Input.GetKeyDown( KeyCode.Alpha4 )  )
                 {
                     gameManager.scrollingText.NewLine("44444");
-                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), 2 );
+                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), gameManager.gameConstants.trapTypes[2] );
 
                 }
           }

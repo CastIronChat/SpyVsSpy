@@ -38,7 +38,7 @@ public class PlayerInput
     public bool GetInteractDown() {
         return Input.GetKeyDown(KeyCode.Space);
     }
-    public bool GetSetTrapDown() {
+    public bool GetUseTrapDown() {
         return Input.GetKeyDown(KeyCode.T);
     }
     public bool GetChooseNextTrapDown() {
@@ -52,8 +52,13 @@ public class PlayerInput
         if(Input.GetKeyDown(KeyCode.Alpha2)) return 1;
         if(Input.GetKeyDown(KeyCode.Alpha3)) return 2;
         if(Input.GetKeyDown(KeyCode.Alpha4)) return 3;
-        if(Input.GetKeyDown(KeyCode.Alpha5)) return 4;
         return null;
     }
 
+    bool __debug = true;
+    // Methods with __debug prefix are for testing in development.
+    // Should be disabled or removed to avoid cheating.
+    public bool __debugInventoryResetDown() {
+        return __debug && Input.GetKeyDown(KeyCode.Alpha5);
+    }
 }

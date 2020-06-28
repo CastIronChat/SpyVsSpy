@@ -7,27 +7,32 @@ public class GameConstants : MonoBehaviour
 {
     public bool playerRespawnsAreLimited = false;
     public int playerMaxDeaths = 3;
-    public int playerMaxInventorySpace = 9;
+    public int playerMaxInventorySpace = 3;
+    /// Number of extra inventory slots granted by having the briefcase
+    public int briefcaseGrantsExtraInventorySpace = 1;
 
     public int roundMaxTimeSeconds = 60 * 3;
     public int startingTraps = 3;
     public bool roundTimeIsLimited = true;
-    public List<TrapType> _trapTypes;
-    // Grab array of child components
-    public List<TrapType> trapTypes {
+    private TrapTypeRegistry _trapTypes;
+    public TrapTypeRegistry trapTypes {
         get {
             if(_trapTypes == null) {
-                _trapTypes = new List<TrapType>(GetComponentsInChildren<TrapType>());
+                var types = new List<TrapType>(GetComponentsInChildren<TrapType>());
+                _trapTypes = new TrapTypeRegistry();
+                foreach(var type in types) _trapTypes.addEntity(type);
             }
             return _trapTypes;
         }
     }
-    public List<CollectibleType> _collectibleTypes;
+    private CollectibleTypeRegistry _collectibleTypes;
     // Grab array of child components
-    public List<CollectibleType> collectibleTypes {
+    public CollectibleTypeRegistry collectibleTypes {
         get {
             if(_collectibleTypes == null) {
-                _collectibleTypes = new List<CollectibleType>(GetComponentsInChildren<CollectibleType>());
+                var types = new List<CollectibleType>(GetComponentsInChildren<CollectibleType>());
+                _collectibleTypes = new CollectibleTypeRegistry();
+                foreach(var type in types) _collectibleTypes.addEntity(type);
             }
             return _collectibleTypes;
         }

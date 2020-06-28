@@ -16,3 +16,7 @@ GameConstants
 - playerMaxDeaths
 - playerStartingTrapsCount
 - playerSpeed() arg used to determine if player is encumbered or not
+
+### MISC
+
+[FormerlySerializedAs("yourVariablesPreviousName")]
