@@ -235,13 +235,6 @@ public class Player : Photon.MonoBehaviour
         // rb.velocity = newvel * speed * Time.deltaTime;
     }
 
-    [PunRPC]
-    public void SetHeldSprite(int newsprite)
-    {
-      heldSprite.sprite = gameManager.gameConstants.trapTypes[newsprite].sprite;
-    }
-
-
     public void UseTraps()
     {
         if(inventory.traps.Count == 0) return;
@@ -268,8 +261,7 @@ public class Player : Photon.MonoBehaviour
         if(trapToEquip.HasValue) {
             var v = trapToEquip.Value;
             inventory.equippedTrap = v;
-            gameManager.scrollingText.NewLine("Equipped trap #" + v + ": " + gameManager.gameConstants.trapTypes[v].name);
-            this.photonView.RPC( "SetHeldSprite", PhotonTargets.AllBufferedViaServer, v );
+            photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, v);
         }
 
         if(input.GetUseTrapDown() && inventory.traps[gameManager.gameConstants.trapTypes[inventory.equippedTrap]] > 0) {
@@ -344,11 +336,18 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     public void rpcSetEquippedTrap(TrapType trapType)
     {
-        var whattrap= trapType.uniqueId;
-      if(GetInventory().HasTrap(trapType) == true || whattrap == 0)
+      if(trapType == null) {
+          inventory.equippedTrap = 0;
+        heldSprite.enabled = false;
+        gameManager.scrollingText.NewLine("Unequipped trap.");
+        return;
+      }
+      if(GetInventory().HasTrap(trapType) == true)
       {
-        GetInventory().equippedTrap = whattrap;
-        heldSprite.sprite = gameManager.gameConstants.trapTypes[whattrap].sprite;
+        heldSprite.enabled = true;
+        GetInventory().equippedTrap = trapType.uniqueId;
+        heldSprite.sprite = trapType.sprite;
+        gameManager.scrollingText.NewLine("Equipped trap #" + trapType.uniqueId + ": " + trapType.name);
       }
     }
 

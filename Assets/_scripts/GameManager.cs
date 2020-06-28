@@ -247,7 +247,7 @@ public class GameManager : Photon.MonoBehaviour
                         {
                               if(el.GetComponent<Player>().GetInventory().HasTrap(trapType))
                               {
-                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, null);
+                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, (TrapType)null);
                                 el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
                                 this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
                               }
