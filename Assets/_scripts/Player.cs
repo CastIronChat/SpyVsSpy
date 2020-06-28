@@ -242,7 +242,7 @@ public class Player : Photon.MonoBehaviour
         var trapSelectionPressed = input.getChooseTrapByIndexDown();
         if(trapSelectionPressed.HasValue) {
             var trapIndexPressed = trapSelectionPressed.Value;
-            if(trapIndexPressed <= 3) {
+            if(trapIndexPressed <= inventory.traps.Count) {
                 trapToEquip = trapIndexPressed;
             }
         }
@@ -260,8 +260,8 @@ public class Player : Photon.MonoBehaviour
         }
         if(trapToEquip.HasValue) {
             var v = trapToEquip.Value;
-            inventory.equippedTrap = v;
-            photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, v);
+            var trapType = gameManager.gameConstants.trapTypes[v];
+            photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, trapType);
         }
 
         if(input.GetUseTrapDown() && inventory.traps[gameManager.gameConstants.trapTypes[inventory.equippedTrap]] > 0) {
@@ -336,6 +336,11 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     public void rpcSetEquippedTrap(TrapType trapType)
     {
+        Debug.Log(trapType);
+        if(trapType != null) {
+            Debug.Log(trapType.uniqueId);
+            Debug.Log(trapType.name);
+        }
       if(trapType == null) {
           inventory.equippedTrap = 0;
         heldSprite.enabled = false;

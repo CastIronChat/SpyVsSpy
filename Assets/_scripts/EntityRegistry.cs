@@ -1,19 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
+using UnityEngine;
 using Id = System.Int32;
 
 /// Stores a collection of entities, assigning them unique IDs, so that networked RPC calls
 /// can refer to them by ID.
 /// The entities also store a reference to the registry.
-public class Registry<R, E> : DefaultCanManipulateEntity<R, E>, IEnumerable<E>
+public class Registry<R, E> : DefaultCanManipulateEntity<R, E>, IEnumerable<E>, NonGenericRegistry
 where R : Registry<R, E>
 where E : Entity<R, E>
 {
     public Registry()
     {
         idAllocator = new DefaultIdAllocator();
+        id = RegistryHelper.registryIdAllocator.nextId();
+        RegistryHelper.registries.Add(id, new WeakReference<object>(this));
     }
+    public int id {get;set;}
     public Registry(IdAllocator idAllocator)
     {
         this.idAllocator = idAllocator;
@@ -41,6 +46,9 @@ where E : Entity<R, E>
         E entity;
         entities.TryGetValue( id, out entity );
         return entity;
+    }
+    public object getEntityAsObject(Id id) {
+        return getEntity(id);
     }
     public void addEntity(E entity)
     {
@@ -72,44 +80,63 @@ where E : Entity<R, E>
     {
         return entities.Values.GetEnumerator();
     }
-
-    // Copied from https://doc.photonengine.com/en-us/pun/current/reference/serialization-in-photon#streambuffer_method
+}
+public static class RegistryHelper {
+    // Based on samples from https://doc.photonengine.com/en-us/pun/current/reference/serialization-in-photon#streambuffer_method
     // Entity references are serialized and deserialized as:
     // 1x byte: is it null?  (1 for not null, 0 for null)
+    // 4x bytes: Registry Id as int32, or 0 if null
     // 4x bytes: Id as int32, or 0 if null (valid ID can be zero)
-    private readonly byte[] memId = new byte[5];
-    public object DeserializeEntityReference(StreamBuffer inStream, short length)
+
+    public static IdAllocator registryIdAllocator = new DefaultIdAllocator();
+    public static Dictionary<Id, WeakReference<object>> registries = new Dictionary<Id, WeakReference<object>>();
+    private static readonly byte[] memId = new byte[9];
+    private static readonly short memLength = 9;
+    public static object DeserializeEntityReference(StreamBuffer inStream, short length)
     {
         byte notNull;
-        Id id;
+        Id registryId;
+        Id entityId;
         lock ( memId )
         {
-            inStream.Read( memId, 0, 5 );
+            inStream.Read( memId, 0, memLength );
             int index = 0;
             notNull = memId[0];
             index++;
-            Protocol.Deserialize( out id, memId, ref index );
+            Protocol.Deserialize( out registryId, memId, ref index );
+            Protocol.Deserialize( out entityId, memId, ref index );
         }
-        return getEntity( id );
+        MonoBehaviour.print("registryId:" + registryId);
+        MonoBehaviour.print("notNull:" + notNull);
+        MonoBehaviour.print("entityId:" + entityId);
+        var registryReference = RegistryHelper.registries[registryId];
+        object registryObject;
+        registryReference.TryGetTarget(out registryObject);
+        var registry = (NonGenericRegistry)registryObject;
+        var entity = registry.getEntityAsObject(entityId);
+        MonoBehaviour.print("getEntity(id):" + entity);
+        return entity;
     }
-    public short SerializeEntityReference(StreamBuffer outStream, object customobject)
+    public static short SerializeEntityReference(StreamBuffer outStream, object customobject)
     {
-        E entity = (E)customobject;
+        NonGenericEntity entity = (NonGenericEntity)customobject;
         lock ( memId )
         {
             byte[] bytes = memId;
             int index = 1;
             if(entity != null) {
                 bytes[0] = 1;
+                Protocol.Serialize( ((NonGenericRegistry)entity.registry).id, bytes, ref index );
                 Protocol.Serialize( entity.uniqueId, bytes, ref index );
             } else {
                 bytes[0] = 0;
                 Protocol.Serialize( (Id)0, bytes, ref index );
+                Protocol.Serialize( (Id)0, bytes, ref index );
             }
-            outStream.Write( bytes, 0, 5 );
+            outStream.Write( bytes, 0, memLength );
         }
 
-        return 5;
+        return memLength;
     }
 }
 
@@ -140,7 +167,7 @@ where E : Entity<R, E>
     }
     public R getRegistry(E entity)
     {
-        return entity.registry;
+        return (R)entity.registry;
     }
     public void setRegistry(E entity, R registry)
     {
@@ -150,13 +177,10 @@ where E : Entity<R, E>
 
 /// Entities have an ID and a reference to their registry, in case they need to make RPC calls on the
 /// registry or get access to Managers accessible from the registry.
-public interface Entity<R, E>
+public interface Entity<R, E> : NonGenericEntity
 where R : Registry<R, E>
 where E : Entity<R, E>
-{
-    Id uniqueId { get; set; }
-    R registry { get; set; }
-}
+{}
 
 /// Every registry needs a way to allocate unique IDs.
 public interface IdAllocator
@@ -173,4 +197,14 @@ public class DefaultIdAllocator : IdAllocator
     {
         return _nextId++;
     }
+}
+
+public interface NonGenericRegistry {
+    object getEntityAsObject(Id id);
+
+    Id id { get; }
+}
+public interface NonGenericEntity {
+    Id uniqueId {get;set;}
+    object registry {get;set;}
 }
