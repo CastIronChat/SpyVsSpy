@@ -37,7 +37,7 @@ public class GameManager : Photon.MonoBehaviour
         // on the receiving end.
         // Can enable the others if/when we start using a Registry to track them
         // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
-        Debug.Log(PhotonPeer.RegisterType(typeof(TrapType), (byte)2, RegistryHelper.SerializeEntityReference, RegistryHelper.DeserializeEntityReference));
+        PhotonPeer.RegisterType(typeof(TrapType), (byte)2, RegistryHelper.SerializeEntityReference, RegistryHelper.DeserializeEntityReference);
         // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
         if ( !PhotonNetwork.connected )
         {

@@ -106,15 +106,11 @@ public static class RegistryHelper {
             Protocol.Deserialize( out registryId, memId, ref index );
             Protocol.Deserialize( out entityId, memId, ref index );
         }
-        MonoBehaviour.print("registryId:" + registryId);
-        MonoBehaviour.print("notNull:" + notNull);
-        MonoBehaviour.print("entityId:" + entityId);
         var registryReference = RegistryHelper.registries[registryId];
         object registryObject;
         registryReference.TryGetTarget(out registryObject);
         var registry = (NonGenericRegistry)registryObject;
         var entity = registry.getEntityAsObject(entityId);
-        MonoBehaviour.print("getEntity(id):" + entity);
         return entity;
     }
     public static short SerializeEntityReference(StreamBuffer outStream, object customobject)

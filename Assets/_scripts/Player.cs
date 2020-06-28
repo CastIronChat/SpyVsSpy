@@ -336,11 +336,6 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     public void rpcSetEquippedTrap(TrapType trapType)
     {
-        Debug.Log(trapType);
-        if(trapType != null) {
-            Debug.Log(trapType.uniqueId);
-            Debug.Log(trapType.name);
-        }
       if(trapType == null) {
           inventory.equippedTrap = 0;
         heldSprite.enabled = false;
