@@ -273,7 +273,7 @@ public class Player : Photon.MonoBehaviour
         }
 
         if(input.GetUseTrapDown() && inventory.traps[gameManager.gameConstants.trapTypes[inventory.equippedTrap]] > 0) {
-
+            
         }
     }
 
