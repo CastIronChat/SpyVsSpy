@@ -28,6 +28,9 @@ where E : Entity<R, E>
     /// Use a sorted dictionary so that entities are stored in Id order, like we did with the List<> prior.
     /// Sometimes sorting is important to make sure inventory items appear in predictable order.
     private SortedDictionary<Id, E> entities = new SortedDictionary<Id, E>();
+    public int Count {
+        get => entities.Count;
+    }
 
     public E this[Id id]
     {

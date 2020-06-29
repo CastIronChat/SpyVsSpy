@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +23,11 @@ public class Player : Photon.MonoBehaviour
     private Quaternion serverRot;
     private SpriteRenderer heldSprite;
 
+    /// HACK there is no guarantee that these IDs are identical across the network.
+    /// We should be using Photon's viewID instead.  We can update Registry to do this.
+    public int uniqueId { get; set; }
+    public object registry { get; set; }
+
     void Start()
     {
         if ( this.photonView.ownerId < colors.Count )
@@ -31,6 +36,7 @@ public class Player : Photon.MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         gameManager = GameManager.getGlobalSingletonGameManager();
+        gameManager.playerManager.players.addEntity(this);
         transform.parent = gameManager.playerManager.transform;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         if ( photonView.isMine )

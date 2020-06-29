@@ -24,7 +24,7 @@ public class GameManager : Photon.MonoBehaviour
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
-    public Transform mcguffinimages;
+    public IconRowHUD mcguffinimages;
     public IconRowHUD playerinventoryimages;
     public IconRowHUD playertrapimages;
     public Transform rooms;
@@ -102,7 +102,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void rpcVoteForNewRoundType(int rndtype, int fromplayer)
     {
-        if ( playerManager.transform.childCount > 1 )
+        if ( playerManager.activePlayerCount > 1 )
         {
             StartRound();
         }
