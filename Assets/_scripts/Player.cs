@@ -413,31 +413,6 @@ public class Player : Photon.MonoBehaviour
         }
     }
 
-    public void OnTriggerStay2D(Collider2D col)
-    {
-          if ( col.GetComponent<HidingSpot>() != null )
-          {
-                // if ( Input.GetKeyDown( KeyCode.Space )  )
-                // {
-                //   gameManager.scrollingText.NewLine("space");
-                //     gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, playerNum, col.GetComponent<HidingSpot>().GetPlaceInList() );
-                // }
-
-                 if ( Input.GetKeyDown( KeyCode.Alpha3 )  )
-                {
-                    gameManager.scrollingText.NewLine("33333");
-                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), gameManager.gameConstants.trapTypes[1] );
-                }
-                 if ( Input.GetKeyDown( KeyCode.Alpha4 )  )
-                {
-                    gameManager.scrollingText.NewLine("44444");
-                    gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, col.GetComponent<HidingSpot>().GetPlaceInList(), gameManager.gameConstants.trapTypes[2] );
-
-                }
-          }
-    }
-
-
     public Inventory GetInventory()
     {
       return inventory;
