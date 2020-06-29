@@ -30,7 +30,7 @@ public class HidingSpot : MonoBehaviour
     public void SetTrap(TrapType newtrap)
     {
       trapValue = newtrap;
-      
+
     }
     public void SetCollectible(int newcollectible)
     { collectibleValue = newcollectible; GetComponent<SpriteRenderer>().color = new Vector4(0.1f * newcollectible, 0.9f * newcollectible, 0.6f,1.0f);}
