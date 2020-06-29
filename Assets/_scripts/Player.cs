@@ -155,7 +155,7 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     public void AddorRemoveTrap(TrapType trapType,int setto)
     {
-        inventory.AddTrap(trapType, setto);
+        inventory.SetTrapCount(trapType, setto);
     }
 
     [PunRPC]
@@ -244,36 +244,33 @@ public class Player : Photon.MonoBehaviour
     public void UseTraps()
     {
         if(inventory.traps.Count == 0) return;
-        int? trapToEquip = null;
+        int? trapIndexToEquip = null;
         var trapSelectionPressed = input.getChooseTrapByIndexDown();
         if(trapSelectionPressed.HasValue) {
             var trapIndexPressed = trapSelectionPressed.Value;
             if(trapIndexPressed <= inventory.traps.Count) {
-                trapToEquip = trapIndexPressed;
+                trapIndexToEquip = trapIndexPressed;
             }
         }
         if(input.GetChooseNextTrapDown()) {
-            trapToEquip = inventory.equippedTrap + 1;
-            if(trapToEquip > inventory.traps.Count) {
-                trapToEquip = 0;
+            trapIndexToEquip = inventory.equippedTrapIndex + 1;
+            if(trapIndexToEquip > inventory.traps.Count) {
+                trapIndexToEquip = 0;
             }
         }
         if(input.GetChoosePreviousTrapDown()) {
-            trapToEquip = inventory.equippedTrap - 1;
-            if(trapToEquip < 0) {
-                trapToEquip = inventory.traps.Count - 1;
+            trapIndexToEquip = inventory.equippedTrapIndex - 1;
+            if(trapIndexToEquip < 0) {
+                trapIndexToEquip = inventory.traps.Count - 1;
             }
         }
-        if(trapToEquip.HasValue) {
-            var v = trapToEquip.Value;
-            var trapType = gameManager.gameConstants.trapTypes[v];
-            photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, trapType);
+        if(trapIndexToEquip.HasValue) {
+            var trap = gameManager.gameConstants.trapTypes[trapIndexToEquip.Value];
+            photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, trap);
         }
 
-        if(input.GetUseTrapDown() && inventory.traps[gameManager.gameConstants.trapTypes[inventory.equippedTrap]] > 0) {
-
+        // Using traps is handled by interaction code elsewhere.
         }
-    }
 
 
     public void Move()
@@ -334,24 +331,15 @@ public class Player : Photon.MonoBehaviour
                 break;
             default: break;
         }
-
-
-
     }
 
     [PunRPC]
     public void rpcSetEquippedTrap(TrapType trapType)
     {
-      if(trapType == null) {
-          inventory.equippedTrap = 0;
-        heldSprite.enabled = false;
-        gameManager.scrollingText.NewLine("Unequipped trap.");
-        return;
-      }
       if(GetInventory().HasTrap(trapType) == true)
       {
         heldSprite.enabled = true;
-        GetInventory().equippedTrap = trapType.uniqueId;
+        GetInventory().equippedTrap = trapType;
         heldSprite.sprite = trapType.sprite;
         gameManager.scrollingText.NewLine("Equipped trap #" + trapType.uniqueId + ": " + trapType.name);
       }
@@ -405,9 +393,9 @@ public class Player : Photon.MonoBehaviour
           if (hit.transform.GetComponent<HidingSpot>() != null)
           {
             //if the player has a trap equipped, try to plant it
-            if(inventory.equippedTrap != 0)
+            if(inventory.equippedTrap.isUsable && inventory.HasTrap(inventory.equippedTrap))
             {
-                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), gameManager.gameConstants.trapTypes[inventory.equippedTrap] );
+                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), inventory.equippedTrap );
             }
             else//if not holding a trap, try to open the spot
             {
