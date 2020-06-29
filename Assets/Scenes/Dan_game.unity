@@ -1559,9 +1559,9 @@ GameObject:
   - component: {fileID: 132943386}
   - component: {fileID: 132943391}
   - component: {fileID: 132943390}
+  - component: {fileID: 132943387}
   - component: {fileID: 132943389}
   - component: {fileID: 132943388}
-  - component: {fileID: 132943387}
   m_Layer: 0
   m_Name: box (2)
   m_TagString: interact
@@ -1595,8 +1595,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
+  gameManager: {fileID: 1813329207}
+  hidingspotManager: {fileID: 1049484761}
   spotInList: -1
   trapValue: {fileID: 0}
   collectibleValue: 2
@@ -6258,9 +6258,9 @@ GameObject:
   - component: {fileID: 594580546}
   - component: {fileID: 594580551}
   - component: {fileID: 594580550}
+  - component: {fileID: 594580547}
   - component: {fileID: 594580549}
   - component: {fileID: 594580548}
-  - component: {fileID: 594580547}
   m_Layer: 0
   m_Name: box (3)
   m_TagString: interact
@@ -6294,8 +6294,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
+  gameManager: {fileID: 1813329207}
+  hidingspotManager: {fileID: 1049484761}
   spotInList: -1
   trapValue: {fileID: 0}
   collectibleValue: 0
@@ -7730,9 +7730,9 @@ GameObject:
   - component: {fileID: 722099641}
   - component: {fileID: 722099646}
   - component: {fileID: 722099645}
+  - component: {fileID: 722099642}
   - component: {fileID: 722099644}
   - component: {fileID: 722099643}
-  - component: {fileID: 722099642}
   m_Layer: 0
   m_Name: bed
   m_TagString: interact
@@ -7768,8 +7768,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
+  gameManager: {fileID: 1813329207}
+  hidingspotManager: {fileID: 1049484761}
   spotInList: -1
   trapValue: {fileID: 0}
   collectibleValue: 0
@@ -8085,9 +8085,9 @@ GameObject:
   - component: {fileID: 781929919}
   - component: {fileID: 781929924}
   - component: {fileID: 781929923}
+  - component: {fileID: 781929920}
   - component: {fileID: 781929922}
   - component: {fileID: 781929921}
-  - component: {fileID: 781929920}
   m_Layer: 0
   m_Name: TV
   m_TagString: interact
@@ -8122,8 +8122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
+  gameManager: {fileID: 1813329207}
+  hidingspotManager: {fileID: 1049484761}
   spotInList: -1
   trapValue: {fileID: 0}
   collectibleValue: 0
@@ -9890,9 +9890,9 @@ GameObject:
   - component: {fileID: 960428921}
   - component: {fileID: 960428926}
   - component: {fileID: 960428925}
+  - component: {fileID: 960428922}
   - component: {fileID: 960428924}
   - component: {fileID: 960428923}
-  - component: {fileID: 960428922}
   m_Layer: 0
   m_Name: box (1)
   m_TagString: interact
@@ -9926,8 +9926,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
+  gameManager: {fileID: 1813329207}
+  hidingspotManager: {fileID: 1049484761}
   spotInList: -1
   trapValue: {fileID: 0}
   collectibleValue: 1
@@ -15320,9 +15320,9 @@ GameObject:
   - component: {fileID: 1506665157}
   - component: {fileID: 1506665162}
   - component: {fileID: 1506665161}
+  - component: {fileID: 1506665158}
   - component: {fileID: 1506665160}
   - component: {fileID: 1506665159}
-  - component: {fileID: 1506665158}
   m_Layer: 0
   m_Name: bed (1)
   m_TagString: interact
@@ -15358,8 +15358,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
+  gameManager: {fileID: 1813329207}
+  hidingspotManager: {fileID: 1049484761}
   spotInList: -1
   trapValue: {fileID: 0}
   collectibleValue: 0
@@ -16168,9 +16168,9 @@ GameObject:
   - component: {fileID: 1598612334}
   - component: {fileID: 1598612339}
   - component: {fileID: 1598612338}
+  - component: {fileID: 1598612335}
   - component: {fileID: 1598612337}
   - component: {fileID: 1598612336}
-  - component: {fileID: 1598612335}
   m_Layer: 0
   m_Name: TV (1)
   m_TagString: interact
@@ -16205,8 +16205,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
+  gameManager: {fileID: 1813329207}
+  hidingspotManager: {fileID: 1049484761}
   spotInList: -1
   trapValue: {fileID: 0}
   collectibleValue: 0
