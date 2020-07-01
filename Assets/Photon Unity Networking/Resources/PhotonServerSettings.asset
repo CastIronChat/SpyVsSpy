@@ -75,4 +75,5 @@ MonoBehaviour:
   - SetBriefcase
   - AddCollectible
   - RemoveCollectible
+  - rpcAttackAnimation
   DisableAutoOpenWizard: 1

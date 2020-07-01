@@ -23,6 +23,8 @@ public class Player : Photon.MonoBehaviour
     private Quaternion serverRot;
     private SpriteRenderer heldSprite;
 
+    private float iFrames; //invincibility frames
+
     void Start()
     {
         if ( this.photonView.ownerId < colors.Count )
@@ -195,6 +197,9 @@ public class Player : Photon.MonoBehaviour
 
     void Update()
     {
+      //after taking damage to avoid double taps from the same source, add invincibility frames
+      if(iFrames > 0){iFrames -= Time.deltaTime;}
+
         if ( photonView.isMine )
         {
           if(input.__debugInventoryResetDown())
@@ -206,7 +211,8 @@ public class Player : Photon.MonoBehaviour
           }
             Move();
             UseTraps();
-            if ( input.GetInteractDown() ){TryToInteract();}
+            if ( Input.GetKeyDown(KeyCode.Space)){TryToInteract();}
+            // if ( input.GetInteractDown() ){TryToInteract();}
         }
         else
         {
@@ -374,6 +380,16 @@ public class Player : Photon.MonoBehaviour
 
     }
 
+    [PunRPC]
+    public void rpcAttackAnimation()
+    {
+      if(GetComponent<SpriteRenderer>().flipX == false)
+      {anim.Play("punch");}
+        else{anim.Play("reversepunch");}
+            // gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer,  );
+
+    }
+
     public void TryToPlantTrap(TrapType whattrap)
     {
 
@@ -392,8 +408,8 @@ public class Player : Photon.MonoBehaviour
 
       RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance);
 
-        // if (hit.transform.GetComponent<HidingSpot>() != null)
-        if (hit)
+
+        if (hit && (hit.transform.GetComponent<HidingSpot>() != null || hit.transform.GetComponent<Door>() != null))
         {
           // this.photonView.RPC( "rpcInteract", PhotonTargets.AllViaServer, CardinalDirectionHelper.ToVector3(facingDirection) );
           if (hit.transform.GetComponent<HidingSpot>() != null)
@@ -417,6 +433,24 @@ public class Player : Photon.MonoBehaviour
 
           }
         }
+        else
+        {
+          //if a hiding spot is not the closest object facing the player, they attack
+              this.photonView.RPC( "rpcAttackAnimation", PhotonTargets.AllViaServer);
+        }
+    }
+
+    public void OnTriggerEnter2D(Collider2D col)
+    {
+        //the server checks when a weapon triggers on a player character, and that the weapon is not their own
+        if ( PhotonNetwork.isMasterClient && col.gameObject.tag == "Weapon" && col.transform.parent != this.transform)
+        {
+
+            //after taking damage to avoid double taps from the same source, add invincibility frames
+            iFrames = 0.5f;
+            this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, lives - 1 );
+        }
+
     }
 
     public void OnTriggerStay2D(Collider2D col)
