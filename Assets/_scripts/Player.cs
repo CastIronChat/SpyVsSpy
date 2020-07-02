@@ -8,7 +8,7 @@ public class Player : Photon.MonoBehaviour
     public GameManager gameManager;
     public int numberInList, playerNum, score, lostScore, money;
     public int lives, gamesPlayed, wins;
-    public float speed,networkspeed = 12.0f,interactDistance = 0.4f;
+    public float speed,networkspeed = 15.0f,interactDistance = 0.4f,attackInputLock = 0.5f,inputLockTimer;
     public string name;
     public GameObject myScoreCard,cam;
     public Material myColor;
@@ -202,17 +202,22 @@ public class Player : Photon.MonoBehaviour
 
         if ( photonView.isMine )
         {
-          if(input.__debugInventoryResetDown())
+          //to prevent weapon spam and multi directional attack, have a brief input lock after attacking
+          if(inputLockTimer > 0){inputLockTimer -= Time.deltaTime;}
+          else
           {
-            inventory.traps[gameManager.gameConstants.trapTypes[0]] = 0;
-            inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
-            inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
-            inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
+              if(input.__debugInventoryResetDown())
+              {
+                inventory.traps[gameManager.gameConstants.trapTypes[0]] = 0;
+                inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
+                inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
+                inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
+              }
+                Move();
+                UseTraps();
+                if ( Input.GetKeyDown(KeyCode.Space)){TryToInteract();}
+                // if ( input.GetInteractDown() ){TryToInteract();}
           }
-            Move();
-            UseTraps();
-            if ( Input.GetKeyDown(KeyCode.Space)){TryToInteract();}
-            // if ( input.GetInteractDown() ){TryToInteract();}
         }
         else
         {
@@ -383,9 +388,30 @@ public class Player : Photon.MonoBehaviour
     [PunRPC]
     public void rpcAttackAnimation()
     {
-      if(GetComponent<SpriteRenderer>().flipX == false)
-      {anim.Play("punch");}
-        else{anim.Play("reversepunch");}
+      inputLockTimer = attackInputLock;
+      rb.velocity = Vector3.zero;
+        if(GetComponent<SpriteRenderer>().flipX == false)
+        {
+          if(GetInventory().hasBriefcase == true)
+          {
+            anim.Play("punch");
+          }
+          else
+          {
+            anim.Play("stab");
+          }
+        }
+        else
+        {
+          if(GetInventory().hasBriefcase == true)
+          {
+            anim.Play("reversepunch");
+          }
+          else
+          {
+            anim.Play("reversestab");
+          }
+        }
             // gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer,  );
 
     }

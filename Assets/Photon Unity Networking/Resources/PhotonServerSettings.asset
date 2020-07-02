@@ -76,4 +76,6 @@ MonoBehaviour:
   - AddCollectible
   - RemoveCollectible
   - rpcAttackAnimation
+  - CreateExplosion
+  - AnimateHidingSpot
   DisableAutoOpenWizard: 1
