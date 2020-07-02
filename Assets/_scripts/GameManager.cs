@@ -30,6 +30,8 @@ public class GameManager : Photon.MonoBehaviour
     public Transform rooms;
     public Transform idleplayerManager;
 
+    //placeholder that needs to be moved to the master trap logic
+    public GameObject debugExplosion;
 
     public void Awake()
     {
@@ -223,8 +225,24 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     [PunRPC]
+    public void CreateExplosion(Vector3 explosionLocation)
+    {
+      //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+      Instantiate(debugExplosion,explosionLocation,debugExplosion.transform.rotation);
+    }
+
+    [PunRPC]
+    public void AnimateHidingSpot(int whichHidingSpot)
+    {
+      //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+       hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation();
+    }
+
+    [PunRPC]
     public void rpcPlayerSetTrapForHidingSpot(int player, int whichHidingSpot, TrapType trapType)
     {
+
+      // this.photonView.RPC( "AnimateHidingSpot", PhotonTargets.AllViaServer, whichHidingSpot);
       if ( PhotonNetwork.isMasterClient )
       {
         foreach(Transform el in playerManager.transform)
@@ -238,6 +256,8 @@ public class GameManager : Photon.MonoBehaviour
                   {
                         if( temphidingspot.trapValue != null)
                         {
+                          this.photonView.RPC( "CreateExplosion", PhotonTargets.AllViaServer, el.position);
+
                           el.GetComponent<Player>().ServerUpdateLives(1);
                           //set the spot to no longer be trapped since it was just used
                           this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
@@ -287,7 +307,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void OpenHidingSpot(int whichPlayer, int whichHidingSpot)
     {
-
+      hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation();
         if ( PhotonNetwork.isMasterClient )
         {
               Player actingPlayer = null;
@@ -311,6 +331,7 @@ public class GameManager : Photon.MonoBehaviour
                     if(activatedHidingSpot.GetTrap() != null)
                     {
 
+                        this.photonView.RPC( "CreateExplosion", PhotonTargets.AllViaServer, actingPlayer.transform.position);
                       //TODO: trap logic
                       actingPlayer.ServerUpdateLives(1);
                       //set the spot to no longer be trapped since it was just used

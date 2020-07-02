@@ -1562,6 +1562,7 @@ GameObject:
   - component: {fileID: 132943387}
   - component: {fileID: 132943389}
   - component: {fileID: 132943388}
+  - component: {fileID: 132943392}
   m_Layer: 0
   m_Name: box (2)
   m_TagString: interact
@@ -1724,6 +1725,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &132943392
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 132943385}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: db11a8957b2627e4596eaaa31e7bb2c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &135049583
 GameObject:
   m_ObjectHideFlags: 0
@@ -6261,6 +6281,7 @@ GameObject:
   - component: {fileID: 594580547}
   - component: {fileID: 594580549}
   - component: {fileID: 594580548}
+  - component: {fileID: 594580552}
   m_Layer: 0
   m_Name: box (3)
   m_TagString: interact
@@ -6423,6 +6444,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &594580552
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 594580545}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: db11a8957b2627e4596eaaa31e7bb2c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &611111689
 GameObject:
   m_ObjectHideFlags: 0
@@ -7147,13 +7187,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 674365202}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.20277387, y: 0.9762715, z: 0.0025439137, w: 0.07596229}
   m_LocalPosition: {x: 8.542469, y: 1.0048237, z: 12.952762}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 1.4810001, y: 171.408, z: 23.356}
 --- !u!1 &678903175
 GameObject:
   m_ObjectHideFlags: 0
@@ -7733,6 +7773,7 @@ GameObject:
   - component: {fileID: 722099642}
   - component: {fileID: 722099644}
   - component: {fileID: 722099643}
+  - component: {fileID: 722099647}
   m_Layer: 0
   m_Name: bed
   m_TagString: interact
@@ -7897,6 +7938,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &722099647
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722099640}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: db11a8957b2627e4596eaaa31e7bb2c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &740942211
 GameObject:
   m_ObjectHideFlags: 0
@@ -8088,6 +8148,7 @@ GameObject:
   - component: {fileID: 781929920}
   - component: {fileID: 781929922}
   - component: {fileID: 781929921}
+  - component: {fileID: 781929925}
   m_Layer: 0
   m_Name: TV
   m_TagString: interact
@@ -8251,6 +8312,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &781929925
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781929918}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: db11a8957b2627e4596eaaa31e7bb2c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &782162712
 GameObject:
   m_ObjectHideFlags: 0
@@ -9893,6 +9973,7 @@ GameObject:
   - component: {fileID: 960428922}
   - component: {fileID: 960428924}
   - component: {fileID: 960428923}
+  - component: {fileID: 960428927}
   m_Layer: 0
   m_Name: box (1)
   m_TagString: interact
@@ -10055,6 +10136,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &960428927
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960428920}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: db11a8957b2627e4596eaaa31e7bb2c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &962740008
 GameObject:
   m_ObjectHideFlags: 0
@@ -15323,6 +15423,7 @@ GameObject:
   - component: {fileID: 1506665158}
   - component: {fileID: 1506665160}
   - component: {fileID: 1506665159}
+  - component: {fileID: 1506665163}
   m_Layer: 0
   m_Name: bed (1)
   m_TagString: interact
@@ -15487,6 +15588,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1506665163
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1506665156}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: db11a8957b2627e4596eaaa31e7bb2c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1527197244
 GameObject:
   m_ObjectHideFlags: 0
@@ -16171,6 +16291,7 @@ GameObject:
   - component: {fileID: 1598612335}
   - component: {fileID: 1598612337}
   - component: {fileID: 1598612336}
+  - component: {fileID: 1598612340}
   m_Layer: 0
   m_Name: TV (1)
   m_TagString: interact
@@ -16334,6 +16455,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1598612340
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1598612333}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: db11a8957b2627e4596eaaa31e7bb2c1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1605843776
 GameObject:
   m_ObjectHideFlags: 0
@@ -18293,6 +18433,8 @@ MonoBehaviour:
   playertrapimages: {fileID: 1332968859}
   rooms: {fileID: 283930881}
   idleplayerManager: {fileID: 362790910}
+  debugExplosion: {fileID: 7312031365088650165, guid: c8be7267a362f304c8d8dc0ee2312829,
+    type: 3}
 --- !u!4 &1813329208
 Transform:
   m_ObjectHideFlags: 0

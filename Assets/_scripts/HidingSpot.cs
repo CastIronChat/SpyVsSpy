@@ -14,11 +14,13 @@ public class HidingSpot : MonoBehaviour
 
     public Trap trap;
 
+    private Animator anim;
+
     void Update()
     {
 
         if(Input.GetKeyDown(KeyCode.Q))
-        {SetCollectible(1);}
+        {PlayAnimation();}
     }
 
     //send ints over the network and compare them to a master list
@@ -45,4 +47,12 @@ public class HidingSpot : MonoBehaviour
         gameManager = newGM;
         spotInList = newplace;
     }
+
+    public void PlayAnimation()
+    {
+      if(anim == null){anim = GetComponent<Animator>();}
+
+      anim.Play("hidingspot_search");
+    }
+
 }
