@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrapTypeRegistry : Registry<TrapTypeRegistry, TrapType> {}
+public class TrapTypeRegistry : Registry<TrapTypeRegistry, TrapType> {
+    public TrapTypeRegistry() : base(RegistryIds.TrapType) {}
+}
 
 /// Immutable data structure representing the "type" of a trap
 /// Player inventory contains a certain quantity of each trap "type"

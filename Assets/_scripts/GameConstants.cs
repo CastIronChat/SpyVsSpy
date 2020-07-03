@@ -23,6 +23,7 @@ public class GameConstants : MonoBehaviour
             {
                 var types = new List<TrapType>( GetComponentsInChildren<TrapType>() );
                 _trapTypes = new TrapTypeRegistry();
+                _trapTypes.registerAsSerializer();
                 foreach ( var type in types ) _trapTypes.addEntity( type );
             }
             return _trapTypes;
