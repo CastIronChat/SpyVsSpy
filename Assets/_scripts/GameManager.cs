@@ -24,7 +24,6 @@ public class GameManager : Photon.MonoBehaviour
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
-    public IconRowHUD mcguffinimages;
     public IconRowHUD playerinventoryimages;
     public IconRowHUD playertrapimages;
     public Transform rooms;
@@ -104,7 +103,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void rpcVoteForNewRoundType(int rndtype, int fromplayer)
     {
-        if ( playerManager.activePlayerCount > 1 )
+        if ( playerManager.activePlayers.Count > 1 )
         {
             StartRound();
         }
@@ -239,16 +238,16 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void rpcPlayerSetTrapForHidingSpot(int player, int whichHidingSpot, TrapType trapType)
+    public void rpcPlayerSetTrapForHidingSpot(int playerId, int whichHidingSpot, TrapType trapType)
     {
 
       // this.photonView.RPC( "AnimateHidingSpot", PhotonTargets.AllViaServer, whichHidingSpot);
       if ( PhotonNetwork.isMasterClient )
       {
-        foreach(Transform el in playerManager.transform)
+        foreach(Player player in playerManager.activePlayers)
         {
             //check that the player has the trap to use
-            if(el.GetComponent<PhotonView>().ownerId == player )
+            if(player.GetComponent<PhotonView>().ownerId == playerId )
             {
               //check that the hiding spot exists and isnt already trapped
                   HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
@@ -256,19 +255,19 @@ public class GameManager : Photon.MonoBehaviour
                   {
                         if( temphidingspot.trapValue != null)
                         {
-                          this.photonView.RPC( "CreateExplosion", PhotonTargets.AllViaServer, el.position);
+                          this.photonView.RPC( "CreateExplosion", PhotonTargets.AllViaServer, player.transform.position);
 
-                          el.GetComponent<Player>().ServerUpdateLives(1);
+                          player.ServerUpdateLives(1);
                           //set the spot to no longer be trapped since it was just used
                           this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
                           this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
                         }
                           else
                         {
-                              if(el.GetComponent<Player>().GetInventory().HasTrap(trapType))
+                              if(player.GetInventory().HasTrap(trapType))
                               {
-                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, (TrapType)null);
-                                el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
+                                player.photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[0]);
+                                player.photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
                                 this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
                               }
                         }

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class Player : Photon.MonoBehaviour
+
+public class PlayerRegistry : Registry<PlayerRegistry, Player> {}
+public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
 {
     public GameManager gameManager;
     public int numberInList, playerNum, score, lostScore, money;
@@ -24,6 +26,10 @@ public class Player : Photon.MonoBehaviour
     private SpriteRenderer heldSprite;
 
     private float iFrames; //invincibility frames
+
+    // TODO use viewID as uniqueID.  Somehow configure registry to support this automatically.
+    public int uniqueId { get; set; }
+    public object registry { get; set; }
 
     void Start()
     {

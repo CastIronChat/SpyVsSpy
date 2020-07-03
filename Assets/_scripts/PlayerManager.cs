@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public PlayerRegistry players = new PlayerRegistry();
     // Start is called before the first frame update
     void Start()
     {
@@ -16,19 +18,20 @@ public class PlayerManager : MonoBehaviour
 
     }
 
-    public IEnumerator<Player> activePlayers() {
-        foreach(var t in transform.getChildTransformEnumerator().ToEnumerable()) {
-            var player = t.GetComponent<Player>();
-            Debug.Assert(player != null);
-            yield return player;
-        }
+    // private HashSet<Player> _inactivePlayers = new HashSet<Player>();
+    // private HashSet<Player> _activePlayers = new HashSet<Player>();
+    // private HashSet<Player> _allPlayers = new HashSet<Player>();
+    public ReadOnlyCollection<Player> activePlayers {
+        // get => _activePlayers;
+        get => new ReadOnlyCollection<Player>(transform.GetComponentsInChildren<Player>());
     }
-
-    public int activePlayerCount {
-        get => transform.childCount;
+    public ReadOnlyCollection<Player> idlePlayers {
+        // get => _inactivePlayers;
+        get => new ReadOnlyCollection<Player>(GameManager.getGlobalSingletonGameManager().idleplayerManager.transform.GetComponentsInChildren<Player>());
     }
 
     public int playerCount {
         get => this.players.Count;
     }
+
 }

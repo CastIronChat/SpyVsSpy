@@ -7,26 +7,24 @@ using UnityEngine;
 /// held by any players.
 public class McGuffinHUD : MonoBehaviour
 {
-    private GameManager _gm;
-    GameManager gm
-    {
-        get
-        {
-            if ( _gm == null ) _gm = GameManager.getGlobalSingletonGameManager();
-            return _gm;
-        }
+    GameManager gm;
+
+    void Start() {
+        gm = GameManager.getGlobalSingletonGameManager();
     }
+
     public IconRowHUD icons;
     void Update()
     {
         // Discover all collectibles being held by a player
         var collectiblesHeld = new HashSet<CollectibleType>();
-        foreach ( var player in gm.playerManager.activePlayers().ToEnumerable() )
+        foreach ( var player in gm.playerManager.activePlayers )
         {
-            foreach ( var collectible in player.GetInventory().collectibles )
+            foreach ( var pair in player.GetInventory().collectibles )
             {
-                if ( collectible.Value > 0 )
-                    collectiblesHeld.Add( collectible.Key );
+                if ( pair.Value > 0 ) {
+                    collectiblesHeld.Add( pair.Key );
+                }
             }
         }
 
@@ -39,6 +37,8 @@ public class McGuffinHUD : MonoBehaviour
             {
                 icons.setIconVisibility( icon, true );
                 icons.setIcon( icon, collectibleType.sprite );
+                icon++;
+            } else {
             }
         }
         for ( ; icon < icons.getIconCount(); icon++ )
