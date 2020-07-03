@@ -55,6 +55,16 @@ where E : Entity<R, E>
     {
         return getEntity( id );
     }
+    public IEnumerable __getEntityEnumerator()
+    {
+        foreach(KeyValuePair<Id, E> pair in entities) {
+            yield return pair;
+        }
+    }
+    public object __getEntitiesAsObject()
+    {
+        return entities;
+    }
     public void addEntity(E entity)
     {
         Id id = idAllocator.nextId();
@@ -207,6 +217,8 @@ public class DefaultIdAllocator : IdAllocator
 public interface NonGenericRegistry
 {
     object getEntityAsObject(Id id);
+    IEnumerable __getEntityEnumerator();
+    object __getEntitiesAsObject();
 
     Id id { get; }
 }
