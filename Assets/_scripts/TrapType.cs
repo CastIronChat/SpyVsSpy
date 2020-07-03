@@ -18,6 +18,11 @@ public class TrapType : MonoBehaviour, Entity<TrapTypeRegistry, TrapType>
     /// True if this is the special "None" trap type.  Useful, e.g., so we can still
     /// describe how to render it in the UI, for example, as a bare hands icon in the trap selection HUD.
     public bool isNoneTrap;
+
+    public GameObject trapEffect;
+    public bool onlyHitTarget, hasKnockback, spawnOnPlayer; //or center in the room
+    public float lifeTime, knockbackForce, dmgPerSecond, oneTimeDamage;
+
     /// Can this trap be used?  For example, if it's the "None" trap then it cannot.
     public bool isUsable {
         get => !isNoneTrap;

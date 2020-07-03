@@ -78,4 +78,6 @@ MonoBehaviour:
   - rpcAttackAnimation
   - CreateExplosion
   - AnimateHidingSpot
+  - ActivateTrapEffect
+  - rpcGetThrownByTrap
   DisableAutoOpenWizard: 1

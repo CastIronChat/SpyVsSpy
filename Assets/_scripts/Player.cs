@@ -381,6 +381,14 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     }
 
     [PunRPC]
+    public void rpcGetThrownByTrap(Vector3 dir,float lockout)
+    {
+      GetComponent<Rigidbody2D>().velocity = dir;
+      inputLockTimer = lockout;
+
+    }
+
+    [PunRPC]
     public void rpcAttackAnimation()
     {
       inputLockTimer = attackInputLock;
@@ -407,7 +415,6 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
             anim.Play("reversestab");
           }
         }
-            // gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer,  );
 
     }
 
@@ -416,7 +423,6 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
 
       RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance);
 
-        // if (hit.transform.GetComponent<HidingSpot>() != null)
         if (hit.transform.GetComponent<HidingSpot>() != null)
         {
           gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(),whattrap );
