@@ -175,14 +175,9 @@ public class GameManager : Photon.MonoBehaviour
             scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
 
             nextPlayerInOrder.transform.position = rooms.GetChild(playercount).position;
-            if(nextPlayerInOrder.GetComponent<Player>().cam != null){
-              //set the camera to the player spawn location while keeping it's Z coordinate
-                Transform playercam = nextPlayerInOrder.GetComponent<Player>().cam.transform;
-              playercam.position = new Vector3( nextPlayerInOrder.transform.position.x, nextPlayerInOrder.transform.position.y,playercam.position.z) ;
-            }
 
-              playercount++;
-              //if there is somehow more players than there are scoreboard elements break out of the loop
+            playercount++;
+            //if there is somehow more players than there are scoreboard elements break out of the loop
             if ( playercount >= scoreBoard.transform.childCount ) { return; }
 
         }

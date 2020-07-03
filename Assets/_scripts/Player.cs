@@ -12,7 +12,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     public int lives, gamesPlayed, wins;
     public float speed,networkspeed = 15.0f,interactDistance = 0.4f,attackInputLock = 0.5f,inputLockTimer;
     public string name;
-    public GameObject myScoreCard,cam;
+    public GameObject myScoreCard;
     public Material myColor;
     public List<Color> colors;
     /// TODO support diagonal movement?
@@ -65,7 +65,6 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
         transform.parent = gameManager.playerManager.transform;
         if ( photonView.isMine )
         {
-          cam = GameObject.Find("Main Camera");
             playerNum = this.photonView.ownerId;
             name = PhotonNetwork.playerName;
             gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerNum, name );
