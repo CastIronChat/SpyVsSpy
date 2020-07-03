@@ -53,6 +53,7 @@ public class Player : Photon.MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         inventory = new Inventory();
+        inventory.traps[gameManager.gameConstants.trapTypes[0]] = 1;
         inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
         inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
         inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
