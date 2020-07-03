@@ -333,7 +333,7 @@ public class GameManager : Photon.MonoBehaviour
                               {
                                 if(actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
                                 {
-                                  actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible", PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue,activatedHidingSpot.collectibleValue);
+                                  actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible", PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue, 1);
 
 
                                   this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found");
