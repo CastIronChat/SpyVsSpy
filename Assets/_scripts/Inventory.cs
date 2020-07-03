@@ -106,13 +106,17 @@ public class Inventory {
         {
             IconRowHUD inventoryImages = gameManager.playertrapimages;
         int index = 0;
-        foreach(var type in trapTypes) {
+            inventoryImages.setCursorVisibility( false );
+            inventoryImages.setCursorPosition( 0 );
+            foreach ( var type in trapTypes )
+            {
             var count = traps[type];
-            inventoryImages.setIconVisibility(index, count > 0);
-            inventoryImages.setIcon(index, type.sprite);
-            if(equippedTrap == index) {
-                inventoryImages.setCursorVisibility(true);
-                inventoryImages.setCursorPosition(index);
+                inventoryImages.setIconVisibility( index, count > 0 );
+                inventoryImages.setIcon( index, type.sprite );
+                if ( equippedTrapIndex == index )
+                {
+                    inventoryImages.setCursorVisibility( true );
+                    inventoryImages.setCursorPosition( index );
             }
             index++;
         }
@@ -121,18 +125,21 @@ public class Inventory {
             IconRowHUD inventoryImages = gameManager.playerinventoryimages;
         int index = 0;
         int slot = 0;
-        inventoryImages.setCursorVisibility(false);
-        foreach(var type in collectibleTypes) {
+            inventoryImages.setCursorVisibility( false );
+            foreach ( var type in collectibleTypes )
+            {
             var count = collectibles[type];
-            if(count > 0) {
-                inventoryImages.setIconVisibility(slot, true);
-                inventoryImages.setIcon(slot, type.sprite);
+                if ( count > 0 )
+                {
+                    inventoryImages.setIconVisibility( slot, true );
+                    inventoryImages.setIcon( slot, type.sprite );
                 slot++;
             }
             index++;
         }
-        for(; slot < inventoryImages.getIconCount(); slot++) {
-            inventoryImages.setIconVisibility(slot, false);
+            for ( ; slot < inventoryImages.getIconCount(); slot++ )
+            {
+                inventoryImages.setIconVisibility( slot, false );
         }
         }
 
