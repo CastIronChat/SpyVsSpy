@@ -24,12 +24,13 @@ public class GameManager : Photon.MonoBehaviour
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
-    public IconRowHUD mcguffinimages;
     public IconRowHUD playerinventoryimages;
     public IconRowHUD playertrapimages;
     public Transform rooms;
     public Transform idleplayerManager;
 
+    //placeholder that needs to be moved to the master trap logic
+    public GameObject debugExplosion;
 
     public void Awake()
     {
@@ -102,7 +103,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void rpcVoteForNewRoundType(int rndtype, int fromplayer)
     {
-        if ( playerManager.activePlayerCount > 1 )
+        if ( playerManager.activePlayers.Count > 1 )
         {
             StartRound();
         }
@@ -174,14 +175,9 @@ public class GameManager : Photon.MonoBehaviour
             scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
 
             nextPlayerInOrder.transform.position = rooms.GetChild(playercount).position;
-            if(nextPlayerInOrder.GetComponent<Player>().cam != null){
-              //set the camera to the player spawn location while keeping it's Z coordinate
-                Transform playercam = nextPlayerInOrder.GetComponent<Player>().cam.transform;
-              playercam.position = new Vector3( nextPlayerInOrder.transform.position.x, nextPlayerInOrder.transform.position.y,playercam.position.z) ;
-            }
 
-              playercount++;
-              //if there is somehow more players than there are scoreboard elements break out of the loop
+            playercount++;
+            //if there is somehow more players than there are scoreboard elements break out of the loop
             if ( playercount >= scoreBoard.transform.childCount ) { return; }
 
         }
@@ -223,14 +219,30 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void rpcPlayerSetTrapForHidingSpot(int player, int whichHidingSpot, TrapType trapType)
+    public void CreateExplosion(Vector3 explosionLocation)
     {
+      //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+      Instantiate(debugExplosion,explosionLocation,debugExplosion.transform.rotation);
+    }
+
+    [PunRPC]
+    public void AnimateHidingSpot(int whichHidingSpot)
+    {
+      //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+       hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation();
+    }
+
+    [PunRPC]
+    public void rpcPlayerSetTrapForHidingSpot(int playerId, int whichHidingSpot, TrapType trapType)
+    {
+
+      // this.photonView.RPC( "AnimateHidingSpot", PhotonTargets.AllViaServer, whichHidingSpot);
       if ( PhotonNetwork.isMasterClient )
       {
-        foreach(Transform el in playerManager.transform)
+        foreach(Player player in playerManager.activePlayers)
         {
             //check that the player has the trap to use
-            if(el.GetComponent<PhotonView>().ownerId == player )
+            if(player.GetComponent<PhotonView>().ownerId == playerId )
             {
               //check that the hiding spot exists and isnt already trapped
                   HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
@@ -238,17 +250,19 @@ public class GameManager : Photon.MonoBehaviour
                   {
                         if( temphidingspot.trapValue != null)
                         {
-                          el.GetComponent<Player>().ServerUpdateLives(1);
+                          this.photonView.RPC( "CreateExplosion", PhotonTargets.AllViaServer, player.transform.position);
+
+                          player.ServerUpdateLives(1);
                           //set the spot to no longer be trapped since it was just used
                           this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Trap went off");
                           this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
                         }
                           else
                         {
-                              if(el.GetComponent<Player>().GetInventory().HasTrap(trapType))
+                              if(player.GetInventory().HasTrap(trapType))
                               {
-                                el.GetComponent<PhotonView>().RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, (TrapType)null);
-                                el.GetComponent<PhotonView>().RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
+                                player.photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[0]);
+                                player.photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
                                 this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
                               }
                         }
@@ -287,7 +301,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void OpenHidingSpot(int whichPlayer, int whichHidingSpot)
     {
-
+      hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation();
         if ( PhotonNetwork.isMasterClient )
         {
               Player actingPlayer = null;
@@ -311,6 +325,7 @@ public class GameManager : Photon.MonoBehaviour
                     if(activatedHidingSpot.GetTrap() != null)
                     {
 
+                        this.photonView.RPC( "CreateExplosion", PhotonTargets.AllViaServer, actingPlayer.transform.position);
                       //TODO: trap logic
                       actingPlayer.ServerUpdateLives(1);
                       //set the spot to no longer be trapped since it was just used
@@ -333,7 +348,7 @@ public class GameManager : Photon.MonoBehaviour
                               {
                                 if(actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
                                 {
-                                  actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible", PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue,activatedHidingSpot.collectibleValue);
+                                  actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible", PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue, 1);
 
 
                                   this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found");

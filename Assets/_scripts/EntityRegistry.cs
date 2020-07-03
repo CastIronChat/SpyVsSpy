@@ -5,6 +5,15 @@ using ExitGames.Client.Photon;
 using UnityEngine;
 using Id = System.Int32;
 
+public static class RegistryIds {
+    public static Id TrapType = 1;
+    public static Id CollectibleType = 2;
+    public static Id Player = 3;
+    public static Id HidingSpot = 4;
+    // Used by ID allocator to allocate new ones for other registries
+    public static Id unclaimedIdsStartAt = 100;
+}
+
 /// Stores a collection of entities, assigning them unique IDs, so that networked RPC calls
 /// can refer to them by ID.
 /// The entities also store a reference to the registry.
@@ -16,19 +25,32 @@ where E : Entity<R, E>
     {
         idAllocator = new DefaultIdAllocator();
         id = RegistryHelper.registryIdAllocator.nextId();
-        RegistryHelper.registries.Add(id, new WeakReference<object>(this));
     }
-    public int id {get;set;}
+    public Registry(Id id)
+    {
+        idAllocator = new DefaultIdAllocator();
+        this.id = id;
+    }
     public Registry(IdAllocator idAllocator)
     {
         this.idAllocator = idAllocator;
+        this.id = RegistryHelper.registryIdAllocator.nextId();
     }
+
+    // tell photon to use this instance as the serializer / deserializer, bumping off any previously-registered Registry
+    public void registerAsSerializer() {
+        // TODO If there is a previously-registered registry, do something to it
+        // to make it "disabled" so that accidentally using entities from it will throw an error?
+        RegistryHelper.registries[id] = new WeakReference<object>( this );
+    }
+    public int id { get; set; }
     private IdAllocator idAllocator;
 
     /// Use a sorted dictionary so that entities are stored in Id order, like we did with the List<> prior.
     /// Sometimes sorting is important to make sure inventory items appear in predictable order.
     private SortedDictionary<Id, E> entities = new SortedDictionary<Id, E>();
-    public int Count {
+    public int Count
+    {
         get => entities.Count;
     }
 
@@ -50,8 +72,9 @@ where E : Entity<R, E>
         entities.TryGetValue( id, out entity );
         return entity;
     }
-    public object getEntityAsObject(Id id) {
-        return getEntity(id);
+    public object getEntityAsObject(Id id)
+    {
+        return getEntity( id );
     }
     public void addEntity(E entity)
     {
@@ -84,14 +107,17 @@ where E : Entity<R, E>
         return entities.Values.GetEnumerator();
     }
 }
-public static class RegistryHelper {
+public static class RegistryHelper
+{
     // Based on samples from https://doc.photonengine.com/en-us/pun/current/reference/serialization-in-photon#streambuffer_method
     // Entity references are serialized and deserialized as:
     // 1x byte: is it null?  (1 for not null, 0 for null)
     // 4x bytes: Registry Id as int32, or 0 if null
     // 4x bytes: Id as int32, or 0 if null (valid ID can be zero)
 
-    public static IdAllocator registryIdAllocator = new DefaultIdAllocator();
+    public static IdAllocator registryIdAllocator = new DefaultIdAllocator(RegistryIds.unclaimedIdsStartAt);
+    // Maps from "type ID" to registry.
+    // For example, TrapType should have a "type ID" that is stable across all clients.
     public static Dictionary<Id, WeakReference<object>> registries = new Dictionary<Id, WeakReference<object>>();
     private static readonly byte[] memId = new byte[9];
     private static readonly short memLength = 9;
@@ -111,9 +137,10 @@ public static class RegistryHelper {
         }
         var registryReference = RegistryHelper.registries[registryId];
         object registryObject;
-        registryReference.TryGetTarget(out registryObject);
+        registryReference.TryGetTarget( out registryObject );
         var registry = (NonGenericRegistry)registryObject;
-        var entity = registry.getEntityAsObject(entityId);
+        if(registry == null) throw new Exception($"Attempting to deserialize Entity reference for registry ID ${registryId}: no registry registered with that ID.");
+        var entity = registry.getEntityAsObject( entityId );
         return entity;
     }
     public static short SerializeEntityReference(StreamBuffer outStream, object customobject)
@@ -123,11 +150,14 @@ public static class RegistryHelper {
         {
             byte[] bytes = memId;
             int index = 1;
-            if(entity != null) {
+            if ( entity != null )
+            {
                 bytes[0] = 1;
                 Protocol.Serialize( ((NonGenericRegistry)entity.registry).id, bytes, ref index );
                 Protocol.Serialize( entity.uniqueId, bytes, ref index );
-            } else {
+            }
+            else
+            {
                 bytes[0] = 0;
                 Protocol.Serialize( (Id)0, bytes, ref index );
                 Protocol.Serialize( (Id)0, bytes, ref index );
@@ -179,7 +209,7 @@ where E : Entity<R, E>
 public interface Entity<R, E> : NonGenericEntity
 where R : Registry<R, E>
 where E : Entity<R, E>
-{}
+{ }
 
 /// Every registry needs a way to allocate unique IDs.
 public interface IdAllocator
@@ -191,6 +221,10 @@ public interface IdAllocator
 public class DefaultIdAllocator : IdAllocator
 {
 
+    public DefaultIdAllocator() {}
+    public DefaultIdAllocator(Id startAt) {
+        _nextId = startAt;
+    }
     private Id _nextId = 0;
     public Id nextId()
     {
@@ -198,12 +232,14 @@ public class DefaultIdAllocator : IdAllocator
     }
 }
 
-public interface NonGenericRegistry {
+public interface NonGenericRegistry
+{
     object getEntityAsObject(Id id);
 
     Id id { get; }
 }
-public interface NonGenericEntity {
-    Id uniqueId {get;set;}
-    object registry {get;set;}
+public interface NonGenericEntity
+{
+    Id uniqueId { get; set; }
+    object registry { get; set; }
 }

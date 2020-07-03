@@ -39,28 +39,18 @@ public class Door : MonoBehaviour
 
     public void OnTriggerExit2D(Collider2D col)
     {
-        if (col.GetComponent<Player>() != null )
+        var player = col.GetComponent<Player>();
+        if ( player != null )
         {
-          // col.transform.position = oppositeDoor.position;
-          // GetComponent<Collider2D>().isTrigger = false;
-          //   doorSprite.active = true;
-                if(col.GetComponent<Player>().cam != null){
+            // col.transform.position = oppositeDoor.position;
+            // GetComponent<Collider2D>().isTrigger = false;
+            //   doorSprite.active = true;
 
-                    Transform cam = col.GetComponent<Player>().cam.transform;
-
-                    if( Vector3.Distance(col.transform.position,transform.position + (0.1f * openDirection)) < Vector3.Distance(col.transform.position,transform.position ))
-                    {
-
-                        cam.position = new Vector3(transform.position.x,transform.position.y,cam.position.z) + (openDirection * roomsize );
-                    }else
-                    {
-                      cam.position = new Vector3(transform.position.x,transform.position.y,cam.position.z) - (openDirection * roomsize );
-                    }
-                    gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer,  spotInList ,false);
-              }
+            if(player.photonView.isMine) {
+                gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, spotInList, false );
+            }
         }
-
     }
-
-
 }
+
+
