@@ -9,7 +9,11 @@ public class Inventory {
     public HashSet<Collectible> items = new HashSet<Collectible>();
 
     private GameManager gameManager = GameManager.getGlobalSingletonGameManager();
-    public int inventorySize,equippedTrap;
+    public int inventorySize, equippedTrapIndex;
+    public TrapType equippedTrap {
+        get => gameManager.gameConstants.trapTypes[equippedTrapIndex];
+        set => equippedTrapIndex = value.uniqueId;
+    }
     public bool hasBriefcase = false;
     public Dictionary<CollectibleType, int> collectibles;
     public Dictionary<TrapType, int> traps;
@@ -49,32 +53,35 @@ public class Inventory {
         return MaxCarryingCapacity > CollectiblesHeldCount;
     }
 
+    public bool CanEquipTrap(TrapType trapType)
+    {
+        if(trapType.isNoneTrap) return true;
+        return HasTrap(trapType);
+    }
     public bool HasTrap(TrapType type)
     {
-        int countHeld;
-        traps.TryGetValue(type, out countHeld);
-        return countHeld > 0;
+        return traps[type] > 0;
     }
     public void UseTrap(TrapType type)
     {
-        int countHeld;
-        traps.TryGetValue(type, out countHeld);
-        if(countHeld > 0) {
-            traps.Add(type, countHeld - 1);
+        if ( traps[type] > 0 )
+        {
+            traps[type] -= 1;
         }
     }
 
     public void RemoveCollectible(CollectibleType type)
     {
-        int countHeld;
-        collectibles.TryGetValue(type, out countHeld);
-        if(countHeld > 0) {
-            collectibles.Add(type, countHeld - 1);
+        if(collectibles[type] > 0)
+        collectibles[type] -= 1;
         }
-    }
 
     //0 is none: the number of that trap in inventory
     public void AddTrap(TrapType type, int count)
+    {
+        traps[type] += count;
+    }
+    public void SetTrapCount(TrapType type, int count)
     {
       traps[type] = count;
     }
@@ -99,13 +106,17 @@ public class Inventory {
         {
             IconRowHUD inventoryImages = gameManager.playertrapimages;
         int index = 0;
-        foreach(var type in trapTypes) {
+            inventoryImages.setCursorVisibility( false );
+            inventoryImages.setCursorPosition( 0 );
+            foreach ( var type in trapTypes )
+            {
             var count = traps[type];
-            inventoryImages.setIconVisibility(index, count > 0);
-            inventoryImages.setIcon(index, type.sprite);
-            if(equippedTrap == index) {
-                inventoryImages.setCursorVisibility(true);
-                inventoryImages.setCursorPosition(index);
+                inventoryImages.setIconVisibility( index, count > 0 );
+                inventoryImages.setIcon( index, type.sprite );
+                if ( equippedTrapIndex == index )
+                {
+                    inventoryImages.setCursorVisibility( true );
+                    inventoryImages.setCursorPosition( index );
             }
             index++;
         }
@@ -114,18 +125,21 @@ public class Inventory {
             IconRowHUD inventoryImages = gameManager.playerinventoryimages;
         int index = 0;
         int slot = 0;
-        inventoryImages.setCursorVisibility(false);
-        foreach(var type in collectibleTypes) {
+            inventoryImages.setCursorVisibility( false );
+            foreach ( var type in collectibleTypes )
+            {
             var count = collectibles[type];
-            if(count > 0) {
-                inventoryImages.setIconVisibility(slot, true);
-                inventoryImages.setIcon(slot, type.sprite);
+                if ( count > 0 )
+                {
+                    inventoryImages.setIconVisibility( slot, true );
+                    inventoryImages.setIcon( slot, type.sprite );
                 slot++;
             }
             index++;
         }
-        for(; slot < inventoryImages.getIconCount(); slot++) {
-            inventoryImages.setIconVisibility(slot, false);
+            for ( ; slot < inventoryImages.getIconCount(); slot++ )
+            {
+                inventoryImages.setIconVisibility( slot, false );
         }
         }
 

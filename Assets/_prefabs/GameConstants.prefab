@@ -43,8 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7190f0b12429314bb45e91cf3c40f19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  name: 
+  name: collectible4
   sprite: {fileID: 21300000, guid: 089191f4566585645b6664ca4c6eac6d, type: 3}
 --- !u!1 &3183641450730695679
 GameObject:
@@ -89,8 +88,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7190f0b12429314bb45e91cf3c40f19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  name: 
+  name: collectible3
   sprite: {fileID: 21300000, guid: 63fc0b786e3d7e843aa80f9906b91e0b, type: 3}
 --- !u!1 &3183641450789907925
 GameObject:
@@ -135,8 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7190f0b12429314bb45e91cf3c40f19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  name: 
+  name: collectible2
   sprite: {fileID: 21300000, guid: 4e25b9b17d157a04fba16590c25e2a8d, type: 3}
 --- !u!1 &3183641451028147871
 GameObject:
@@ -181,9 +178,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79cd41a3eafc745a2578e47af14fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 1
   name: traptype1
   sprite: {fileID: 21300000, guid: ea79f89f3e9d0df4f944ecd5564b2ab7, type: 3}
+  isNoneTrap: 0
 --- !u!1 &3183641451144219663
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,9 +224,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79cd41a3eafc745a2578e47af14fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 3
   name: toaster
   sprite: {fileID: 21300000, guid: e83d596ff7a9ec74daa47ce31d149fb2, type: 3}
+  isNoneTrap: 0
 --- !u!1 &3183641451528391585
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,6 +283,7 @@ MonoBehaviour:
   playerRespawnsAreLimited: 0
   playerMaxDeaths: 3
   playerMaxInventorySpace: 9
+  briefcaseGrantsExtraInventorySpace: 1
   roundMaxTimeSeconds: 180
   startingTraps: 3
   roundTimeIsLimited: 1
@@ -332,9 +330,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79cd41a3eafc745a2578e47af14fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  name: blank
+  name: No trap
   sprite: {fileID: 21300000, guid: e95eac9053395844fbb4f4ada979b2a7, type: 3}
+  isNoneTrap: 1
 --- !u!1 &3183641451820806356
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,9 +376,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79cd41a3eafc745a2578e47af14fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 4
   name: traptype4
   sprite: {fileID: 21300000, guid: 1f82d4a329de67844941f6d9a5694696, type: 3}
+  isNoneTrap: 0
 --- !u!1 &3183641452050416458
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,9 +422,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79cd41a3eafc745a2578e47af14fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 2
   name: traptype2
   sprite: {fileID: 21300000, guid: a5c91e45b34b26e4fa2de4b248500c31, type: 3}
+  isNoneTrap: 0
 --- !u!1 &3183641452164459325
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,8 +468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7190f0b12429314bb45e91cf3c40f19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
-  name: 
+  name: collectible1
   sprite: {fileID: 21300000, guid: 7cbb97ddf7cc0d544adb353172825069, type: 3}
 --- !u!1 &3183641452184168701
 GameObject:
@@ -516,6 +513,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7190f0b12429314bb45e91cf3c40f19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
   name: blank
   sprite: {fileID: 21300000, guid: e95eac9053395844fbb4f4ada979b2a7, type: 3}

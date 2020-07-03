@@ -15,24 +15,30 @@ public class GameConstants : MonoBehaviour
     public int startingTraps = 3;
     public bool roundTimeIsLimited = true;
     private TrapTypeRegistry _trapTypes;
-    public TrapTypeRegistry trapTypes {
-        get {
-            if(_trapTypes == null) {
-                var types = new List<TrapType>(GetComponentsInChildren<TrapType>());
+    public TrapTypeRegistry trapTypes
+    {
+        get
+        {
+            if ( _trapTypes == null )
+            {
+                var types = new List<TrapType>( GetComponentsInChildren<TrapType>() );
                 _trapTypes = new TrapTypeRegistry();
-                foreach(var type in types) _trapTypes.addEntity(type);
+                foreach ( var type in types ) _trapTypes.addEntity( type );
             }
             return _trapTypes;
         }
     }
     private CollectibleTypeRegistry _collectibleTypes;
     // Grab array of child components
-    public CollectibleTypeRegistry collectibleTypes {
-        get {
-            if(_collectibleTypes == null) {
-                var types = new List<CollectibleType>(GetComponentsInChildren<CollectibleType>());
+    public CollectibleTypeRegistry collectibleTypes
+    {
+        get
+        {
+            if ( _collectibleTypes == null )
+            {
+                var types = new List<CollectibleType>( GetComponentsInChildren<CollectibleType>() );
                 _collectibleTypes = new CollectibleTypeRegistry();
-                foreach(var type in types) _collectibleTypes.addEntity(type);
+                foreach ( var type in types ) _collectibleTypes.addEntity( type );
             }
             return _collectibleTypes;
         }
