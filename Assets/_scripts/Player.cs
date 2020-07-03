@@ -8,7 +8,7 @@ public class Player : Photon.MonoBehaviour
     public GameManager gameManager;
     public int numberInList, playerNum, score, lostScore, money;
     public int lives, gamesPlayed, wins;
-    public float speed,networkspeed = 12.0f,interactDistance = 0.4f;
+    public float speed,networkspeed = 15.0f,interactDistance = 0.4f,attackInputLock = 0.5f,inputLockTimer;
     public string name;
     public GameObject myScoreCard,cam;
     public Material myColor;
@@ -23,10 +23,7 @@ public class Player : Photon.MonoBehaviour
     private Quaternion serverRot;
     private SpriteRenderer heldSprite;
 
-    /// HACK there is no guarantee that these IDs are identical across the network.
-    /// We should be using Photon's viewID instead.  We can update Registry to do this.
-    public int uniqueId { get; set; }
-    public object registry { get; set; }
+    private float iFrames; //invincibility frames
 
     void Start()
     {
@@ -202,18 +199,27 @@ public class Player : Photon.MonoBehaviour
 
     void Update()
     {
+      //after taking damage to avoid double taps from the same source, add invincibility frames
+      if(iFrames > 0){iFrames -= Time.deltaTime;}
+
         if ( photonView.isMine )
         {
-          if(input.__debugInventoryResetDown())
+          //to prevent weapon spam and multi directional attack, have a brief input lock after attacking
+          if(inputLockTimer > 0){inputLockTimer -= Time.deltaTime;}
+          else
           {
-            inventory.traps[gameManager.gameConstants.trapTypes[0]] = 0;
-            inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
-            inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
-            inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
+              if(input.__debugInventoryResetDown())
+              {
+                inventory.traps[gameManager.gameConstants.trapTypes[0]] = 0;
+                inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
+                inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
+                inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
+              }
+                Move();
+                UseTraps();
+                if ( Input.GetKeyDown(KeyCode.Space)){TryToInteract();}
+                // if ( input.GetInteractDown() ){TryToInteract();}
           }
-            Move();
-            UseTraps();
-            if ( input.GetInteractDown() ){TryToInteract();}
         }
         else
         {
@@ -369,6 +375,37 @@ public class Player : Photon.MonoBehaviour
 
     }
 
+    [PunRPC]
+    public void rpcAttackAnimation()
+    {
+      inputLockTimer = attackInputLock;
+      rb.velocity = Vector3.zero;
+        if(GetComponent<SpriteRenderer>().flipX == false)
+        {
+          if(GetInventory().hasBriefcase == true)
+          {
+            anim.Play("punch");
+          }
+          else
+          {
+            anim.Play("stab");
+          }
+        }
+        else
+        {
+          if(GetInventory().hasBriefcase == true)
+          {
+            anim.Play("reversepunch");
+          }
+          else
+          {
+            anim.Play("reversestab");
+          }
+        }
+            // gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer,  );
+
+    }
+
     public void TryToPlantTrap(TrapType whattrap)
     {
 
@@ -387,8 +424,8 @@ public class Player : Photon.MonoBehaviour
 
       RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance);
 
-        // if (hit.transform.GetComponent<HidingSpot>() != null)
-        if (hit)
+
+        if (hit && (hit.transform.GetComponent<HidingSpot>() != null || hit.transform.GetComponent<Door>() != null))
         {
           // this.photonView.RPC( "rpcInteract", PhotonTargets.AllViaServer, CardinalDirectionHelper.ToVector3(facingDirection) );
           if (hit.transform.GetComponent<HidingSpot>() != null)
@@ -412,6 +449,24 @@ public class Player : Photon.MonoBehaviour
 
           }
         }
+        else
+        {
+          //if a hiding spot is not the closest object facing the player, they attack
+              this.photonView.RPC( "rpcAttackAnimation", PhotonTargets.AllViaServer);
+        }
+    }
+
+    public void OnTriggerEnter2D(Collider2D col)
+    {
+        //the server checks when a weapon triggers on a player character, and that the weapon is not their own
+        if ( PhotonNetwork.isMasterClient && col.gameObject.tag == "Weapon" && col.transform.parent != this.transform)
+        {
+
+            //after taking damage to avoid double taps from the same source, add invincibility frames
+            iFrames = 0.5f;
+            this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, lives - 1 );
+        }
+
     }
 
     public Inventory GetInventory()
