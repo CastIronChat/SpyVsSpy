@@ -5,6 +5,15 @@ using ExitGames.Client.Photon;
 using UnityEngine;
 using Id = System.Int32;
 
+public static class RegistryIds {
+    public static Id TrapType = 1;
+    public static Id CollectibleType = 2;
+    public static Id Player = 3;
+    public static Id HidingSpot = 4;
+    // Used by ID allocator to allocate new ones for other registries
+    public static Id unclaimedIdsStartAt = 100;
+}
+
 /// Stores a collection of entities, assigning them unique IDs, so that networked RPC calls
 /// can refer to them by ID.
 /// The entities also store a reference to the registry.
@@ -16,13 +25,25 @@ where E : Entity<R, E>
     {
         idAllocator = new DefaultIdAllocator();
         id = RegistryHelper.registryIdAllocator.nextId();
-        RegistryHelper.registries.Add( id, new WeakReference<object>( this ) );
     }
-    public int id { get; set; }
+    public Registry(Id id)
+    {
+        idAllocator = new DefaultIdAllocator();
+        this.id = id;
+    }
     public Registry(IdAllocator idAllocator)
     {
         this.idAllocator = idAllocator;
+        this.id = RegistryHelper.registryIdAllocator.nextId();
     }
+
+    // tell photon to use this instance as the serializer / deserializer, bumping off any previously-registered Registry
+    public void registerAsSerializer() {
+        // TODO If there is a previously-registered registry, do something to it
+        // to make it "disabled" so that accidentally using entities from it will throw an error?
+        RegistryHelper.registries[id] = new WeakReference<object>( this );
+    }
+    public int id { get; set; }
     private IdAllocator idAllocator;
 
     /// Use a sorted dictionary so that entities are stored in Id order, like we did with the List<> prior.
@@ -94,7 +115,9 @@ public static class RegistryHelper
     // 4x bytes: Registry Id as int32, or 0 if null
     // 4x bytes: Id as int32, or 0 if null (valid ID can be zero)
 
-    public static IdAllocator registryIdAllocator = new DefaultIdAllocator();
+    public static IdAllocator registryIdAllocator = new DefaultIdAllocator(RegistryIds.unclaimedIdsStartAt);
+    // Maps from "type ID" to registry.
+    // For example, TrapType should have a "type ID" that is stable across all clients.
     public static Dictionary<Id, WeakReference<object>> registries = new Dictionary<Id, WeakReference<object>>();
     private static readonly byte[] memId = new byte[9];
     private static readonly short memLength = 9;
@@ -116,6 +139,7 @@ public static class RegistryHelper
         object registryObject;
         registryReference.TryGetTarget( out registryObject );
         var registry = (NonGenericRegistry)registryObject;
+        if(registry == null) throw new Exception($"Attempting to deserialize Entity reference for registry ID ${registryId}: no registry registered with that ID.");
         var entity = registry.getEntityAsObject( entityId );
         return entity;
     }
@@ -197,6 +221,10 @@ public interface IdAllocator
 public class DefaultIdAllocator : IdAllocator
 {
 
+    public DefaultIdAllocator() {}
+    public DefaultIdAllocator(Id startAt) {
+        _nextId = startAt;
+    }
     private Id _nextId = 0;
     public Id nextId()
     {
