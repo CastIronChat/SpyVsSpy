@@ -19,6 +19,7 @@ public class GameConstants : MonoBehaviour
 
     public int roundMaxTimeSeconds = 60 * 3;
     public int startingTraps = 3;
+    public float poisonTime; //how long before a player takes damage from poison
     public bool roundTimeIsLimited = true;
     private TrapTypeRegistry _trapTypes;
     public TrapTypeRegistry trapTypes

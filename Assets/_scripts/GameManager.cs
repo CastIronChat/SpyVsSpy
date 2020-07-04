@@ -218,6 +218,24 @@ public class GameManager : Photon.MonoBehaviour
 
     }
 
+
+    public void PlayerEnterHidingSpot(int playerid, int trapspot, TrapType trapvalue)
+    {
+          if ( PhotonNetwork.isMasterClient )
+          {
+                this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerid, trapspot, trapvalue);
+          }
+    }
+
+    public void PlayerBumpHidingSpot(int playerid, int trapspot, TrapType trapvalue)
+    {
+          if ( PhotonNetwork.isMasterClient )
+          {
+                hidingSpotManager.GetHidingSpot(trapspot).PlayAnimation("bump");
+                this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerid, trapspot, trapvalue);
+          }
+    }
+
     [PunRPC]
     public void CreateExplosion(Vector3 explosionLocation)
     {
@@ -244,14 +262,17 @@ public class GameManager : Photon.MonoBehaviour
                 acting_Player = player;
               }
           }
-          foreach(Transform room in rooms)
-          {
-            if( Vector3.Distance(acting_Player.transform.position, room.position) < Vector3.Distance(acting_Player.transform.position, closestRoom.position))
-            {closestRoom = room;}
-          }
+          // foreach(Transform room in rooms)
+          // {
+          //   if( Vector3.Distance(acting_Player.transform.position, room.position) < Vector3.Distance(acting_Player.transform.position, closestRoom.position))
+          //   {closestRoom = room;}
+          // }
+
           //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
           if(tempTrap.spawnOnPlayer == true)
-          {Instantiate(tempTrap.trapEffect,acting_Player.transform.position,debugExplosion.transform.rotation);}
+          {
+            Instantiate(tempTrap.trapEffect,acting_Player.transform.position,debugExplosion.transform.rotation);
+          }
           else
           {
             Instantiate(tempTrap.trapEffect, hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position,debugExplosion.transform.rotation);
@@ -265,7 +286,7 @@ public class GameManager : Photon.MonoBehaviour
                     acting_Player.GetComponent<PhotonView>().RPC( "rpcGetThrownByTrap", PhotonTargets.AllViaServer, dir * tempTrap.knockbackForce, 1.0f);
                 }
 
-                acting_Player.ServerUpdateLives(1);
+                acting_Player.ServerUpdateLives(tempTrap.oneTimeDamage);
                 //set the spot to no longer be trapped since it was just used
                 this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, traptype.name);
                 this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
@@ -276,10 +297,10 @@ public class GameManager : Photon.MonoBehaviour
 
 
     [PunRPC]
-    public void AnimateHidingSpot(int whichHidingSpot)
+    public void AnimateHidingSpot(int whichHidingSpot,string animation)
     {
       //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
-       hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation();
+       hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation(animation);
     }
 
     [PunRPC]
@@ -306,12 +327,15 @@ public class GameManager : Photon.MonoBehaviour
                         }
                           else
                         {
+                          //always set the sprite to blank, even if the player doesnt have a trap, because it that scenario its a server/client/client info mismatch
+                          player.photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[0]);
                               if(player.GetInventory().HasTrap(trapType))
                               {
-                                player.photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[0]);
+
                                 player.photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
                                 this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
                               }
+
                         }
                   }
               return;
@@ -348,7 +372,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void OpenHidingSpot(int whichPlayer, int whichHidingSpot)
     {
-      hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation();
+      hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation("search");
         if ( PhotonNetwork.isMasterClient )
         {
               Player actingPlayer = null;
