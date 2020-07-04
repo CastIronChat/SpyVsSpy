@@ -7,6 +7,7 @@ public class HidingSpot : MonoBehaviour
     public GameManager gameManager;
     public HidingspotManager hidingspotManager;
     public int spotInList = -1;
+    public bool canBeBumpedInto;
     public TrapType trapValue;
     public int collectibleValue = 0;
 
@@ -20,7 +21,7 @@ public class HidingSpot : MonoBehaviour
     {
 
         if(Input.GetKeyDown(KeyCode.Q))
-        {PlayAnimation();}
+        {PlayAnimation("search");}
     }
 
     //send ints over the network and compare them to a master list
@@ -48,11 +49,29 @@ public class HidingSpot : MonoBehaviour
         spotInList = newplace;
     }
 
-    public void PlayAnimation()
+    public void PlayAnimation(string animation)
     {
       if(anim == null){anim = GetComponent<Animator>();}
 
-      anim.Play("hidingspot_search");
+      anim.Play(animation);
+    }
+
+    public void OnCollisionEnter2D(Collision2D col)
+    {
+        if( canBeBumpedInto && col.transform.GetComponent<Player>() && GetTrap() != null)
+        {
+            gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
+        }
+
+    }
+
+    public void OnTriggerEnter2D(Collider2D col)
+    {
+        if( col.transform.GetComponent<Player>() && GetTrap() != null)
+        {
+          gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
+        }
+
     }
 
 }
