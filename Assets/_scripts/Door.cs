@@ -25,7 +25,7 @@ public class Door : MonoBehaviour
     public void SetOpen(bool open)
     {
       GetComponent<Collider2D>().isTrigger = open;
-      doorSprite.active = !open;
+      doorSprite.SetActive( !open );
     }
 
     public int GetPlaceInList()
@@ -44,7 +44,7 @@ public class Door : MonoBehaviour
         {
             // col.transform.position = oppositeDoor.position;
             // GetComponent<Collider2D>().isTrigger = false;
-            //   doorSprite.active = true;
+            //   doorSprite.SetActive( true );
 
             if(player.photonView.isMine) {
                 gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, spotInList, false );
