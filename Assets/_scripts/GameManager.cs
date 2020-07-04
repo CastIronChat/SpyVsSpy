@@ -420,7 +420,6 @@ public class GameManager : Photon.MonoBehaviour
 
     public void PopulateScoreBoard(int newPlayer, string newname)
     {
-        int cardcount = 0;
         int playercount = 0;
 
         Transform nextPlayerInOrder = playerManager.transform.GetChild( 0 );
