@@ -5,6 +5,12 @@ using UnityEngine;
 /// Not sure if this makes sense, but we can sync game constants so we can tweak values while playing
 public class GameConstants : MonoBehaviour
 {
+    [Description(@"
+        In the future, we can sync all these values over the network.
+
+        Might be useful for playtesting since we can reconfigure parameters from one client,
+        and it'll affect the whole game.
+    ")]
     public bool playerRespawnsAreLimited = false;
     public int playerMaxDeaths = 3;
     public int playerMaxInventorySpace = 3;
