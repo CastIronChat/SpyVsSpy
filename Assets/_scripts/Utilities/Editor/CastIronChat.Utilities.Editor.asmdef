@@ -1,0 +1,14 @@
+{
+    "name": "CastIronChat.Utilities.Editor",
+    "references": [
+        "GUID:e3111cb03180b9f45890d5f0c2561d54"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
