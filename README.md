@@ -20,3 +20,12 @@ GameConstants
 ### MISC
 
 [FormerlySerializedAs("yourVariablesPreviousName")]
+
+## Inventory networking
+
+Player's inventory is observable via Photon's standard syncing mechanism.
+Traps are set via ordered messages: set trap UUID on target UUID
+
+Items are moved via ordered messages:
+- move item from player to hidingspot
+- move item from hiding spot to player
