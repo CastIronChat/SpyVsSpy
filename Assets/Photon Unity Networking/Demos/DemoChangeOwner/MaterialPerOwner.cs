@@ -26,11 +26,11 @@ public class MaterialPerOwner : Photon.MonoBehaviour
                 m_Renderer.material.color = FindObjectOfType<ColorPerPlayer>().Colors[index];
                 this.assignedColorForUserId = this.photonView.ownerId;
             }
-            catch (Exception e)
+            catch
             {
                 //nothing
             }
-           
+
             //Debug.Log("Switched Material to: " + this.assignedColorForUserId + " " + this.renderer.material.GetInstanceID());
         }
     }

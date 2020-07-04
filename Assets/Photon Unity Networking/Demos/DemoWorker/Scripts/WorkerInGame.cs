@@ -37,7 +37,6 @@ public class WorkerInGame : Photon.MonoBehaviour
     {
         Debug.Log("OnMasterClientSwitched: " + player);
 
-        string message;
         // InRoomChat chatComponent = GetComponent<InRoomChat>();  // if we find a InRoomChat component, we print out a short message
 
         // if (chatComponent != null)
