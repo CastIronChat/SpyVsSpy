@@ -20,23 +20,26 @@ public class SizeReference : MonoBehaviour
     private Matrix4x4 cornerMatrix {
         get => transform.localToWorldMatrix * Matrix4x4.Scale(size / 2);
     }
-    Vector3 upperRightCorner {
+    public Vector3 upperRightCorner {
         get => cornerMatrix.MultiplyPoint(Vector2.up + Vector2.right);
     }
-    Vector3 upperLeftCorner {
+    public Vector3 upperLeftCorner {
         get => cornerMatrix.MultiplyPoint(Vector2.up + Vector2.left);
     }
-    Vector3 lowerLeftCorner {
+    public Vector3 lowerLeftCorner {
         get => cornerMatrix.MultiplyPoint(Vector2.down + Vector2.left);
     }
-    Vector3 lowerRightCorner {
+    public Vector3 lowerRightCorner {
         get => cornerMatrix.MultiplyPoint(Vector2.down + Vector2.right);
     }
-    Vector2 globalSize {
+    public Vector2 globalSize {
         get => new Vector2(transform.lossyScale.x * size.x, transform.lossyScale.y * size.y);
     }
-    Vector3 height {
-        get => cornerMatrix.MultiplyPoint(Vector2.right);
+    public float width {
+        get => transform.lossyScale.x * size.x;
+    }
+    public float height {
+        get => transform.lossyScale.y * size.y;
     }
     void OnDrawGizmosSelected()
     {
@@ -47,7 +50,6 @@ public class SizeReference : MonoBehaviour
         draw(false);
     }
     void draw(bool selected) {
-        Gizmos.DrawCube(lowerLeftCorner, Vector3.one);
         Gizmos.color = selected ? selectedColor : normalColor;
         Gizmos.matrix = matrix;
         Gizmos.DrawWireCube(Vector3.zero, Vector3.one);

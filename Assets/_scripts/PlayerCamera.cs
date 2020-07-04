@@ -22,8 +22,8 @@ public class PlayerCamera : MonoBehaviour, IDisposable
         var roomSizeReference = manager.roomSizeReference;
         // Camera snaps to a grid.
         // A dummy box collider is used as a visual reference of this grid.
-        float roomWidth = roomSizeReference.size.x;
-        float roomHeight = roomSizeReference.size.y;
+        float roomWidth = roomSizeReference.width;
+        float roomHeight = roomSizeReference.height;
 
         var cornerToMiddleOffset = new Vector3(roomWidth, roomHeight) / 2;
 

@@ -5,6 +5,6 @@ using UnityEngine;
 public class SizeReferenceEditor : Editor {
     void OnSceneGUI() {
         Handles.DrawCamera(new Rect(0,0,500,500), Camera.current);
-        Handles.PositionHandle(Vector3.zero, Quaternion.identity);
+        // Handles.PositionHandle(Vector3.zero, Quaternion.identity);
     }
 }
