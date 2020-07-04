@@ -21,7 +21,7 @@ public class WorkerMenu : MonoBehaviour
 
     public static readonly string SceneNameMenu = "worker_lobby_resave";
 
-    public static readonly string SceneNameGame = "Dan_game";
+    public static string SceneNameGame = "Dan_game";
 
     private string errorDialog;
     private double timeToClearDialog;

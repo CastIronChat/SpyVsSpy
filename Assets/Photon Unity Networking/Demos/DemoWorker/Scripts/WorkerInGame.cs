@@ -16,7 +16,7 @@ public class WorkerInGame : Photon.MonoBehaviour
         // in case we started this demo with the wrong scene being active, simply load the menu scene
         if (!PhotonNetwork.connected)
         {
-            SceneManager.LoadScene(WorkerMenu.SceneNameMenu);
+            BackToMenu();
             return;
         }
 
@@ -60,16 +60,14 @@ public class WorkerInGame : Photon.MonoBehaviour
     {
         Debug.Log("OnLeftRoom (local)");
 
-        // back to main menu
-        SceneManager.LoadScene(WorkerMenu.SceneNameMenu);
+        BackToMenu();
     }
 
     public void OnDisconnectedFromPhoton()
     {
         Debug.Log("OnDisconnectedFromPhoton");
 
-        // back to main menu
-        SceneManager.LoadScene(WorkerMenu.SceneNameMenu);
+        BackToMenu();
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -91,7 +89,12 @@ public class WorkerInGame : Photon.MonoBehaviour
     {
         Debug.Log("OnFailedToConnectToPhoton");
 
-        // back to main menu
+        BackToMenu();
+    }
+
+    private void BackToMenu() {
+        // For development, menu will return you to whichever scene you have open now.
+        WorkerMenu.SceneNameGame = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(WorkerMenu.SceneNameMenu);
     }
 }
