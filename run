@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+
+command=powershell
+if command -v pwsh &>/dev/null ; then
+    command=pwsh
+fi
+"$command" -NoProfile -NoLogo ./run.ps1 "$@"

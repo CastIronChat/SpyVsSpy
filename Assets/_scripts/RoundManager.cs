@@ -21,11 +21,11 @@ public class RoundManager : MonoBehaviour
     }
     public void DisableUi()
     {
-        roundUI.active = false;
+        roundUI.SetActive( false );
     }
     public void EnableUi()
     {
-        roundUI.active = true;
+        roundUI.SetActive( true );
     }
 
     public void SelectRound(int rndtype)

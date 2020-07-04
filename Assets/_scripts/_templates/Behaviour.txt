@@ -1,0 +1,19 @@
+using System;
+using System.Collections;
+using UnityEngine;
+
+[Autobind]
+public partial class ##NAME##
+{
+    void Awake() {
+        __Bind__();
+    }
+
+    //void FixedUpdate() {
+
+    //}
+
+    void OnDestroy() {
+        __Unbind__();
+    }
+}

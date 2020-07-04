@@ -41,9 +41,12 @@ public class CameraManager : MonoBehaviour
     public int addDummyCameras = 0;
 
     void OnValidate() {
-        Assert.NotNull(playerManager);
+        // TODO this runs on the prefab which, by necessity, has nulls here.
+        // So we must skip these assertions to avoid annoying log messages.
+
+        // Assert.NotNull(playerManager);
         Assert.NotNull(cameraPrefab);
-        Assert.NotNull(roomSizeReference);
+        // Assert.NotNull(roomSizeReference);
     }
     void Update()
     {

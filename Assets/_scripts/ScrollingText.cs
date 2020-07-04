@@ -31,14 +31,14 @@ public class ScrollingText : MonoBehaviour
         {
             scrollingTextParent.GetChild( count ).GetChild( 1 ).GetComponent<Text>().text = scrollingTextParent.GetChild( count - 1 ).GetChild( 1 ).GetComponent<Text>().text;
             if ( scrollingTextParent.GetChild( count ).GetChild( 1 ).GetComponent<Text>().text.Length > 0 )
-            { scrollingTextParent.GetChild( count ).GetChild( 0 ).gameObject.active = true; }
-            else { scrollingTextParent.GetChild( count ).GetChild( 0 ).gameObject.active = false; }
+            { scrollingTextParent.GetChild( count ).GetChild( 0 ).gameObject.SetActive( true ); }
+            else { scrollingTextParent.GetChild( count ).GetChild( 0 ).gameObject.SetActive( false ); }
             count--;
         }
         scrollingTextParent.GetChild( 0 ).GetChild( 1 ).GetComponent<Text>().text = newline;
         if ( scrollingTextParent.GetChild( 0 ).GetChild( 1 ).GetComponent<Text>().text.Length > 0 )
-        { scrollingTextParent.GetChild( 0 ).GetChild( 0 ).gameObject.active = true; }
-        else { scrollingTextParent.GetChild( 0 ).GetChild( 0 ).gameObject.active = false; }
+        { scrollingTextParent.GetChild( 0 ).GetChild( 0 ).gameObject.SetActive( true ); }
+        else { scrollingTextParent.GetChild( 0 ).GetChild( 0 ).gameObject.SetActive( false ); }
 
         timer = timeToClearMessage;
     }
