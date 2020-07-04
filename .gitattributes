@@ -1,0 +1,7 @@
+# Unity saves files as LF; that's what it expects.
+# .editorconfig should tell our code editors to do the same.
+
+# This tells git to normalize line endings when committing, *and*
+# to checkout with Linux line endings even on Windows.
+
+* text=auto eol=lf
