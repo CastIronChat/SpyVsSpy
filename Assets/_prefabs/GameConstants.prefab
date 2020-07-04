@@ -181,6 +181,15 @@ MonoBehaviour:
   name: traptype1
   sprite: {fileID: 21300000, guid: ea79f89f3e9d0df4f944ecd5564b2ab7, type: 3}
   isNoneTrap: 0
+  trapEffect: {fileID: 1201566434208985916, guid: 9027df7ed8e8dc14eb57b1779cac4af4,
+    type: 3}
+  onlyHitTarget: 0
+  hasKnockback: 0
+  spawnOnPlayer: 0
+  lifeTime: 0
+  knockbackForce: 0
+  dmgPerSecond: 0
+  oneTimeDamage: 0
 --- !u!1 &3183641451144219663
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,6 +236,15 @@ MonoBehaviour:
   name: toaster
   sprite: {fileID: 21300000, guid: e83d596ff7a9ec74daa47ce31d149fb2, type: 3}
   isNoneTrap: 0
+  trapEffect: {fileID: 7312031365088650165, guid: c8be7267a362f304c8d8dc0ee2312829,
+    type: 3}
+  onlyHitTarget: 0
+  hasKnockback: 1
+  spawnOnPlayer: 0
+  lifeTime: 0
+  knockbackForce: 5
+  dmgPerSecond: 0
+  oneTimeDamage: 0
 --- !u!1 &3183641451528391585
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,6 +351,14 @@ MonoBehaviour:
   name: No trap
   sprite: {fileID: 21300000, guid: e95eac9053395844fbb4f4ada979b2a7, type: 3}
   isNoneTrap: 1
+  trapEffect: {fileID: 0}
+  onlyHitTarget: 0
+  hasKnockback: 0
+  spawnOnPlayer: 0
+  lifeTime: 0
+  knockbackForce: 0
+  dmgPerSecond: 0
+  oneTimeDamage: 0
 --- !u!1 &3183641451820806356
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,6 +405,14 @@ MonoBehaviour:
   name: traptype4
   sprite: {fileID: 21300000, guid: 1f82d4a329de67844941f6d9a5694696, type: 3}
   isNoneTrap: 0
+  trapEffect: {fileID: 0}
+  onlyHitTarget: 0
+  hasKnockback: 0
+  spawnOnPlayer: 0
+  lifeTime: 0
+  knockbackForce: 0
+  dmgPerSecond: 0
+  oneTimeDamage: 0
 --- !u!1 &3183641452050416458
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,6 +459,15 @@ MonoBehaviour:
   name: traptype2
   sprite: {fileID: 21300000, guid: a5c91e45b34b26e4fa2de4b248500c31, type: 3}
   isNoneTrap: 0
+  trapEffect: {fileID: 7312031365088650165, guid: c8be7267a362f304c8d8dc0ee2312829,
+    type: 3}
+  onlyHitTarget: 0
+  hasKnockback: 0
+  spawnOnPlayer: 1
+  lifeTime: 0
+  knockbackForce: 0
+  dmgPerSecond: 0
+  oneTimeDamage: 0
 --- !u!1 &3183641452164459325
 GameObject:
   m_ObjectHideFlags: 0
