@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,5 +24,13 @@ public static class HelperMethods {
     {
         while ( enumerator.MoveNext() )
             yield return enumerator.Current;
+    }
+
+    public static TAccumulate Aggregate<TSource,TAccumulate> (this System.Collections.Generic.IEnumerable<TSource> source, TAccumulate seed, Func<TAccumulate,TSource,TAccumulate> func) {
+        TAccumulate r = seed;
+        foreach(var value in source) {
+            r = func(r, value);
+        }
+        return r;
     }
 }

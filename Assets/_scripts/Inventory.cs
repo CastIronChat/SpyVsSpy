@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 /// All the stuff a player is holding.
@@ -39,7 +38,7 @@ public class Inventory {
 
     /// Total number of collectibles held.  Sum of quantity held of each type.
     public int CollectiblesHeldCount {
-        get => (from count in collectibles.Values select count).Sum();
+        get => collectibles.Values.Aggregate(0, (a, b) => a + b);
     }
     public int MaxCarryingCapacity {
         get {
