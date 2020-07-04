@@ -9,4 +9,7 @@ using UnityEngine;
 public class Trap : MonoBehaviour
 {
     public TrapType type;
+
+
+
 }
