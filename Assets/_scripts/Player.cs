@@ -11,7 +11,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     public int numberInList, playerNum, score, lostScore, money;
     public int lives, gamesPlayed, wins;
     public float speed,networkspeed = 15.0f,interactDistance = 0.4f,attackInputLock = 0.5f,inputLockTimer;
-    public string name;
+    new public string name;
     public GameObject myScoreCard;
     public Material myColor;
     public List<Color> colors;
@@ -132,7 +132,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
         score = scoreChange;
         if ( myScoreCard != null )
         {
-            myScoreCard.active = true;
+            myScoreCard.SetActive( true );
 
         }
     }
@@ -142,7 +142,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     {
         if ( myScoreCard != null )
         {
-            myScoreCard.active = true;
+            myScoreCard.SetActive( true );
             myScoreCard.transform.GetChild( 1 ).GetComponent<Text>().text = name + " : ";
             myScoreCard.transform.GetChild( 2 ).GetComponent<Text>().text = inventory.GetTrapsString();
         }

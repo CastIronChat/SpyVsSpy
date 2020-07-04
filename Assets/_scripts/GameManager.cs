@@ -46,7 +46,7 @@ public class GameManager : Photon.MonoBehaviour
         }
         if ( PhotonNetwork.isMasterClient )
         {
-                startbutton.active = true;
+                startbutton.SetActive( true );
         }
 
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
@@ -114,7 +114,7 @@ public class GameManager : Photon.MonoBehaviour
     public void StartRound()
     {
 
-        startbutton.active = false;
+        startbutton.SetActive( false );
 
         int playercount = 0;
         foreach ( Transform go in idleplayerManager )
@@ -151,7 +151,7 @@ public class GameManager : Photon.MonoBehaviour
             lastPlayerNum = lowestPlayerNum;
             lowestPlayerNum = 99999;
 
-            scoreBoard.transform.GetChild( playercount ).gameObject.active = true;
+            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( true );
             scoreBoard.transform.GetChild( playercount ).GetChild( 1 ).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().name + " : ";
             scoreBoard.transform.GetChild( playercount ).GetChild( 2 ).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().score.ToString();
 
@@ -184,7 +184,7 @@ public class GameManager : Photon.MonoBehaviour
         //disable all unused scorecards
         while ( playercount < scoreBoard.transform.childCount )
         {
-            scoreBoard.transform.GetChild( playercount ).gameObject.active = false;
+            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( false );
             playercount++;
         }
 
@@ -461,7 +461,7 @@ public class GameManager : Photon.MonoBehaviour
             lastPlayerNum = lowestPlayerNum;
             lowestPlayerNum = 99999;
 
-            scoreBoard.transform.GetChild( playercount ).gameObject.active = true;
+            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( true );
 
             nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild( playercount ).gameObject;
             // nextPlayerInOrder.parent = playerManager.transform;
@@ -482,7 +482,7 @@ public class GameManager : Photon.MonoBehaviour
         }
         while ( playercount < scoreBoard.transform.childCount )
         {
-            scoreBoard.transform.GetChild( playercount ).gameObject.active = false;
+            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( false );
             playercount++;
         }
 

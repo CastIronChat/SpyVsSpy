@@ -5,7 +5,7 @@ using UnityEngine;
 public class CollectibleTypeRegistry : Registry<CollectibleTypeRegistry, CollectibleType> {}
 public class CollectibleType : MonoBehaviour, Entity<CollectibleTypeRegistry, CollectibleType>
 {
-    public string name;
+    new public string name;
     public Sprite sprite;
 
     public int uniqueId { get; set; }

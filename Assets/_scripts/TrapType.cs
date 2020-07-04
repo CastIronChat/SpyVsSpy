@@ -15,7 +15,7 @@ public class TrapType : MonoBehaviour, Entity<TrapTypeRegistry, TrapType>
 {
     public object registry { get; set; }
     public int uniqueId { get; set; }
-    public string name;
+    new public string name;
     public Sprite sprite;
     /// True if this is the special "None" trap type.  Useful, e.g., so we can still
     /// describe how to render it in the UI, for example, as a bare hands icon in the trap selection HUD.

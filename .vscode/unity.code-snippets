@@ -27,5 +27,14 @@
             "    $0",
             "}"
         ]
+    },
+    "summary": {
+        "prefix": "///",
+        "description": "///<summary>",
+        "body": [
+            "///<summary>",
+            "///",
+            "///</summary>"
+        ]
     }
 }
