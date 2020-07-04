@@ -20,7 +20,7 @@ public class CameraManager : MonoBehaviour
 
     public GameObject cameraPrefab;
 
-    public SizeReference roomSizeReference;
+    public RectTransformUtility roomSizeReference;
 
     List<PlayerCamera> cameras = new List<PlayerCamera>();
     List<PlayerCamera> dummyCameras = new List<PlayerCamera>();
