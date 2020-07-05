@@ -42,7 +42,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
         gameManager.playerManager.players.addEntity(this);
         transform.parent = gameManager.playerManager.transform;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        if ( photonView.isMine )
+        if ( photonView.isMine  )
         {
 
             rb.isKinematic = false;

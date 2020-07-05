@@ -112,6 +112,11 @@ public class HidingspotManager : MonoBehaviour
 
               hidingSpots.Add( closestHidingSpot.GetComponent<HidingSpot>() );
               closestHidingSpot.parent = activeHidingSpots;
+              // if(PhotonNetwork.isMasterClient == false)
+              // {
+              //   closestHidingSpot.GetComponent<Rigidbody2D>().isKinematic = true;
+              // }
+
           //  }
 
         }
