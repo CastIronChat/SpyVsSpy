@@ -21,6 +21,10 @@
             "using System.Collections;",
             "using System.Collections.Generic;",
             "using UnityEngine;",
+            "using UnityEngine.Assertions;",
+            "#if UNITY_EDITOR",
+            "using UnityEditor;",
+            "#endif",
             "",
             "public class $1 : MonoBehaviour",
             "{",
@@ -37,4 +41,251 @@
             "///</summary>"
         ]
     }
+    /*
+[DidReloadScripts]
+[InitializeOnLoad]
+[InitializeOnLoadMethod]
+[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+[InitializeOnEnterPlayMode]
+static void OnProjectLoadedInEditor()
+[ExecuteAlways]
+[ExecuteInEditor]
+[CustomEditor(typeof(SizeReference))]
+[TextArea(minlines, maxlines)]
+[Range(min, max)]
+[SerializeField]
+[OnOpenAsset]
+[PostProcessBuild]
+[PostProcessScene]
+
+Start()
+Update()
+FixedUpdate()
+LateUpdate()
+OnGUI()
+OnDisable()
+OnEnable()
+
+Awake	Awake is called when the script instance is being loaded.
+FixedUpdate	Frame-rate independent MonoBehaviour.FixedUpdate message for physics calculations.
+LateUpdate	LateUpdate is called every frame, if the Behaviour is enabled.
+OnAnimatorIK	Callback for setting up animation IK (inverse kinematics).
+OnAnimatorMove	Callback for processing animation movements for modifying root motion.
+OnApplicationFocus	Sent to all GameObjects when the player gets or loses focus.
+OnApplicationPause	Sent to all GameObjects when the application pauses.
+OnApplicationQuit	Sent to all game objects before the application quits.
+OnAudioFilterRead	If OnAudioFilterRead is implemented, Unity will insert a custom filter into the audio DSP chain.
+OnBecameInvisible	OnBecameInvisible is called when the renderer is no longer visible by any camera.
+OnBecameVisible	OnBecameVisible is called when the renderer became visible by any camera.
+OnCollisionEnter	OnCollisionEnter is called when this collider/rigidbody has begun touching another rigidbody/collider.
+OnCollisionEnter2D	Sent when an incoming collider makes contact with this object's collider (2D physics only).
+OnCollisionExit	OnCollisionExit is called when this collider/rigidbody has stopped touching another rigidbody/collider.
+OnCollisionExit2D	Sent when a collider on another object stops touching this object's collider (2D physics only).
+OnCollisionStay	:ref::OnCollisionStay is called once per frame for every collider/rigidbody that is touching rigidbody/collider.
+OnCollisionStay2D	Sent each frame where a collider on another object is touching this object's collider (2D physics only).
+OnConnectedToServer	Called on the client when you have successfully connected to a server.
+OnControllerColliderHit	OnControllerColliderHit is called when the controller hits a collider while performing a Move.
+OnDestroy	Destroying the attached Behaviour will result in the game or Scene receiving OnDestroy.
+OnDisable	This function is called when the behaviour becomes disabled.
+OnDisconnectedFromServer	Called on the client when the connection was lost or you disconnected from the server.
+OnDrawGizmos	Implement OnDrawGizmos if you want to draw gizmos that are also pickable and always drawn.
+OnDrawGizmosSelected	Implement OnDrawGizmosSelected to draw a gizmo if the object is selected.
+OnEnable	This function is called when the object becomes enabled and active.
+OnFailedToConnect	Called on the client when a connection attempt fails for some reason.
+OnFailedToConnectToMasterServer	Called on clients or servers when there is a problem connecting to the MasterServer.
+OnGUI	OnGUI is called for rendering and handling GUI events.
+OnJointBreak	Called when a joint attached to the same game object broke.
+OnJointBreak2D	Called when a Joint2D attached to the same game object breaks.
+OnMasterServerEvent	Called on clients or servers when reporting events from the MasterServer.
+OnMouseDown	OnMouseDown is called when the user has pressed the mouse button while over the Collider.
+OnMouseDrag	OnMouseDrag is called when the user has clicked on a Collider and is still holding down the mouse.
+OnMouseEnter	Called when the mouse enters the Collider.
+OnMouseExit	Called when the mouse is not any longer over the Collider.
+OnMouseOver	Called every frame while the mouse is over the Collider.
+OnMouseUp	OnMouseUp is called when the user has released the mouse button.
+OnMouseUpAsButton	OnMouseUpAsButton is only called when the mouse is released over the same Collider as it was pressed.
+OnNetworkInstantiate	Called on objects which have been network instantiated with Network.Instantiate.
+OnParticleCollision	OnParticleCollision is called when a particle hits a Collider.
+OnParticleSystemStopped	OnParticleSystemStopped is called when all particles in the system have died, and no new particles will be born. New particles cease to be created either after Stop is called, or when the duration property of a non-looping system has been exceeded.
+OnParticleTrigger	OnParticleTrigger is called when any particles in a Particle System meet the conditions in the trigger module.
+OnParticleUpdateJobScheduled	OnParticleUpdateJobScheduled is called when a Particle System's built-in update job has been scheduled.
+OnPlayerConnected	Called on the server whenever a new player has successfully connected.
+OnPlayerDisconnected	Called on the server whenever a player disconnected from the server.
+OnPostRender	OnPostRender is called after a camera finished rendering the Scene.
+OnPreCull	OnPreCull is called before a camera culls the Scene.
+OnPreRender	OnPreRender is called before a camera starts rendering the Scene.
+OnRenderImage	OnRenderImage is called after all rendering is complete to render image.
+OnRenderObject	OnRenderObject is called after camera has rendered the Scene.
+OnSerializeNetworkView	Used to customize synchronization of variables in a script watched by a network view.
+OnServerInitialized	Called on the server whenever a Network.InitializeServer was invoked and has completed.
+OnTransformChildrenChanged	This function is called when the list of children of the transform of the GameObject has changed.
+OnTransformParentChanged	This function is called when the parent property of the transform of the GameObject has changed.
+OnTriggerEnter	When a GameObject collides with another GameObject, Unity calls OnTriggerEnter.
+OnTriggerEnter2D	Sent when another object enters a trigger collider attached to this object (2D physics only).
+OnTriggerExit	OnTriggerExit is called when the Collider other has stopped touching the trigger.
+OnTriggerExit2D	Sent when another object leaves a trigger collider attached to this object (2D physics only).
+OnTriggerStay	OnTriggerStay is called once per physics update for every Collider other that is touching the trigger.
+OnTriggerStay2D	Sent each frame where another object is within a trigger collider attached to this object (2D physics only).
+OnValidate	This function is called when the script is loaded or a value is changed in the Inspector (Called in the editor only).
+OnWillRenderObject	OnWillRenderObject is called for each camera if the object is visible and not a UI element.
+Reset	Reset to default values.
+Start	Start is called on the frame when a script is enabled just before any of the Update methods are called the first time.
+Update	Update is called every frame, if the MonoBehaviour is enabled.
+public void OnBeforeSerialize();
+public void OnAfterDeserialize();
+
+
+    // void Update() {
+    // void OnGUI() {
+
+        https://github.com/JetBrains/resharper-unity/issues/986
+        https://github.com/JetBrains/resharper-unity/issues/1453
+
+only for Editor-derived:
+bool HasFrameBounds()
+Bounds OnGetFrameBounds()
+void OnPreSceneGUI()
+void OnSceneDrag()
+
+Only for EditorWindow:
+void EditorWindow.ModifierKeysChanged() - docs
+void EditorWindow.ShowButton(Rect) - docs
+void EditorWindow.OnAddedAsTab()
+void EditorWindow.OnTabDetached()
+void EditorWindow.OnBeforeRemoveAsTab()
+void EditorWindow.OnBecameInvisible()
+void EditorWindow.OnBecameVisible()
+void EditorWindow.OnDidOpenScene()
+https://docs.unity3d.com/ScriptReference/EditorWindow.html
+Awake
+OnDestroy
+OnFocus
+OnGUI
+OnHierarchyChange
+OnInspectorUpdate
+OnLostFocus
+OnProjectChange
+OnSelectionChange
+Update
+OnDisable
+OnEnable
+
+https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/HostView.cs#L83
+m_OnGUI = CreateDelegate("OnGUI");
+            m_OnFocus = CreateDelegate("OnFocus");
+            m_OnLostFocus = CreateDelegate("OnLostFocus");
+            m_OnProjectChange = CreateDelegate("OnProjectChange");
+            m_OnSelectionChange = CreateDelegate("OnSelectionChange");
+            m_OnDidOpenScene = CreateDelegate("OnDidOpenScene");
+            m_OnInspectorUpdate = CreateDelegate("OnInspectorUpdate");
+            m_OnHierarchyChange = CreateDelegate("OnHierarchyChange");
+            m_OnBecameVisible = CreateDelegate("OnBecameVisible");
+            m_OnBecameInvisible = CreateDelegate("OnBecameInvisible");
+            m_Update = CreateDelegate("Update");
+            m_ModifierKeysChanged = CreateDelegate("ModifierKeysChanged");
+            var methodInfo = GetPaneMethod("ShowButton");
+
+
+[Serializable]
+[AddComponentMenu]
+[AssemblyIsEditorAssembly]
+[BeforeRenderOrder]
+[ColorUsage]
+[ContextMenu]
+[ContextMenuItem]
+[CreateAssetMenu]
+[CustomGridBrush]
+[Delayed]
+[DisallowMultipleComponent]
+[ExcludeFromObjectFactory]
+[ExcludeFromPreset]
+[ExecuteAlways]
+[ExecuteInEditMode]
+[GradientUsage]
+[GUITarget]
+[Header]
+[HelpURL]
+[HideInInspector]
+[ImageEffectAfterScale]
+[ImageEffectAllowedInSceneView]
+[ImageEffectOpaque]
+[ImageEffectTransformsToLDR]
+[ImageEffectUsesCommandBuffer]
+[InspectorName]
+[Min]
+[Multiline]
+[PreferBinarySerialization]
+[Range]
+[RequireComponent]
+[PunRPC]
+[RPC]
+[RuntimeInitializeOnLoadMethod]
+[SelectionBase]
+[SerializeField]
+[SerializeReference]
+[SharedBetweenAnimators]
+[Space]
+[TextArea]
+[Tooltip]
+[UnityAPICompatibilityVersion]
+
+public class MyCustomProperty : PropertyAttribute {}
+
+[CustomPropertyDrawer(typeof(MyCustomProperty))]
+public class MyCustomPropertyDrawer : PropertyDrawer {}
+
+[CustomPropertyDrawer(typeof(MyCustomProperty))]
+public class MyCustomDecoratorDrawer : DecoratorDrawer {
+    public override float GetHeight() {}
+    public override void OnGUI(Rect position) {}
+    public override bool CanCacheInspectorGUI() {}
+
+
+Editor attributes:
+[InspectorName("16 bits")]
+[CallbackOrderAttribute]
+[CanEditMultipleObjects]
+[CustomEditorForRenderPipelineAttribute]
+[CustomPreviewAttribute]
+[CustomPropertyDrawer]
+[DrawGizmo]
+[InitializeOnEnterPlayModeAttribute]
+[InitializeOnLoadAttribute]
+[InitializeOnLoadMethodAttribute]
+[LightingExplorerExtensionAttribute]
+[MenuItem("Test/Show My Window")]
+[PreferenceItem]
+[SettingsProviderAttribute]
+[SettingsProviderGroupAttribute]
+[ShaderIncludePathAttribute]
+
+[CustomEditor(typeof(MyType))]
+public class MyTypeEditor : Editor {
+    public override VisualElement CreateInspectorGUI() {}
+    public void OnInspectorGUI() {}
+
+Editor.DrawDefaultInspector
+
+Delegates (events)   https://docs.unity3d.com/ScriptReference/EditorApplication.html
+EditorApplication.delayCall
+EditorApplication.hierarchyWindowItemOnGUI
+EditorApplication.modifierKeysChanged
+EditorApplication.projectWindowItemOnGUI
+EditorApplication.update
+EditorApplication.hierarchyChanged	Event that is raised when an object or group of objects in the hierarchy changes.
+EditorApplication.pauseStateChanged	Event that is raised whenever the Editor's pause state changes.
+EditorApplication.playModeStateChanged	Event that is raised whenever the Editor's play mode state changes.
+EditorApplication.projectChanged	Event that is raised whenever the state of the project changes.
+EditorApplication.quitting	Unity raises this event when the editor application is quitting.
+EditorApplication.wantsToQuit
+
+
+AssemblyReloadEvents.beforeAssemblyReload
+AssemblyReloadEvents.afterAssemblyReload
+
+https://docs.unity3d.com/Manual/PlatformDependentCompilation.html
+#if UNITY_EDITOR
+#endif
+
+    */
 }
