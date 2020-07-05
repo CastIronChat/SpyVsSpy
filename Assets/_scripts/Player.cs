@@ -25,8 +25,8 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     private Quaternion serverRot;
     private SpriteRenderer heldSprite;
 
-    private float iFrames; //invincibility frames
-
+    private float iFrames, poisonTimer; //invincibility frames
+    private bool isPoisoned; //after a time defined on the gameconstants the player takes damage from poison, clear poison by leaving the room...or opening a window?
     // TODO use viewID as uniqueID.  Somehow configure registry to support this automatically.
     public int uniqueId { get; set; }
     public object registry { get; set; }
@@ -42,7 +42,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
         gameManager.playerManager.players.addEntity(this);
         transform.parent = gameManager.playerManager.transform;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        if ( photonView.isMine )
+        if ( photonView.isMine  )
         {
 
             rb.isKinematic = false;
@@ -209,6 +209,18 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
 
         if ( photonView.isMine )
         {
+
+            if(isPoisoned == true)
+            {
+                poisonTimer += Time.deltaTime;
+                if(poisonTimer >= gameManager.gameConstants.poisonTime)
+                {
+                  isPoisoned = false;
+                  poisonTimer = -1;
+                  this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, lives - 1 );
+                }
+            }
+
           //to prevent weapon spam and multi directional attack, have a brief input lock after attacking
           if(inputLockTimer > 0){inputLockTimer -= Time.deltaTime;}
           else
@@ -383,9 +395,11 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     [PunRPC]
     public void rpcGetThrownByTrap(Vector3 dir,float lockout)
     {
-      GetComponent<Rigidbody2D>().velocity = dir;
-      inputLockTimer = lockout;
-
+      if(photonView.isMine == true)
+      {
+          GetComponent<Rigidbody2D>().velocity = dir;
+          inputLockTimer = lockout;
+      }
     }
 
     [PunRPC]
@@ -470,15 +484,42 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     public void OnTriggerEnter2D(Collider2D col)
     {
         //the server checks when a weapon triggers on a player character, and that the weapon is not their own
-        if ( PhotonNetwork.isMasterClient && col.gameObject.tag == "Weapon" && col.transform.parent != this.transform)
+        if ( PhotonNetwork.isMasterClient && col.transform.parent != this.transform)
         {
 
+          //TODO: differentiate attack types
             //after taking damage to avoid double taps from the same source, add invincibility frames
+          if(col.gameObject.tag == "Weapon")
+          {
+            iFrames = 0.5f;
+            this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, lives - 2 );
+          }
+          if(col.gameObject.tag == "Punch")
+          {
             iFrames = 0.5f;
             this.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, lives - 1 );
+          }
+
+
         }
 
     }
+
+
+      void OnParticleCollision(GameObject other)
+      {
+        if(other.transform.tag == "Poison")
+        {
+          if(isPoisoned == false)
+          {
+            isPoisoned = true;
+            poisonTimer = 0;
+            gameManager.scrollingText.NewLine("GASP POISON " );
+          }
+
+        }
+      }
+
 
     public Inventory GetInventory()
     {

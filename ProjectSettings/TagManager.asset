@@ -8,6 +8,7 @@ TagManager:
   - Hazard
   - interact
   - Weapon
+  - Poison
   layers:
   - Default
   - TransparentFX
@@ -44,4 +45,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Walls
+    uniqueID: 3707875819
+    locked: 0
+  - name: Hidden
+    uniqueID: 393663397
     locked: 0

@@ -80,4 +80,5 @@ MonoBehaviour:
   - AnimateHidingSpot
   - ActivateTrapEffect
   - rpcGetThrownByTrap
+  - rpcSyncPyhsicsLocation
   DisableAutoOpenWizard: 1
