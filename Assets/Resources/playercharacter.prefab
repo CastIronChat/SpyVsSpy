@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 6541319070722673844}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_Children:
   - {fileID: 1107723182054021784}
   - {fileID: 1502670966142689491}
@@ -174,7 +174,7 @@ MonoBehaviour:
   lives: 3
   gamesPlayed: 0
   wins: 0
-  speed: 100
+  speed: 150
   networkspeed: 12
   interactDistance: 0.4
   attackInputLock: 0.5

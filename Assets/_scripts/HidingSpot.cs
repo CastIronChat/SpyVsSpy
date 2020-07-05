@@ -36,7 +36,9 @@ public class HidingSpot : MonoBehaviour
 
     }
     public void SetCollectible(int newcollectible)
-    { collectibleValue = newcollectible; GetComponent<SpriteRenderer>().color = new Vector4(0.1f * newcollectible, 0.9f * newcollectible, 0.6f,1.0f);}
+    {
+       // collectibleValue = newcollectible; GetComponent<SpriteRenderer>().color = new Vector4(0.1f * newcollectible, 0.9f * newcollectible, 0.6f,1.0f);
+     }
 
 
 
@@ -58,16 +60,19 @@ public class HidingSpot : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D col)
     {
-        if( canBeBumpedInto && col.transform.GetComponent<Player>() && GetTrap() != null)
+        if( canBeBumpedInto == true)
         {
-            gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
+              if(  col.transform.GetComponent<Player>() && GetTrap() != null)
+              {
+                  gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
+              }
         }
 
     }
 
     public void OnTriggerEnter2D(Collider2D col)
     {
-        if( col.transform.GetComponent<Player>() && GetTrap() != null)
+        if(  canBeBumpedInto && col.transform.GetComponent<Player>() && GetTrap() != null)
         {
           gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
         }
