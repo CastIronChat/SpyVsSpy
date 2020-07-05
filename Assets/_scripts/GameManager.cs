@@ -236,6 +236,20 @@ public class GameManager : Photon.MonoBehaviour
           }
     }
 
+    public void SyncPyhsicsLocation(int hidingSpot)
+    {
+      if ( PhotonNetwork.isMasterClient )
+      {
+          this.photonView.RPC( "rpcSyncPyhsicsLocation", PhotonTargets.AllViaServer,hidingSpot, hidingSpotManager.GetHidingSpot(hidingSpot).transform.position);
+      }
+    }
+
+    [PunRPC]
+    public void rpcSyncPyhsicsLocation(int hidingSpot, Vector3 realPos)
+    {
+      hidingSpotManager.GetHidingSpot(hidingSpot).transform.position = realPos;
+    }
+
     [PunRPC]
     public void CreateExplosion(Vector3 explosionLocation)
     {

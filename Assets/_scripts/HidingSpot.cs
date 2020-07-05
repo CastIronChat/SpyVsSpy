@@ -66,6 +66,17 @@ public class HidingSpot : MonoBehaviour
               {
                   gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
               }
+            //  gameManager.SyncPyhsicsLocation(spotInList);
+        }
+
+    }
+
+    public void OnCollisionStay2D(Collision2D col)
+    {
+        if( canBeBumpedInto == true)
+        {
+
+              //gameManager.SyncPyhsicsLocation(spotInList);
         }
 
     }
