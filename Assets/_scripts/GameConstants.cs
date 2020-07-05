@@ -50,4 +50,8 @@ public class GameConstants : MonoBehaviour
             return _collectibleTypes;
         }
     }
+    private static GlobalSingletonGetter<GameConstants> _instance = new GlobalSingletonGetter<GameConstants>();
+    public static GameConstants instance {
+        get => _instance.instance;
+    }
 }

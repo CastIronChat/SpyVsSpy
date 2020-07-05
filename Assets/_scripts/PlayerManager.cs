@@ -27,7 +27,7 @@ public class PlayerManager : MonoBehaviour
     }
     public ReadOnlyCollection<Player> idlePlayers {
         // get => _inactivePlayers;
-        get => new ReadOnlyCollection<Player>(GameManager.getGlobalSingletonGameManager().idleplayerManager.transform.GetComponentsInChildren<Player>());
+        get => new ReadOnlyCollection<Player>(GameManager.instance.idleplayerManager.transform.GetComponentsInChildren<Player>());
     }
 
     public int playerCount {

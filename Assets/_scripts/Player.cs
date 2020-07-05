@@ -38,7 +38,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        gameManager = GameManager.getGlobalSingletonGameManager();
+        gameManager = GameManager.instance;
         gameManager.playerManager.players.addEntity(this);
         transform.parent = gameManager.playerManager.transform;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
@@ -51,7 +51,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
     }
     void OnEnable()
     {
-        gameManager = GameManager.getGlobalSingletonGameManager();
+        gameManager = GameManager.instance;
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
