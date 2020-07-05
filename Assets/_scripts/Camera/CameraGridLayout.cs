@@ -1,6 +1,16 @@
 using System;
 
 class CameraGridLayout : CameraLayoutEngine {
+    /*
+     * Camera grid has different # of rows & cols based on # of cameras:
+     * 1 camera - whole screen
+     * 2-4 - 2 per row
+     * 4 - 2x2 grid
+     * 5 - 3 top, 2 below
+     * Up to 9 - 3 per row
+     * 10-16 - 4 per row
+     * 17-21 - 5 per row
+     */
     public float cameraAspectRatio = 1;
 
     // TODO ask Dan if there's a better way to think about camera viewport values relative to Canvas dimensions.
@@ -80,3 +90,23 @@ class CameraGridLayout : CameraLayoutEngine {
 
     }
 }
+
+
+/*
+ * Desired camera width is a percentage of smallest camera size
+
+ KNOWN:
+ Fixed aspect ratio for each viewport
+ Spacing is a percentage of viewport *height* (can be converted to width via fixed aspect ratio)
+
+//  Compute max height if screen was infinitely wide
+//  Compute max width if screen was infinitely high
+
+ Compute layout height in camera height units.
+ Compute layout width in camera *height* units.
+ Figure out scaling factor to scrunch the layout into the screen's aspect ratio.
+  - Math.Min of Xscale and Yscale
+
+ Compute camera height & width based on scaling factor.
+
+ */
