@@ -10,7 +10,7 @@ public class McGuffinHUD : MonoBehaviour
     GameManager gm;
 
     void Start() {
-        gm = GameManager.getGlobalSingletonGameManager();
+        gm = GameManager.instance;
     }
 
     public IconRowHUD icons;

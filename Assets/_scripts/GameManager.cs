@@ -7,17 +7,20 @@ using UnityEngine.UI;
 
 public class GameManager : Photon.MonoBehaviour
 {
-    /// HACK anyone can use this method to get a reference to the GameManager assuming it is a global singleton
-    public static GameManager getGlobalSingletonGameManager() {
-        var gm = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
-        Debug.Assert(gm != null);
-        return gm;
+    // HACK anyone can use this method to get a reference to the GameManager assuming it is a global singleton
+    public static GameManager instance {
+        get => singleton.instance;
     }
+    private static GlobalSingletonGetter<GameManager> singleton = new GlobalSingletonGetter<GameManager>(gameObjectName: "GameManager");
     public PlayerManager playerManager;
     public HidingspotManager hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
     public ScrollingText scrollingText;
     public RoundManager roundManager;
-    public GameConstants gameConstants;
+
+    public GameConstants gameConstants
+    {
+        get => GameConstants.instance;
+    }
 
     public GameObject playerPrefab;
     public GameObject scoreBoard,startbutton;

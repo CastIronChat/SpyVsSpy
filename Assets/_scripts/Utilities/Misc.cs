@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class HelperMethods {
     ///<summary>
@@ -32,5 +35,24 @@ public static class HelperMethods {
             r = func(r, value);
         }
         return r;
+    }
+    public static Rect ToScreenSpace(this RectTransform transform)
+    {
+        Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);
+        return new Rect((Vector2)transform.position - (size * 0.5f), size);
+    }
+
+    public static bool IsPrefabStage(this GameObject gameObject) {
+        return PrefabStageUtility.GetCurrentPrefabStage() != null;
+    }
+    public static bool IsPrefabStage(this Component component) {
+        return component.gameObject.IsPrefabStage();
+    }
+    public static bool IsRootPrefabStage(this GameObject gameObject) {
+        // return PrefabStageUtility.GetCurrentPrefabStage() != null && !PrefabUtility.IsPartOfPrefabInstance(gameObject);
+        return PrefabStageUtility.GetCurrentPrefabStage() != null && !PrefabUtility.IsPartOfAnyPrefab(gameObject);
+    }
+    public static bool IsRootPrefabStage(this Component component) {
+        return component.gameObject.IsRootPrefabStage();
     }
 }

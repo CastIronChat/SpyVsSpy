@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Inventory {
     public HashSet<Collectible> items = new HashSet<Collectible>();
 
-    private GameManager gameManager = GameManager.getGlobalSingletonGameManager();
+    private GameManager gameManager = GameManager.instance;
     public int inventorySize, equippedTrapIndex;
     public TrapType equippedTrap {
         get => gameManager.gameConstants.trapTypes[equippedTrapIndex];
