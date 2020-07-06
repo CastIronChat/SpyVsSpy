@@ -54,10 +54,8 @@ public class GlobalSingletonGetter<T> where T : Component
         //         Count++;
         //     }
         // }
-        Debug.Log($"Beginning search for {typeof(T)}");
         foreach(var obj in Resources.FindObjectsOfTypeAll<T>()) {
                 if(PrefabUtility.IsPartOfPrefabAsset(obj)) continue;
-                Debug.Log(  $"{obj.gameObject.name}", obj);
                 if(found == null) found = obj;
                 Count++;
         }

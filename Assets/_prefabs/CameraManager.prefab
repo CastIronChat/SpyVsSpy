@@ -54,6 +54,10 @@ MonoBehaviour:
   dummyCameras: []
   forceReLayoutEveryFrame: 0
   addDummyCameras: 0
+  layouts:
+  - {fileID: 2643887855839423959}
+  - {fileID: 5054220862847367786}
+  _enabledLayout: 0
 --- !u!114 &2643887855839423959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77,7 +81,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267975412880851437}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cdbca099ee03e0c4c95d09081ae0f25f, type: 3}
   m_Name: 

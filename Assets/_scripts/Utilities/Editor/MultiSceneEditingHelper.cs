@@ -27,16 +27,17 @@ namespace MultiSceneEditingHelper
                 {
                     // Disable all but the active scene
                     var active = EditorSceneManager.GetActiveScene();
-                    if(EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
-                    for ( var i = 0; i < EditorSceneManager.sceneCount; i++ )
+                    if ( EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo() )
                     {
-                        var scene = EditorSceneManager.GetSceneAt( i );
-                        if ( scene.isLoaded && scene != active )
+                        for ( var i = 0; i < EditorSceneManager.sceneCount; i++ )
                         {
-                            closedScenePaths.Add( scene.path );
-                            EditorSceneManager.CloseScene( scene, false );
+                            var scene = EditorSceneManager.GetSceneAt( i );
+                            if ( scene.isLoaded && scene != active )
+                            {
+                                closedScenePaths.Add( scene.path );
+                                EditorSceneManager.CloseScene( scene, false );
+                            }
                         }
-                    }
                     }
                 }
                 if ( state == PlayModeStateChange.EnteredEditMode )
@@ -54,13 +55,31 @@ namespace MultiSceneEditingHelper
         public List<string> closedScenePaths = new List<string>();
         void OnGUI()
         {
-            GUILayout.Label( "Extra editor options for multi-scene editing.");
+            GUILayout.Label( "Extra editor options for multi-scene editing." );
             GUILayout.Space( 10 );
             GUILayout.Label( "Check this box if you want \"Play\" mode to only run the active scene when using multi-scene editing." );
             GUILayout.Label( "When you click Play, all other scenes will be unloaded." );
-            GUILayout.Label( "When you return to Edit mode, the will be re-loaded.");
+            GUILayout.Label( "When you return to Edit mode, the will be re-loaded." );
 
             DisableAllButActiveScene = EditorGUILayout.Toggle( DisableAllButActiveScene );
+
+            var active = EditorSceneManager.GetActiveScene();
+            GUILayout.Label( "" );
+            GUILayout.Label( $"Active scene: {describeScene( active )}" );
+            GUILayout.Label( "" );
+            if ( EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo() )
+            {
+                for ( var i = 0; i < EditorSceneManager.sceneCount; i++ )
+                {
+                    var scene = EditorSceneManager.GetSceneAt( i );
+                    GUILayout.Label( $"Scene: {describeScene( scene )}" );
+                }
+            }
+        }
+
+        private string describeScene(Scene scene)
+        {
+            return $"handle={scene.handle}, name={scene.name}, path={scene.path}";
         }
     }
 }

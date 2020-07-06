@@ -244,7 +244,7 @@ MonoBehaviour:
   lifeTime: 0
   knockbackForce: 5
   dmgPerSecond: 0
-  oneTimeDamage: 0
+  oneTimeDamage: 2
 --- !u!1 &3183641451528391585
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,6 +304,7 @@ MonoBehaviour:
   briefcaseGrantsExtraInventorySpace: 1
   roundMaxTimeSeconds: 180
   startingTraps: 3
+  poisonTime: 2
   roundTimeIsLimited: 1
 --- !u!1 &3183641451571270964
 GameObject:
@@ -467,7 +468,7 @@ MonoBehaviour:
   lifeTime: 0
   knockbackForce: 0
   dmgPerSecond: 0
-  oneTimeDamage: 0
+  oneTimeDamage: 1
 --- !u!1 &3183641452164459325
 GameObject:
   m_ObjectHideFlags: 0
