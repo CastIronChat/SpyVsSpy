@@ -1,5 +1,5 @@
 {
-    "name": "CodeTemplates.Editor",
+    "name": "CastIronChat.CodeGen",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -7,8 +7,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [
-        "UNITY_EDITOR"
-    ],
+    "defineConstraints": [],
     "versionDefines": []
 }

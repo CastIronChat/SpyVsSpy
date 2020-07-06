@@ -1,6 +1,8 @@
 {
-    "name": "CodeTemplates.Editor",
-    "references": [],
+    "name": "CastIronChat.CodeGen.Editor",
+    "references": [
+        "CastIronChat.CodeGen"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
