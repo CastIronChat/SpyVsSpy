@@ -1106,18 +1106,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 407796256}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &29570775 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3183641451528391586, guid: 23d129ea0614b2a44b9d6376d7e1849a,
-    type: 3}
-  m_PrefabInstance: {fileID: 407796256}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c66879c829e61be49aae0478b5dd2df7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &31223931
 GameObject:
   m_ObjectHideFlags: 0
@@ -36534,20 +36522,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!4 &1210727697
-Transform:
+--- !u!224 &1210727697
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1210727696}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.51, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 283930881}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -9.51, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1210727698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36557,10 +36550,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1210727696}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 827fab0c875cd5541a21ebbd11a5469a, type: 3}
+  m_Script: {fileID: 11500000, guid: 09dbc63fef3edf74e85bce91c5238c61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 6.65, y: 6.65, z: 0}
+  showWhenSelected: 1
+  showWhenDeselected: 1
 --- !u!1 &1215787654
 GameObject:
   m_ObjectHideFlags: 0
@@ -53153,7 +53147,6 @@ MonoBehaviour:
   hidingSpotManager: {fileID: 1049484761}
   scrollingText: {fileID: 843869123}
   roundManager: {fileID: 1795956389}
-  gameConstants: {fileID: 29570775}
   playerPrefab: {fileID: 100000, guid: 306d58f3d17f0bd4082310859a39d5e8, type: 3}
   scoreBoard: {fileID: 1424402384}
   startbutton: {fileID: 1744082377}
