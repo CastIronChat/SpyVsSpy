@@ -14,8 +14,7 @@ public class CameraLayoutReference : MonoBehaviour
 
     public RectTransformUtility getNonLocalPlayerCamera(int index)
     {
-        var ret = transform.GetChild( index - 1 );
-        Assert.IsNotNull( ret );
+        var ret = transform.GetChild( index + 1 );
         var ret2 = ret.GetComponent<RectTransformUtility>();
         Assert.IsNotNull( ret2 );
         return ret2;

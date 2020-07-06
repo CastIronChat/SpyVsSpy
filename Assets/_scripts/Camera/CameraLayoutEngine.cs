@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class CameraLayoutEngine : MonoBehaviour
+public class CameraLayoutEngine : MonoBehaviour
 {
     public CameraManager manager;
-    void Awake() {
-        if(this.enabled) {
-            manager.OnLayoutShouldChange += layout;
-        }
+    protected virtual void OnEnable() {
+        manager.OnLayoutShouldChange += layout;
     }
-    void Start() {}
-    void OnDestroy() {
+    protected virtual void OnDisable() {
         manager.OnLayoutShouldChange -= layout;
     }
-    public abstract void layout();
+    public virtual void OnDestroy() {
+        manager.OnLayoutShouldChange -= layout;
+    }
+
+    public virtual void layout()
+    {
+    }
 }

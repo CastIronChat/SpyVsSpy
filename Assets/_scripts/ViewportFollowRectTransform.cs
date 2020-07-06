@@ -11,7 +11,6 @@ public class ViewportFollowRectTransform : MonoBehaviour
 
     public RectTransform target;
     public Camera _camera;
-    public Canvas canvas;
     void LateUpdate() {
         _camera.pixelRect = target.ToScreenSpace();
     }

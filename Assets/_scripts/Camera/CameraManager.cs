@@ -7,9 +7,14 @@ using UnityEngine.Assertions;
 using UnityEditor;
 #endif
 
+
 public class CameraManager : MonoBehaviour
 {
     public PlayerManager playerManager;
+
+    public GameConstants gameConstants {
+        get => GameConstants.instance;
+    }
 
     public GameObject cameraPrefab;
 
@@ -18,6 +23,15 @@ public class CameraManager : MonoBehaviour
     public List<PlayerCamera> cameras = new List<PlayerCamera>();
     [HideInInspector]
     public List<PlayerCamera> dummyCameras = new List<PlayerCamera>();
+
+    public int cameraCountIncludingDummies
+    {
+        get => cameras.Count + dummyCameras.Count;
+    }
+    public PlayerCamera getCameraAtIncludingDummies(int i)
+    {
+        return i < cameras.Count ? cameras[i] : dummyCameras[i - cameras.Count];
+    }
     Dictionary<Player, PlayerCamera> playerToCamera = new Dictionary<Player, PlayerCamera>();
 
     /// Set true in inspector to play with the layout values
@@ -30,6 +44,28 @@ public class CameraManager : MonoBehaviour
     public delegate void OnLayoutShouldChangeDelegate();
     public event OnLayoutShouldChangeDelegate OnLayoutShouldChange;
 
+    public List<CameraLayoutEngine> layouts;
+    [SerializeField]
+    private int _enabledLayout = 0;
+    public int enabledLayout {
+        get => _enabledLayout;
+        set
+        {
+            var old = _enabledLayout;
+            _enabledLayout = value;
+        if ( _enabledLayout != old )
+        {
+            setEnabledLayout();
+        }
+    }
+    }
+    private void setEnabledLayout() {
+        for(var i = 0; i < layouts.Count; i++) {
+            layouts[i].enabled = false;
+        }
+        layouts[_enabledLayout].enabled = true;
+    }
+
     void OnValidate() {
         // TODO this runs on the prefab which, by necessity, has nulls here.
         // So we must skip these assertions to avoid annoying log messages.
@@ -37,6 +73,7 @@ public class CameraManager : MonoBehaviour
         // Assert.IsNotNull(playerManager);
         Assert.IsNotNull(cameraPrefab);
         // Assert.IsNotNull(roomSizeReference);
+        setEnabledLayout();
     }
     void Update()
     {
