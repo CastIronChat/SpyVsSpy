@@ -57,7 +57,7 @@ public class HidingSpot : MonoBehaviour
 
       if(anim.GetBool("on") != null)
       {
-        anim.SetBool("on",anim.GetBool("on"));
+        anim.SetBool("on",!anim.GetBool("on"));
       }
 
       anim.Play(animation);
