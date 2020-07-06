@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
@@ -55,7 +57,10 @@ public class GlobalSingletonGetter<T> where T : Component
         //     }
         // }
         foreach(var obj in Resources.FindObjectsOfTypeAll<T>()) {
+                // TODO make utility functions in Misc.cs that can safely be called in a game (probs return indicating that no, nothing is a prefab in a game)
+                #if UNITY_EDITOR
                 if(PrefabUtility.IsPartOfPrefabAsset(obj)) continue;
+                #endif
                 if(found == null) found = obj;
                 Count++;
         }

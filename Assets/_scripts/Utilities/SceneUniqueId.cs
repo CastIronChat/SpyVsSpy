@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+#if UNITY_EDITOR
 using UnityEditor.Experimental.SceneManagement;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,6 +21,7 @@ public class SceneUniqueId : MonoBehaviour
     public int id = 0;
     // TODO when scene is deleted, should delete hashset too.  WeakRef magic?
     static Dictionary<Scene, SceneIds> state = new Dictionary<Scene, SceneIds>();
+    #if UNITY_EDITOR
     void OnValidate() {
         if(PrefabStageUtility.GetCurrentPrefabStage() != null || PrefabUtility.IsPartOfPrefabAsset(this)) {
             id = 0;
@@ -38,6 +41,7 @@ public class SceneUniqueId : MonoBehaviour
             // and one of the object's ID will change.
         }
     }
+    #endif
     private class SceneIds {
         HashSet<int> ids = new HashSet<int>();
         int nextIdForAllocation = 1;

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
+using UnityEditor.Experimental.SceneManagement;
+#endif
 
 public static class HelperMethods {
     ///<summary>
@@ -42,6 +44,7 @@ public static class HelperMethods {
         return new Rect((Vector2)transform.position - (size * 0.5f), size);
     }
 
+    #if UNITY_EDITOR
     public static bool IsPrefabStage(this GameObject gameObject) {
         return PrefabStageUtility.GetCurrentPrefabStage() != null;
     }
@@ -55,4 +58,5 @@ public static class HelperMethods {
     public static bool IsRootPrefabStage(this Component component) {
         return component.gameObject.IsRootPrefabStage();
     }
+    #endif
 }
