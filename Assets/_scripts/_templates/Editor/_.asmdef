@@ -1,8 +1,6 @@
 {
-    "name": "CastIronChat.CodeGen.Editor",
-    "references": [
-        "CastIronChat.CodeGen"
-    ],
+    "name": "CastIronChat.SpyVsSpy._templates.Editor",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

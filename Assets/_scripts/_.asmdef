@@ -1,0 +1,15 @@
+{
+    "name": "CastIronChat.SpyVsSpy",
+    "references": [
+        "Photon_Unity_Networking",
+        "CastIronChat.Utilities"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}

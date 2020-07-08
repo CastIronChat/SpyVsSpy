@@ -1,14 +1,16 @@
 {
-    "name": "Photon",
+    "name": "CastIronChat.Utilities.CodeGen.Editor",
     "references": [
-        "PhotonChatApi"
+        "CastIronChat.Utilities.CodeGen"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
     "versionDefines": []
 }

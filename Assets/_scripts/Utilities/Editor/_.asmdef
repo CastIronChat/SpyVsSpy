@@ -1,0 +1,16 @@
+{
+    "name": "CastIronChat.Utilities.Editor",
+    "references": [
+        "CastIronChat.Utilities"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": []
+}
