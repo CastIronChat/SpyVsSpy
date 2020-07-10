@@ -24,7 +24,7 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     public GameObject playerPrefab;
-    public GameObject scoreBoard,startbutton;
+    public GameObject scoreBoard,startbutton,bubbleHidingspot,bubblePlayer;
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
@@ -381,6 +381,42 @@ public class GameManager : Photon.MonoBehaviour
       hidingSpotManager.OpenDoor(whichDoor, open);
     }
 
+    public void EnableBubbles()
+    {
+      // bubblePlayer.active = true;
+      // bubbleHidingspot.active = true;
+
+      bubblePlayer.GetComponent<Animator>().Play("turnoff");
+      bubbleHidingspot.GetComponent<Animator>().Play("turnoff");
+
+    }
+
+    [PunRPC]
+    public void SetBubbles( int whichspot, int whichplayer, int collectible,int itemleftbehind)
+    {
+
+      //move the search bubbles that display the items pulled from or put in a hidingspot to the player and spots Location
+      //then tell the localplayer to enable them so only the local player sees
+      //NOTE: idea -a trap could make it so that everyone can see
+      foreach ( Transform go in playerManager.transform )
+      {
+
+          if ( go.GetComponent<PhotonView>().ownerId == whichplayer )
+          {
+            bubblePlayer.transform.position = go.position;
+            bubblePlayer.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[collectible].sprite;
+            bubbleHidingspot.transform.position = hidingSpotManager.GetHidingSpot(whichspot).transform.position;
+            //pass the value to avoid a race condition
+            bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[itemleftbehind].sprite;
+            go.GetComponent<Player>().BubbleAnimation();
+
+
+          }
+
+      }
+
+    }
+
     [PunRPC]
     public void OpenHidingSpot(int whichPlayer, int whichHidingSpot)
     {
@@ -427,6 +463,7 @@ public class GameManager : Photon.MonoBehaviour
                               {
                                 if(actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
                                 {
+                                  int collectiblegrabbed = activatedHidingSpot.GetCollectible();
                                   actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible", PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue, 1);
 
 
@@ -435,6 +472,9 @@ public class GameManager : Photon.MonoBehaviour
 
                                   //move the item in the hiding spot to the players inventory
                                   this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+
+                                  //set the bubbles to show the item picked up
+                                    photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, whichPlayer, collectiblegrabbed, 0);
                                 }
                               }
 

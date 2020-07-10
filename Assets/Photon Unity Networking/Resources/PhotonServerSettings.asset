@@ -81,4 +81,5 @@ MonoBehaviour:
   - ActivateTrapEffect
   - rpcGetThrownByTrap
   - rpcSyncPyhsicsLocation
+  - SetBubbles
   DisableAutoOpenWizard: 1

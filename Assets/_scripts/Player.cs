@@ -488,6 +488,17 @@ public class Player : Photon.MonoBehaviour, Entity
         }
     }
 
+
+    public void BubbleAnimation()
+    {
+      if(photonView.isMine)
+      {
+          gameManager.EnableBubbles();
+      }
+
+    }
+
+
     public void OnTriggerEnter2D(Collider2D col)
     {
         //the server checks when a weapon triggers on a player character, and that the weapon is not their own

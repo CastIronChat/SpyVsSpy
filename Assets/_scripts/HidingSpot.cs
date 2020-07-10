@@ -37,7 +37,8 @@ public class HidingSpot : MonoBehaviour
     }
     public void SetCollectible(int newcollectible)
     {
-       // collectibleValue = newcollectible; GetComponent<SpriteRenderer>().color = new Vector4(0.1f * newcollectible, 0.9f * newcollectible, 0.6f,1.0f);
+       collectibleValue = newcollectible;
+       // GetComponent<SpriteRenderer>().color = new Vector4(0.1f * newcollectible, 0.9f * newcollectible, 0.6f,1.0f);
      }
 
 
@@ -54,6 +55,11 @@ public class HidingSpot : MonoBehaviour
     public void PlayAnimation(string animation)
     {
       if(anim == null){anim = GetComponent<Animator>();}
+
+      if(anim.GetBool("on") != null)
+      {
+        anim.SetBool("on",!anim.GetBool("on"));
+      }
 
       anim.Play(animation);
     }
