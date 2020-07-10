@@ -1,15 +1,16 @@
 {
-    "name": "CastIronChat.SpyVsSpy",
+    "name": "Photon_Unity_Networking.Editor",
     "references": [
-        "Photon",
-        "CastIronChat.Utilities"
+        "Photon_Unity_Networking"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
     "versionDefines": []
 }

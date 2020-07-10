@@ -1,12 +1,16 @@
 {
-    "name": "CastIronChat.CodeGen",
-    "references": [],
+    "name": "Photon_Unity_Networking.UtilityScripts.PhotonPlayer.Editor",
+    "references": [
+        "Photon_Unity_Networking"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
     "versionDefines": []
 }

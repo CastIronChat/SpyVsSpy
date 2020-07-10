@@ -1,0 +1,17 @@
+{
+    "name": "Photon_Unity_Networking.Demos.DemoHub.Editor",
+    "references": [
+        "Photon_Unity_Networking",
+        "Photon_Unity_Networking.Editor"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": []
+}

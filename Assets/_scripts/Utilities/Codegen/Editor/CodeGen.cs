@@ -74,12 +74,12 @@ namespace Codegen
         // static constructor
         static Codegen() {
             counter ++;
-            Debug.Log($"Initialized Codegen watcher. Counters are {counter}, {counter2} and random number is {UnityEngine.Random.Range(0, 10)}");
+            //Debug.Log($"Initialized Codegen watcher. Counters are {counter}, {counter2} and random number is {UnityEngine.Random.Range(0, 10)}");
         }
         [DidReloadScripts]
         static void didReloadScripts() {
             counter2 ++;
-            Debug.Log($"didReloadScripts for codegen watcher. Counters are {counter}, {counter2} and random number is {UnityEngine.Random.Range(0, 10)}");
+            //Debug.Log($"didReloadScripts for codegen watcher. Counters are {counter}, {counter2} and random number is {UnityEngine.Random.Range(0, 10)}");
         }
     }
 }

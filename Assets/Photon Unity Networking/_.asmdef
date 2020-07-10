@@ -1,0 +1,14 @@
+{
+    "name": "Photon_Unity_Networking",
+    "references": [
+        "PhotonChatApi"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}

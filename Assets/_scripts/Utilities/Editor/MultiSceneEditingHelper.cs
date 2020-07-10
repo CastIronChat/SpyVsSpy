@@ -67,12 +67,15 @@ namespace MultiSceneEditingHelper
             GUILayout.Label( "" );
             GUILayout.Label( $"Active scene: {describeScene( active )}" );
             GUILayout.Label( "" );
-            if ( EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo() )
+            if ( !Application.isPlaying )
             {
-                for ( var i = 0; i < EditorSceneManager.sceneCount; i++ )
+                if ( EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo() )
                 {
-                    var scene = EditorSceneManager.GetSceneAt( i );
-                    GUILayout.Label( $"Scene: {describeScene( scene )}" );
+                    for ( var i = 0; i < EditorSceneManager.sceneCount; i++ )
+                    {
+                        var scene = EditorSceneManager.GetSceneAt( i );
+                        GUILayout.Label( $"Scene: {describeScene( scene )}" );
+                    }
                 }
             }
         }

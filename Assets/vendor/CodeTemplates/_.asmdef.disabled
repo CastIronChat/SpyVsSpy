@@ -1,0 +1,5 @@
+{
+    // Disabled to suppress warning, because there are no files in this assembly
+    "name": "CodeTemplates",
+    "autoReferenced": false
+}
