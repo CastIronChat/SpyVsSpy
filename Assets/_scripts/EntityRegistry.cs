@@ -377,7 +377,6 @@ namespace CastIronChat.EntityRegistry
     {
         public DefaultIdAllocator(Id startAt = 1)
         {
-            Assert.IsTrue( startAt > 0 );
             _nextId = startAt;
         }
 
