@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using CastIronChat.EntityRegistry;
+using ExitGames.Client.Photon;
 using UnityEngine;
 
 /// Not sure if this makes sense, but we can sync game constants so we can tweak values while playing
@@ -30,8 +32,8 @@ public class GameConstants : MonoBehaviour
             {
                 var types = new List<TrapType>( GetComponentsInChildren<TrapType>() );
                 _trapTypes = new TrapTypeRegistry();
-                _trapTypes.registerAsSerializer();
-                foreach ( var type in types ) _trapTypes.addEntity( type );
+                _trapTypes.installAsSerializer();
+                foreach ( var type in types ) _trapTypes.add( type );
             }
             return _trapTypes;
         }
@@ -46,7 +48,8 @@ public class GameConstants : MonoBehaviour
             {
                 var types = new List<CollectibleType>( GetComponentsInChildren<CollectibleType>() );
                 _collectibleTypes = new CollectibleTypeRegistry();
-                foreach ( var type in types ) _collectibleTypes.addEntity( type );
+                _collectibleTypes.installAsSerializer();
+                foreach ( var type in types ) _collectibleTypes.add( type );
             }
             return _collectibleTypes;
         }

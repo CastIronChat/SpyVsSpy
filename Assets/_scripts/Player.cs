@@ -1,11 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CastIronChat.EntityRegistry;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerRegistry : Registry<PlayerRegistry, Player> {}
-public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
+public class PlayerRegistry : Registry<Player>
+{
+    public PlayerRegistry() : base(id: RegistryIds.Player, name: "players", validIdsStartAt: 1) {}
+}
+public class Player : Photon.MonoBehaviour, Entity
 {
     public GameManager gameManager;
     public int numberInList, playerNum, score, lostScore, money;
@@ -27,9 +31,12 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
 
     private float iFrames, poisonTimer; //invincibility frames
     private bool isPoisoned; //after a time defined on the gameconstants the player takes damage from poison, clear poison by leaving the room...or opening a window?
-    // TODO use viewID as uniqueID.  Somehow configure registry to support this automatically.
-    public int uniqueId { get; set; }
-    public object registry { get; set; }
+    public int uniqueId
+    {
+        get => photonView.viewID;
+        set => throw new Exception("not supported");
+    }
+    public BaseRegistry registry { get; set; }
 
     void Start()
     {
@@ -39,7 +46,7 @@ public class Player : Photon.MonoBehaviour, Entity<PlayerRegistry, Player>
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         gameManager = GameManager.instance;
-        gameManager.playerManager.players.addEntity(this);
+        gameManager.playerManager.players.add(this);
         transform.parent = gameManager.playerManager.transform;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         if ( photonView.isMine  )

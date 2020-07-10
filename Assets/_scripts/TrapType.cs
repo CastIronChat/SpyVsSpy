@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using CastIronChat.EntityRegistry;
 using UnityEngine;
 
-public class TrapTypeRegistry : Registry<TrapTypeRegistry, TrapType> {
-    public TrapTypeRegistry() : base(RegistryIds.TrapType) {}
+public class TrapTypeRegistry : Registry<TrapType> {
+    public TrapTypeRegistry() : base(id: RegistryIds.TrapType, name: "trap types", validIdsStartAt: 0) {}
 }
 
 /// Immutable data structure representing the "type" of a trap
@@ -11,13 +12,13 @@ public class TrapTypeRegistry : Registry<TrapTypeRegistry, TrapType> {
 /// An instance of this class describes info about the type: what it does,
 /// sprites for inventory, etc.
 /// Declared as a MonoBehavior so that we can configure fields via the editor.
-public class TrapType : MonoBehaviour, Entity<TrapTypeRegistry, TrapType>
+public class TrapType : MonoBehaviour, Entity
 {
-    public object registry { get; set; }
-    public int uniqueId { get; set; }
+    public BaseRegistry registry { get; set; }
+    public int uniqueId { get; set; } = -1;
     new public string name;
     public Sprite sprite;
-    
+
     /// True if this is the special "None" trap type.  Useful, e.g., so we can still
     /// describe how to render it in the UI, for example, as a bare hands icon in the trap selection HUD.
     public bool isNoneTrap;

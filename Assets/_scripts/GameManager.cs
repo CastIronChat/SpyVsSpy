@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CastIronChat.EntityRegistry;
 using ExitGames.Client.Photon;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,12 +38,6 @@ public class GameManager : Photon.MonoBehaviour
 
     public void Awake()
     {
-        // Tell photon how to send a `TrapType` over the network, by transmitting the TrapType's Id and looking up the TrapType instance
-        // on the receiving end.
-        // Can enable the others if/when we start using a Registry to track them
-        // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
-        PhotonPeer.RegisterType(typeof(TrapType), (byte)2, RegistryHelper.SerializeEntityReference, RegistryHelper.DeserializeEntityReference);
-        // PhotonPeer.RegisterType(typeof(Door), (byte)1, hidingSpotManager.doors.SerializeEntityReference, hidingSpotManager.doors.DeserializeEntityReference);
         if ( !PhotonNetwork.connected )
         {
 
