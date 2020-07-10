@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using CastIronChat.EntityRegistry;
+using ComponentReferenceAttributes;
 using ExitGames.Client.Photon;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,8 +14,13 @@ public class GameManager : Photon.MonoBehaviour
         get => singleton.instance;
     }
     private static GlobalSingletonGetter<GameManager> singleton = new GlobalSingletonGetter<GameManager>(gameObjectName: "GameManager");
+    [Description("Trying out an annotation that will automatically set a component reference with a button.")]
+    [ChildComponent]
     public PlayerManager playerManager;
+    [ChildComponent]
     public HidingspotManager hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
+    [ChildComponent]
+    public CollectibleManager collectibleManager;
     public ScrollingText scrollingText;
     public RoundManager roundManager;
 
