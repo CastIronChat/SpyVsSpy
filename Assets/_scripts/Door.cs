@@ -1,14 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CastIronChat.EntityRegistry;
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class DoorRegistry : Registry<Door>
 {
-  public GameManager gameManager;
+    public DoorRegistry(): base(id: RegistryIds.Doors, name: "doors", validIdsStartAt: 1) {
+    }
+}
+public class Door : MonoBehaviour, Entity
+{
+    public GameManager gameManager;
+    public HidingspotManager doorManager;
     public Transform oppositeDoor;
     public GameObject doorSprite;
     public Vector3 openDirection; //leftright or updown
-    public int spotInList = -1;
     public float roomsize;
     // Start is called before the first frame update
     void Start()
@@ -28,15 +34,6 @@ public class Door : MonoBehaviour
       doorSprite.SetActive( !open );
     }
 
-    public int GetPlaceInList()
-    {return spotInList;}
-    //have all hiding spots set on the server so that when interacting each player will check/update through the hiding spot manager, rather than each item.
-    public void SetSpotInList(int newplace,GameManager newGM)
-    {
-      gameManager = newGM;
-        spotInList = newplace;
-    }
-
     public void OnTriggerExit2D(Collider2D col)
     {
         var player = col.GetComponent<Player>();
@@ -47,10 +44,13 @@ public class Door : MonoBehaviour
             //   doorSprite.SetActive( true );
 
             if(player.photonView.isMine) {
-                gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, spotInList, false );
+                gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, uniqueId, false );
             }
         }
     }
+
+    public int uniqueId { get; set; }
+    public BaseRegistry registry { get; set; }
 }
 
 

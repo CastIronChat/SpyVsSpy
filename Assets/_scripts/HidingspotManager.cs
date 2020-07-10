@@ -9,7 +9,7 @@ public class HidingspotManager : MonoBehaviour
   public ScrollingText scrollingText;
   public Transform hidingSpotParent,doorsParent,activeHidingSpots;
   public List<HidingSpot> hidingSpots;
-  public List<Door> doors;
+  public DoorRegistry doors;
     // Start is called before the first frame update
     void Start()
     {
@@ -63,31 +63,16 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
-      foreach ( Transform go in doorsParent )
-      {
-        go.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
-        doors.Add( go.GetComponent<Door>() );
-      }
-
-        // while ( doors.Count < doorsParent.childCount )
-        // {
-        //     Transform closestDoor =  doorsParent.GetChild( 0 );
-        //     float dist = Vector3.Distance( closestDoor.position, transform.position );
-        //     foreach ( Transform go in doorsParent )
-        //     {
-        //         if (closestDoor.GetComponent<Door>().spotInList != -1 || Vector3.Distance( go.transform.position, transform.position ) < dist  )
-        //         {
-        //             closestDoor = go;
-        //             dist = Vector3.Distance( go.transform.position, transform.position );
-        //         }
-        //     }
-        //
-        //
-        //     closestDoor.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
-        //
-        //     doors.Add( closestDoor.GetComponent<Door>() );
-        // }
-
+        var allDoors = new List<Door>(doorsParent.GetComponentsInChildren<Door>());
+        // Assign all doors IDs based on their position in the scene, like words in a book:
+        // sorted top to bottom, left to right.
+        allDoors.Sort(HelperMethods.compareByTransform);
+        foreach ( var door in allDoors )
+        {
+            doors.add(door);
+            door.gameManager = gameManager;
+            door.doorManager = this;
+        }
     }
 
     public void SetHidingspotList()
