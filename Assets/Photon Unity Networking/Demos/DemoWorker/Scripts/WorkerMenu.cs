@@ -13,7 +13,7 @@ public class WorkerMenu : MonoBehaviour
 {
     public GUISkin Skin;
     public Vector2 WidthAndHeight = new Vector2(600, 400);
-    private string roomName = "myRoom";
+    private string roomName;
 
     private Vector2 scrollPos = Vector2.zero;
 
@@ -41,6 +41,8 @@ public class WorkerMenu : MonoBehaviour
 
     public void Awake()
     {
+        roomName = $"myRoom{Random.Range( 0, 1000 )}";
+
         // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
         PhotonNetwork.automaticallySyncScene = true;
 
