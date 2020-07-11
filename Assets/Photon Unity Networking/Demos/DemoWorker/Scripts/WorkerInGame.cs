@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class WorkerInGame : Photon.MonoBehaviour
 {
-    public Transform playerPrefab;
+    public Transform playerPrefab,spawnSpaceParent;
 
     public void Awake()
     {
@@ -21,7 +21,8 @@ public class WorkerInGame : Photon.MonoBehaviour
         }
 
         // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-        PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
+        GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, spawnSpaceParent.GetChild(PhotonNetwork.playerList.Length).position, Quaternion.identity, 0) as GameObject;
+        clone.transform.position = spawnSpaceParent.GetChild(clone.GetComponent<PhotonView>().ownerId).position;
         print(this.photonView.ownerId);
     }
 
