@@ -248,7 +248,7 @@ public class GameManager : Photon.MonoBehaviour
       hidingSpotManager.GetHidingSpot(hidingSpot).transform.position = realPos;
     }
 
-    [PunRPC]
+    [PunRPC] //remove, unused
     public void CreateExplosion(Vector3 explosionLocation)
     {
       //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
@@ -346,6 +346,9 @@ public class GameManager : Photon.MonoBehaviour
 
                                 player.photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
                                 this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
+
+                                photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, playerId, 0, 0,trapType.uniqueId,0);
+
                               }
 
                         }
@@ -383,39 +386,49 @@ public class GameManager : Photon.MonoBehaviour
 
     public void EnableBubbles()
     {
-      // bubblePlayer.active = true;
-      // bubbleHidingspot.active = true;
 
+      bubblePlayer.transform.rotation = transform.rotation;
+      bubbleHidingspot.transform.rotation = transform.rotation;
       bubblePlayer.GetComponent<Animator>().Play("turnoff");
       bubbleHidingspot.GetComponent<Animator>().Play("turnoff");
 
     }
 
     [PunRPC]
-    public void SetBubbles( int whichspot, int whichplayer, int collectible,int itemleftbehind)
+    public void SetBubbles( int whichspot, int whichplayer, int collectible,int collectibleInSpot, int trapInSpot, int weaponInSpot)
     {
 
-      //move the search bubbles that display the items pulled from or put in a hidingspot to the player and spots Location
-      //then tell the localplayer to enable them so only the local player sees
-      //NOTE: idea -a trap could make it so that everyone can see
-      foreach ( Transform go in playerManager.transform )
-      {
+        //move the search bubbles that display the items pulled from or put in a hidingspot to the player and spots Location
+        //then tell the localplayer to enable them so only the local player sees
+        //NOTE: idea -a trap could make it so that everyone can see
+        foreach ( Transform go in playerManager.transform )
+        {
 
-          if ( go.GetComponent<PhotonView>().ownerId == whichplayer )
-          {
-            bubblePlayer.transform.position = go.position;
-            bubblePlayer.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[collectible].sprite;
-            bubbleHidingspot.transform.position = hidingSpotManager.GetHidingSpot(whichspot).transform.position;
-            //pass the value to avoid a race condition
-            bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[itemleftbehind].sprite;
-            go.GetComponent<Player>().BubbleAnimation();
+              if ( go.GetComponent<PhotonView>().ownerId == whichplayer )
+              {
+                bubblePlayer.transform.position = go.position;
+                bubblePlayer.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[collectible].sprite;
+                bubbleHidingspot.transform.position = hidingSpotManager.GetHidingSpot(whichspot).transform.position;
+                //pass the value to avoid a race condition
+
+                if(collectibleInSpot != 0)
+                {bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[collectibleInSpot].sprite;}
+                else if (trapInSpot != 0)
+                {bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.trapTypes[trapInSpot].sprite;}
+                // else if (weaponInSpot != 0)
+                // {bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.weaponTypes[weaponInSpot].sprite;}
 
 
-          }
 
-      }
+                go.GetComponent<Player>().BubbleAnimation();
+                bubblePlayer.transform.parent = go;
+
+              }
+
+        }
 
     }
+
 
     [PunRPC]
     public void OpenHidingSpot(int whichPlayer, int whichHidingSpot)
@@ -474,7 +487,7 @@ public class GameManager : Photon.MonoBehaviour
                                   this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
 
                                   //set the bubbles to show the item picked up
-                                    photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, whichPlayer, collectiblegrabbed, 0);
+                                    photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, whichPlayer, collectiblegrabbed, 0,0,0);
                                 }
                               }
 

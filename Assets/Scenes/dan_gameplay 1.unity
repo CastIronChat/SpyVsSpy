@@ -648,7 +648,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 3
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &5025712
@@ -1974,7 +1974,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &44214679
@@ -2907,7 +2907,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &67408225
@@ -3509,7 +3509,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &96336776
@@ -3707,7 +3707,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &99208710
@@ -3985,7 +3985,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &106114896
@@ -6720,7 +6720,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &200303184
@@ -7801,7 +7801,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &260623282
@@ -7984,7 +7984,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 270605397}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.05}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1962680830}
@@ -8159,7 +8159,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 4
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &272481760
@@ -8633,7 +8633,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &276818223
@@ -9479,7 +9479,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &306375997
@@ -10287,7 +10287,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &333380933
@@ -12778,7 +12778,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &419948040
@@ -13323,7 +13323,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &431375023
@@ -14273,7 +14273,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &466879556
@@ -14838,7 +14838,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &469745462
@@ -15036,7 +15036,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &471902464
@@ -16596,7 +16596,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &553208429
@@ -18840,7 +18840,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &606248350
@@ -20474,7 +20474,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &664879973
@@ -22926,7 +22926,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &727269510
@@ -23615,7 +23615,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &767209717
@@ -24350,7 +24350,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &802285987
@@ -25645,7 +25645,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &832500880
@@ -28654,7 +28654,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &925430438
@@ -29859,7 +29859,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &955529975
@@ -31763,7 +31763,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1031297175
@@ -34040,7 +34040,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1104549525
@@ -34945,7 +34945,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1132066771
@@ -35711,7 +35711,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1159564957
@@ -37315,7 +37315,7 @@ Transform:
   m_GameObject: {fileID: 1225978937}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.32999992, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 912381559}
   m_RootOrder: 0
@@ -37489,7 +37489,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1233369283
@@ -37687,7 +37687,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1237110257
@@ -38535,7 +38535,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1254263682
@@ -41399,7 +41399,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1372331688
@@ -42346,7 +42346,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1417021729
@@ -42470,7 +42470,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 2eb5474688ffdcd41bac1d6cb1a5b3ec, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -42880,7 +42880,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1428611183
@@ -44907,7 +44907,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1502933137
@@ -45443,7 +45443,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1514146853
@@ -46852,7 +46852,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1547283821
@@ -47216,7 +47216,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1555408240
@@ -47551,7 +47551,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1566348895
@@ -47829,7 +47829,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1572766778
@@ -48138,7 +48138,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1583435451
@@ -48705,7 +48705,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1599841245
@@ -49517,7 +49517,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1615024139
@@ -51501,7 +51501,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1718324881
@@ -52219,7 +52219,7 @@ Transform:
   m_GameObject: {fileID: 1760006086}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.32999992, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 1418589100}
   m_RootOrder: 0
@@ -53550,7 +53550,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1810038320
@@ -53828,7 +53828,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1813074083
@@ -54670,7 +54670,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1835041096
@@ -55310,7 +55310,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1860350522
@@ -55762,7 +55762,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1874111585
@@ -56843,7 +56843,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1903015528
@@ -59194,7 +59194,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 2
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1962680835
@@ -59749,7 +59749,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 1
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1973375315
@@ -60214,7 +60214,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &1988491797
@@ -60664,12 +60664,12 @@ PrefabInstance:
     - target: {fileID: 3455629094433848385, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3455629094433848385, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3455629094595054102, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
@@ -60794,42 +60794,42 @@ PrefabInstance:
     - target: {fileID: 3455629094910088773, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3455629094910088773, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3455629095191785136, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3455629095191785136, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3651611637368930021, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3651611637368930021, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7074233367263880900, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7074233367263880900, guid: 2e5865f1b5fe7644693ec3914965f939,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e5865f1b5fe7644693ec3914965f939, type: 3}
@@ -61484,7 +61484,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &2014828774
@@ -61892,7 +61892,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &2026420547
@@ -63725,7 +63725,7 @@ MonoBehaviour:
   spotInList: -1
   canBeBumpedInto: 0
   trapValue: {fileID: 0}
-  collectibleValue: 1
+  collectibleValue: 0
   hiddenItem: {fileID: 0}
   trap: {fileID: 0}
 --- !u!61 &2118785194
