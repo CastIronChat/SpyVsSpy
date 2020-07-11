@@ -5,12 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/boxes_resave.unity
-    guid: fba7ff4e3966fde4fb32cd53a0ce8ba0
   - enabled: 1
     path: Assets/Scenes/dan_gameplay 1.unity
     guid: 383453aed14e848469d53fab13915498
+  - enabled: 1
+    path: Assets/Scenes/Andrew/gameplay.unity
+    guid: 941294a08f6fe9349b1bf2f361c22692
+  - enabled: 1
+    path: Assets/Scenes/Andrew/init.unity
+    guid: a72811a02deaf2840a05c3f6279e951b
   - enabled: 1
     path: Assets/Scenes/worker_lobby_resave.unity
     guid: cea7bc7a40e09624f8dc6c4b7d0ab317
