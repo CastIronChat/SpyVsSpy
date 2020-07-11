@@ -19,6 +19,8 @@ public class Player : Photon.MonoBehaviour, Entity
     public GameObject myScoreCard;
     public Material myColor;
     public List<Color> colors;
+    public SpriteRenderer characterSprite,heldSprite,weaponSprite;
+
     /// TODO support diagonal movement?
     private CardinalDirection movementDirection = CardinalDirection.None,facingDirection = CardinalDirection.None;
     private Animator anim;
@@ -27,7 +29,7 @@ public class Player : Photon.MonoBehaviour, Entity
     private Inventory inventory;
     private Vector3 serverPos;
     private Quaternion serverRot;
-    private SpriteRenderer heldSprite;
+
 
     private float iFrames, poisonTimer; //invincibility frames
     private bool isPoisoned; //after a time defined on the gameconstants the player takes damage from poison, clear poison by leaving the room...or opening a window?
@@ -41,14 +43,17 @@ public class Player : Photon.MonoBehaviour, Entity
     void Start()
     {
         if ( this.photonView.ownerId < colors.Count )
-        { GetComponent<SpriteRenderer>().color = colors[this.photonView.ownerId]; }
+        { characterSprite.GetComponent<SpriteRenderer>().color = colors[this.photonView.ownerId]; }
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         gameManager = GameManager.instance;
         gameManager.playerManager.players.add(this);
         transform.parent = gameManager.playerManager.transform;
-        heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+
+        if(heldSprite == null)
+        {heldSprite = transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();}
+
         if ( photonView.isMine  )
         {
 
@@ -263,8 +268,8 @@ public class Player : Photon.MonoBehaviour, Entity
     [PunRPC]
     public void SetSpriteFlip(bool flip, float rot)
     {
-        GetComponent<SpriteRenderer>().flipX = flip;
-        transform.eulerAngles = new Vector3( 0, 0, rot );
+        characterSprite.GetComponent<SpriteRenderer>().flipX = flip;
+        characterSprite.transform.eulerAngles = new Vector3( 0, 0, rot );
     }
     [PunRPC]
     public void SetVelocity(Vector3 newvel)
@@ -346,19 +351,19 @@ public class Player : Photon.MonoBehaviour, Entity
         switch(movementDirection) {
             case CardinalDirection.Up:
                 this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 270.0f );
-                transform.GetChild(0).localPosition = new Vector3(-0.1f,0,0);
+                // transform.GetChild(0).localPosition = new Vector3(-0.1f,0,0);
                 break;
             case CardinalDirection.Down:
                 this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, true, 270.0f );
-                  transform.GetChild(0).localPosition = new Vector3(0.1f,0,0);
+                  // transform.GetChild(0).localPosition = new Vector3(0.1f,0,0);
                 break;
             case CardinalDirection.Left:
                 this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, false, 0f );
-                  transform.GetChild(0).localPosition = new Vector3(-0.1f,0,0);
+                  // transform.GetChild(0).localPosition = new Vector3(-0.1f,0,0);
                 break;
             case CardinalDirection.Right:
                 this.photonView.RPC( "SetSpriteFlip", PhotonTargets.AllViaServer, true, 0f );
-                  transform.GetChild(0).localPosition = new Vector3(0.1f,0,0);
+                  // transform.GetChild(0).localPosition = new Vector3(0.1f,0,0);
                 break;
             default: break;
         }
@@ -414,7 +419,7 @@ public class Player : Photon.MonoBehaviour, Entity
     {
       inputLockTimer = attackInputLock;
       rb.velocity = Vector3.zero;
-        if(GetComponent<SpriteRenderer>().flipX == false)
+        if(characterSprite.GetComponent<SpriteRenderer>().flipX == false)
         {
           if(GetInventory().hasBriefcase == true)
           {
@@ -496,10 +501,10 @@ public class Player : Photon.MonoBehaviour, Entity
 
     public void BubbleAnimation()
     {
-      if(photonView.isMine)
-      {
-          gameManager.EnableBubbles();
-      }
+          if(photonView.isMine)
+          {
+              gameManager.EnableBubbles();
+          }
 
     }
 
