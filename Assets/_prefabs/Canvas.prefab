@@ -951,7 +951,7 @@ GameObject:
   - component: {fileID: 3056191411070417727}
   - component: {fileID: 3056191411070417726}
   m_Layer: 5
-  m_Name: trapInventoryUI
+  m_Name: trapInventoryHeader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
