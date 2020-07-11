@@ -21,6 +21,8 @@ public class GameManager : Photon.MonoBehaviour
     public HidingspotManager hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
     [ChildComponent]
     public CollectibleManager collectibleManager;
+    [SiblingComponent]
+    public Map map;
     public ScrollingText scrollingText;
     public RoundManager roundManager;
 

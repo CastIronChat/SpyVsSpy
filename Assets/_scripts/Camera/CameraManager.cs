@@ -10,15 +10,14 @@ using UnityEditor;
 
 public class CameraManager : MonoBehaviour
 {
-    public PlayerManager playerManager;
-
-    public GameConstants gameConstants {
-        get => GameConstants.instance;
+    public GameManager gameManager;
+    public PlayerManager playerManager
+    {
+        get => gameManager.playerManager;
     }
 
     public GameObject cameraPrefab;
 
-    public RectTransformUtility roomSizeReference;
     [HideInInspector]
     public List<PlayerCamera> cameras = new List<PlayerCamera>();
     [HideInInspector]

@@ -6,8 +6,11 @@ public class HidingspotManager : MonoBehaviour
 {
 
   public GameManager gameManager;
+  public Map map
+  {
+      get => gameManager.map;
+  }
   public ScrollingText scrollingText;
-  public Transform hidingSpotParent,doorsParent,activeHidingSpots;
   public List<HidingSpot> hidingSpots;
   public DoorRegistry doors = new DoorRegistry();
     // Start is called before the first frame update
@@ -64,7 +67,7 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
-        var allDoors = new List<Door>(doorsParent.GetComponentsInChildren<Door>());
+        var allDoors = new List<Door>(map.getComponents<Door>());
         // Assign all doors IDs based on their position in the scene, like words in a book:
         // sorted top to bottom, left to right.
         allDoors.Sort(HelperMethods.compareByTransform);
@@ -78,7 +81,7 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetHidingspotList()
     {
-        var allHidingSpots = new List<HidingSpot>(hidingSpotParent.GetComponentsInChildren<HidingSpot>());
+        var allHidingSpots = new List<HidingSpot>(map.getComponents<HidingSpot>());
         // Assign all doors IDs based on their position in the scene, like words in a book:
         // sorted top to bottom, left to right.
         allHidingSpots.Sort(HelperMethods.compareByTransform);
@@ -86,7 +89,6 @@ public class HidingspotManager : MonoBehaviour
         {
             hidingSpot.SetSpotInList( hidingSpots.Count, gameManager );
             hidingSpots.Add(hidingSpot);
-            hidingSpot.transform.parent = activeHidingSpots;
         }
     }
 }
