@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
@@ -28,6 +29,11 @@ public class PlayerManager : MonoBehaviour
     public ReadOnlyCollection<Player> idlePlayers {
         // get => _inactivePlayers;
         get => new ReadOnlyCollection<Player>(GameManager.instance.idleplayerManager.transform.GetComponentsInChildren<Player>());
+    }
+
+    public Player localPlayer
+    {
+        get => players.First( p => p.photonView.isMine );
     }
 
     public int playerCount {

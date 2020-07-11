@@ -9,12 +9,13 @@ public class HidingspotManager : MonoBehaviour
   public ScrollingText scrollingText;
   public Transform hidingSpotParent,doorsParent,activeHidingSpots;
   public List<HidingSpot> hidingSpots;
-  public DoorRegistry doors;
+  public DoorRegistry doors = new DoorRegistry();
     // Start is called before the first frame update
     void Start()
     {
       SetHidingspotList();
       SetDoorList();
+      doors.installAsSerializer();
     }
     void OnEnable()
     {
@@ -77,34 +78,15 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetHidingspotList()
     {
-
-        while ( 0 < hidingSpotParent.childCount )
+        var allHidingSpots = new List<HidingSpot>(hidingSpotParent.GetComponentsInChildren<HidingSpot>());
+        // Assign all doors IDs based on their position in the scene, like words in a book:
+        // sorted top to bottom, left to right.
+        allHidingSpots.Sort(HelperMethods.compareByTransform);
+        foreach ( var hidingSpot in allHidingSpots )
         {
-            Transform closestHidingSpot = hidingSpotParent.GetChild( 0 );
-            float dist = Vector3.Distance( closestHidingSpot.position, transform.position );
-            foreach ( Transform go in hidingSpotParent )
-            {
-                if (Vector3.Distance( go.position, transform.position ) <= dist || closestHidingSpot.GetComponent<HidingSpot>().spotInList != -1)
-                {
-                    closestHidingSpot = go;
-                    dist = Vector3.Distance( go.position, transform.position );
-                }
-            }
-
-          //  if(closestHidingSpot.GetComponent<HidingSpot>().spotInList == -1)
-          //  {
-              closestHidingSpot.GetComponent<HidingSpot>().SetSpotInList( hidingSpots.Count, gameManager );
-
-              hidingSpots.Add( closestHidingSpot.GetComponent<HidingSpot>() );
-              closestHidingSpot.parent = activeHidingSpots;
-              // if(PhotonNetwork.isMasterClient == false)
-              // {
-              //   closestHidingSpot.GetComponent<Rigidbody2D>().isKinematic = true;
-              // }
-
-          //  }
-
+            hidingSpot.SetSpotInList( hidingSpots.Count, gameManager );
+            hidingSpots.Add(hidingSpot);
+            hidingSpot.transform.parent = activeHidingSpots;
         }
-
     }
 }

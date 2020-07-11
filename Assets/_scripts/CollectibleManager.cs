@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 /// <summary>
 /// Responsibilities:
@@ -17,8 +18,9 @@ public class CollectibleManager : MonoBehaviour
 {
     private Dictionary<Player, PlayerCollectibleState> playerStates = new Dictionary<Player, PlayerCollectibleState>();
 
-    [FormerlySerializedAs("icons")]
-    public IconRowHUD notFoundIcons;
+    [FormerlySerializedAs( "icons" )] public IconRowHUD notFoundIcons;
+
+    public GameObject objectiveHeader;
 
     public PlayerCollectibleState getState(Player p)
     {
@@ -37,16 +39,33 @@ public class CollectibleManager : MonoBehaviour
         var collectiblesHeldByAnyone = new HashSet<CollectibleType>();
         foreach ( var player in gm.playerManager.activePlayers )
         {
-            var state = getState(player);
+            var state = getState( player );
             int countHeldByThisPlayer = 0;
             foreach ( var pair in player.GetInventory().collectibles )
             {
-                if ( pair.Value > 0 ) {
+                if ( pair.Value > 0 )
+                {
                     collectiblesHeldByAnyone.Add( pair.Key );
                     countHeldByThisPlayer++;
                 }
             }
-            state.hasAllCollectibles = countHeldByThisPlayer >= collectibleTypes.Count;
+
+            // HACK there is a "blank" collectible that doesn't count, so we need to subtract 1.
+            // This is confusing; see if we can fix our logic to avoid.
+            state.hasAllCollectibles = countHeldByThisPlayer >= collectibleTypes.Count - 1;
+        }
+
+        var localPlayerState = getState( pm.localPlayer );
+        if ( localPlayerState.hasAllCollectibles )
+        {
+            objectiveHeader.SetActive( true );
+            // HACK what if there are multiple objectives?  Is our responsibility to control the objectives UI for
+            // *all* objectives?
+            objectiveHeader.GetComponentInChildren<Text>().text = "Get to the exit!";
+        }
+        else
+        {
+            objectiveHeader.SetActive( false );
         }
 
         notFoundIcons.setCursorVisibility( false );
@@ -59,17 +78,28 @@ public class CollectibleManager : MonoBehaviour
                 notFoundIcons.setIconVisibility( icon, true );
                 notFoundIcons.setIcon( icon, collectibleType.sprite );
                 icon++;
-            } else {
+            }
+            else
+            {
             }
         }
+
         for ( ; icon < notFoundIcons.getIconCount(); icon++ )
         {
             notFoundIcons.setIconVisibility( icon, false );
         }
     }
 
-    private GameManager gm {get => GameManager.instance;}
-    private PlayerManager pm {get => gm.playerManager;}
+    private GameManager gm
+    {
+        get => GameManager.instance;
+    }
+
+    private PlayerManager pm
+    {
+        get => gm.playerManager;
+    }
+
     private CollectibleTypeRegistry collectibleTypes
     {
         get => gm.gameConstants.collectibleTypes;

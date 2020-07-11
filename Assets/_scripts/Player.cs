@@ -475,9 +475,14 @@ public class Player : Photon.MonoBehaviour, Entity
 
 
           }
-          if (hit.transform.GetComponent<Door>() != null)
+
+          var door = hit.transform.GetComponent<Door>();
+          if (door != null)
           {
-            gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer,  hit.transform.GetComponent<Door>().GetPlaceInList() ,true);
+              if ( door.canBeOpenedBy( this ) )
+              {
+                  gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, door.uniqueId, true );
+              }
 
           }
         }

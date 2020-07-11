@@ -12,10 +12,12 @@ public class Door : MonoBehaviour, Entity
 {
     public GameManager gameManager;
     public HidingspotManager doorManager;
-    public Transform oppositeDoor;
     public GameObject doorSprite;
-    public Vector3 openDirection; //leftright or updown
-    public float roomsize;
+
+    [Description(@"
+        Exit doors can only be opened by a player with all items.
+    ")]
+    public bool isExit = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +49,11 @@ public class Door : MonoBehaviour, Entity
                 gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, uniqueId, false );
             }
         }
+    }
+
+    public bool canBeOpenedBy(Player player)
+    {
+        return !isExit || gameManager.collectibleManager.getState( player ).hasAllCollectibles;
     }
 
     public int uniqueId { get; set; }
