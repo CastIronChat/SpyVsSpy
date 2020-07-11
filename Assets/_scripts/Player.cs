@@ -491,10 +491,10 @@ public class Player : Photon.MonoBehaviour, Entity
 
     public void BubbleAnimation()
     {
-      if(photonView.isMine)
-      {
-          gameManager.EnableBubbles();
-      }
+          if(photonView.isMine)
+          {
+              gameManager.EnableBubbles();
+          }
 
     }
 
