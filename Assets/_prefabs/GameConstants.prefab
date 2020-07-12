@@ -178,17 +178,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79cd41a3eafc745a2578e47af14fb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: traptype1
-  sprite: {fileID: 21300000, guid: ea79f89f3e9d0df4f944ecd5564b2ab7, type: 3}
+  name: Ice
+  sprite: {fileID: 21300000, guid: 13850f475f88e534cbbfd06511750ffa, type: 3}
   isNoneTrap: 0
-  trapEffect: {fileID: 1201566434208985916, guid: 9027df7ed8e8dc14eb57b1779cac4af4,
+  trapEffect: {fileID: 977880286148150768, guid: fe46708b086efb64ca4f52d8047e0c48,
     type: 3}
   onlyHitTarget: 0
   hasKnockback: 0
-  spawnOnPlayer: 0
+  spawnOnPlayer: 1
   lifeTime: 0
   knockbackForce: 0
   dmgPerSecond: 0
+  inputLockOut: 5
   oneTimeDamage: 0
 --- !u!1 &3183641451144219663
 GameObject:
@@ -234,7 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: toaster
-  sprite: {fileID: 21300000, guid: e83d596ff7a9ec74daa47ce31d149fb2, type: 3}
+  sprite: {fileID: 21300000, guid: dd3bd0970e93ece489762c5ec1bec54a, type: 3}
   isNoneTrap: 0
   trapEffect: {fileID: 7312031365088650165, guid: c8be7267a362f304c8d8dc0ee2312829,
     type: 3}
@@ -244,6 +245,7 @@ MonoBehaviour:
   lifeTime: 0
   knockbackForce: 5
   dmgPerSecond: 0
+  inputLockOut: 0
   oneTimeDamage: 2
 --- !u!1 &3183641451528391585
 GameObject:
@@ -305,6 +307,7 @@ MonoBehaviour:
   roundMaxTimeSeconds: 180
   startingTraps: 3
   poisonTime: 2
+  disarmTime: 5
   roundTimeIsLimited: 1
 --- !u!1 &3183641451571270964
 GameObject:
@@ -359,6 +362,7 @@ MonoBehaviour:
   lifeTime: 0
   knockbackForce: 0
   dmgPerSecond: 0
+  inputLockOut: 0
   oneTimeDamage: 0
 --- !u!1 &3183641451820806356
 GameObject:
@@ -413,6 +417,7 @@ MonoBehaviour:
   lifeTime: 0
   knockbackForce: 0
   dmgPerSecond: 0
+  inputLockOut: 0
   oneTimeDamage: 0
 --- !u!1 &3183641452050416458
 GameObject:
@@ -458,17 +463,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: traptype2
-  sprite: {fileID: 21300000, guid: a5c91e45b34b26e4fa2de4b248500c31, type: 3}
+  sprite: {fileID: 21300000, guid: 4d4cb2c1fe7b65740b767ad9b5a5d5cb, type: 3}
   isNoneTrap: 0
-  trapEffect: {fileID: 7312031365088650165, guid: c8be7267a362f304c8d8dc0ee2312829,
+  trapEffect: {fileID: 1201566434208985916, guid: 9027df7ed8e8dc14eb57b1779cac4af4,
     type: 3}
   onlyHitTarget: 0
   hasKnockback: 0
-  spawnOnPlayer: 1
+  spawnOnPlayer: 0
   lifeTime: 0
   knockbackForce: 0
-  dmgPerSecond: 0
-  oneTimeDamage: 1
+  dmgPerSecond: 1
+  inputLockOut: 0
+  oneTimeDamage: 0
 --- !u!1 &3183641452164459325
 GameObject:
   m_ObjectHideFlags: 0

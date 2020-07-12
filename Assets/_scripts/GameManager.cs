@@ -298,6 +298,14 @@ public class GameManager : Photon.MonoBehaviour
                     acting_Player.GetComponent<PhotonView>().RPC( "rpcGetThrownByTrap", PhotonTargets.AllViaServer, dir * tempTrap.knockbackForce, 1.0f);
                 }
 
+                if(tempTrap.inputLockOut != 0)
+                {
+                    Vector3 dir = (acting_Player.transform.position - hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position).normalized;
+                    acting_Player.GetComponent<PhotonView>().RPC( "rpcSetInputLockOut", PhotonTargets.AllViaServer, tempTrap.inputLockOut);
+                    acting_Player.GetComponent<PhotonView>().RPC( "rpcPlayAnimation", PhotonTargets.AllViaServer, "freeze");
+
+                }
+
                 acting_Player.ServerUpdateLives(tempTrap.oneTimeDamage);
                 //set the spot to no longer be trapped since it was just used
                 this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, traptype.name);
@@ -504,6 +512,24 @@ public class GameManager : Photon.MonoBehaviour
     }
 
 
+    [PunRPC]
+    public void DisarmHidingSpot( int whichHidingSpot)
+    {
+
+        if ( PhotonNetwork.isMasterClient )
+        {
+            //check that the hiding spot is in the list range
+              if(whichHidingSpot < hidingSpotManager.hidingSpots.Count)
+              {
+
+                  HidingSpot activatedHidingSpot = hidingSpotManager.hidingSpots[whichHidingSpot];
+                this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
+              }
+
+          }
+
+
+    }
 
 
 

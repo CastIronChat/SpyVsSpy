@@ -82,4 +82,8 @@ MonoBehaviour:
   - rpcGetThrownByTrap
   - rpcSyncPyhsicsLocation
   - SetBubbles
+  - StartDisarming
+  - DisarmHidingSpot
+  - rpcSetInputLockOut
+  - rpcPlayAnimation
   DisableAutoOpenWizard: 1
