@@ -83,8 +83,6 @@ public class Player : Photon.MonoBehaviour, Entity
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        playerManager.players.add(this);
-        transform.parent = playerManager.transform;
 
         if(heldSprite == null)
         {heldSprite = transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();}

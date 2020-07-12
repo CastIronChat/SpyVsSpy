@@ -9,6 +9,7 @@ using UnityEngine.Assertions;
 public class Map : MonoBehaviour
 {
     public RectTransformUtility roomSizeReference;
+    public Transform rooms;
 
     /// <summary>
     /// At the moment, a silly abstraction, since we're just wrapping GetComponentsInChildren<>

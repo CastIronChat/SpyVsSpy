@@ -43,7 +43,9 @@ public class GameManager : Photon.MonoBehaviour
     public List<Material> colors;
     public IconRowHUD playerinventoryimages;
     public IconRowHUD playertrapimages;
-    public Transform rooms;
+    public Transform rooms {
+        get => map.rooms;
+    }
     public Transform idleplayerManager;
 
     //placeholder that needs to be moved to the master trap logic
