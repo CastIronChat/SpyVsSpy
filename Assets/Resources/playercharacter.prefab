@@ -187,6 +187,7 @@ MonoBehaviour:
   - {r: 1, g: 0.9263606, b: 0, a: 1}
   - {r: 0.7042122, g: 0, b: 1, a: 1}
   - {r: 0, g: 1, b: 0.0791831, a: 1}
+  - {r: 1, g: 0, b: 0.20579243, a: 1}
   characterSprite: {fileID: 1410988799141569444}
   heldSprite: {fileID: 5390566615242513836}
   weaponSprite: {fileID: 8820651695482201203}
@@ -241,13 +242,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6884955624644215074}
-  m_LocalRotation: {x: -0, y: -0, z: 0.76451373, w: 0.6446074}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.10000001, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 7627970187631562262}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 99.728004}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5390566615242513836
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -285,7 +286,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
