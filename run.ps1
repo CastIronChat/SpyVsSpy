@@ -17,8 +17,10 @@ Subcommands are declared in the switch() statement below.
 function run() {
     switch($Command) {
         "format" {
-            dotnet tool run dotnet-format .\Assembly-CSharp.csproj
-            dotnet tool run dotnet-format .\Assembly-CSharp-Editor.csproj
+            gci 'CastIronChat*.csproj' | % {
+                echo "dotnet tool run dotnet-format $($_.name)"
+                dotnet tool run dotnet-format $_.name
+            }
         }
         "build-webgl" {
             # THIS SCRIPT IS NOT WORKING
