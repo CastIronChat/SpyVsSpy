@@ -10,19 +10,24 @@ using UnityEngine.UI;
 public class GameManager : Photon.MonoBehaviour
 {
     // HACK anyone can use this method to get a reference to the GameManager assuming it is a global singleton
-    public static GameManager instance {
+    public static GameManager instance
+    {
         get => singleton.instance;
     }
-    private static GlobalSingletonGetter<GameManager> singleton = new GlobalSingletonGetter<GameManager>(gameObjectName: "GameManager");
-    [Description("Trying out an annotation that will automatically set a component reference with a button.")]
+
+    private static GlobalSingletonGetter<GameManager> singleton =
+        new GlobalSingletonGetter<GameManager>( gameObjectName: "GameManager" );
+
+    [Description( "Trying out an annotation that will automatically set a component reference with a button." )]
     [ChildComponent]
     public PlayerManager playerManager;
+
     [ChildComponent]
-    public HidingspotManager hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
-    [ChildComponent]
-    public CollectibleManager collectibleManager;
-    [SiblingComponent]
-    public Map map;
+    public HidingspotManager
+        hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
+
+    [ChildComponent] public CollectibleManager collectibleManager;
+    [SiblingComponent] public Map map;
     public ScrollingText scrollingText;
     public RoundManager roundManager;
 
@@ -32,7 +37,7 @@ public class GameManager : Photon.MonoBehaviour
     }
 
     public GameObject playerPrefab;
-    public GameObject scoreBoard,startbutton,bubbleHidingspot,bubblePlayer;
+    public GameObject scoreBoard, startbutton, bubbleHidingspot, bubblePlayer;
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
@@ -48,11 +53,11 @@ public class GameManager : Photon.MonoBehaviour
     {
         if ( !PhotonNetwork.connected )
         {
-
         }
+
         if ( PhotonNetwork.isMasterClient )
         {
-                startbutton.SetActive( true );
+            startbutton.SetActive( true );
         }
 
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
@@ -65,29 +70,18 @@ public class GameManager : Photon.MonoBehaviour
     {
         print( "new player Number: " + newPlayer );
         PopulateScoreBoard( newPlayer, newname );
-
     }
 
 
     void Update()
     {
-
-
-
-
         if ( PhotonNetwork.isMasterClient && Input.GetKeyDown( KeyCode.RightShift ) )
         {
-
-
         }
 
         if ( PhotonNetwork.isMasterClient )
         {
-
-
         }
-
-
     }
 
 
@@ -101,7 +95,7 @@ public class GameManager : Photon.MonoBehaviour
     {
         if ( PhotonNetwork.isMasterClient )
         {
-          photonView.RPC( "StartRound", PhotonTargets.AllBufferedViaServer );
+            photonView.RPC( "StartRound", PhotonTargets.AllBufferedViaServer );
         }
     }
 
@@ -113,20 +107,18 @@ public class GameManager : Photon.MonoBehaviour
         {
             StartRound();
         }
-
     }
 
     [PunRPC]
     public void StartRound()
     {
-
         startbutton.SetActive( false );
 
         int playercount = 0;
         foreach ( Transform go in idleplayerManager )
-        { go.transform.parent = playerManager.transform; }
-
-
+        {
+            go.transform.parent = playerManager.transform;
+        }
 
 
         Transform nextPlayerInOrder = playerManager.transform.GetChild( 0 );
@@ -136,383 +128,369 @@ public class GameManager : Photon.MonoBehaviour
 
             nextPlayerInOrder.GetComponent<Player>().playerNum = nextPlayerInOrder.GetComponent<PhotonView>().ownerId;
         }
+
         int lowestPlayerNum = 99999;
         int lastPlayerNum = -1;
 
         //sort players by their ownerid so that the transform has the same child order for all players
         while ( playercount < playerManager.transform.childCount )
         {
-
-
             foreach ( Transform go in playerManager.transform )
             {
-
-                if ( go.GetComponent<PhotonView>().ownerId > lastPlayerNum && go.GetComponent<PhotonView>().ownerId < lowestPlayerNum )
+                if ( go.GetComponent<PhotonView>().ownerId > lastPlayerNum &&
+                     go.GetComponent<PhotonView>().ownerId < lowestPlayerNum )
                 {
                     nextPlayerInOrder = go;
                     lowestPlayerNum = go.GetComponent<Player>().playerNum;
                 }
-
             }
+
             lastPlayerNum = lowestPlayerNum;
             lowestPlayerNum = 99999;
 
             scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( true );
-            scoreBoard.transform.GetChild( playercount ).GetChild( 1 ).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().name + " : ";
-            scoreBoard.transform.GetChild( playercount ).GetChild( 2 ).GetComponent<Text>().text = nextPlayerInOrder.GetComponent<Player>().score.ToString();
+            scoreBoard.transform.GetChild( playercount ).GetChild( 1 ).GetComponent<Text>().text =
+                nextPlayerInOrder.GetComponent<Player>().name + " : ";
+            scoreBoard.transform.GetChild( playercount ).GetChild( 2 ).GetComponent<Text>().text =
+                nextPlayerInOrder.GetComponent<Player>().score.ToString();
 
-            nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild( playercount ).gameObject;
+            nextPlayerInOrder.GetComponent<Player>().myScoreCard =
+                scoreBoard.transform.GetChild( playercount ).gameObject;
             nextPlayerInOrder.parent = playerManager.transform;
             if ( PhotonNetwork.isMasterClient )
             {
                 int addtraps = gameConstants.startingTraps;
-                while(addtraps > 0)
+                while ( addtraps > 0 )
                 {
-                  nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[addtraps],1 );
-                  addtraps--;
+                    nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "AddorRemoveTrap",
+                        PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[addtraps], 1 );
+                    addtraps--;
                 }
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, gameConstants.playerMaxDeaths );
 
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives",
+                    PhotonTargets.AllBufferedViaServer, gameConstants.playerMaxDeaths );
+
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList",
+                    PhotonTargets.AllBufferedViaServer, playercount );
             }
 
 
+            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color =
+                nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>()
+                    .colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
 
-            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
-
-            nextPlayerInOrder.transform.position = rooms.GetChild(playercount).position;
+            nextPlayerInOrder.transform.position = rooms.GetChild( playercount ).position;
 
             playercount++;
             //if there is somehow more players than there are scoreboard elements break out of the loop
-            if ( playercount >= scoreBoard.transform.childCount ) { return; }
-
+            if ( playercount >= scoreBoard.transform.childCount )
+            {
+                return;
+            }
         }
+
         //disable all unused scorecards
         while ( playercount < scoreBoard.transform.childCount )
         {
             scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( false );
             playercount++;
         }
-
-
-
-
-
-
-
     }
-
 
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-
         if ( stream.isWriting )
         {
-
             // stream.SendNext(1);
             // stream.SendNext(roundActive);
         }
         else
         {
-
             // partOfTurn = (int)stream.ReceiveNext();
             // roundActive = (bool)stream.ReceiveNext();
-
-
         }
-
     }
 
 
     public void PlayerEnterHidingSpot(int playerid, int trapspot, TrapType trapvalue)
     {
-          if ( PhotonNetwork.isMasterClient )
-          {
-                this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerid, trapspot, trapvalue);
-          }
+        if ( PhotonNetwork.isMasterClient )
+        {
+            this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerid, trapspot, trapvalue );
+        }
     }
 
     public void PlayerBumpHidingSpot(int playerid, int trapspot, TrapType trapvalue)
     {
-          if ( PhotonNetwork.isMasterClient )
-          {
-                hidingSpotManager.GetHidingSpot(trapspot).PlayAnimation("bump");
-                this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerid, trapspot, trapvalue);
-          }
+        if ( PhotonNetwork.isMasterClient )
+        {
+            hidingSpotManager.GetHidingSpot( trapspot ).PlayAnimation( "bump" );
+            this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerid, trapspot, trapvalue );
+        }
     }
 
     public void SyncPyhsicsLocation(int hidingSpot)
     {
-      if ( PhotonNetwork.isMasterClient )
-      {
-          this.photonView.RPC( "rpcSyncPyhsicsLocation", PhotonTargets.AllViaServer,hidingSpot, hidingSpotManager.GetHidingSpot(hidingSpot).transform.position);
-      }
+        if ( PhotonNetwork.isMasterClient )
+        {
+            this.photonView.RPC( "rpcSyncPyhsicsLocation", PhotonTargets.AllViaServer, hidingSpot,
+                hidingSpotManager.GetHidingSpot( hidingSpot ).transform.position );
+        }
     }
 
     [PunRPC]
     public void rpcSyncPyhsicsLocation(int hidingSpot, Vector3 realPos)
     {
-      hidingSpotManager.GetHidingSpot(hidingSpot).transform.position = realPos;
+        hidingSpotManager.GetHidingSpot( hidingSpot ).transform.position = realPos;
     }
 
     [PunRPC] //remove, unused
     public void CreateExplosion(Vector3 explosionLocation)
     {
-      //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
-      Instantiate(debugExplosion,explosionLocation,debugExplosion.transform.rotation);
+        //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+        Instantiate( debugExplosion, explosionLocation, debugExplosion.transform.rotation );
     }
 
 
     [PunRPC]
-    public void ActivateTrapEffect(int actingPlayer,int whichHidingSpot, TrapType traptype)
+    public void ActivateTrapEffect(int actingPlayer, int whichHidingSpot, TrapType traptype)
     {
-          TrapType tempTrap = traptype;
-          Player acting_Player = null;
-          Transform closestRoom = rooms.GetChild(0);
+        TrapType tempTrap = traptype;
+        Player acting_Player = null;
+        Transform closestRoom = rooms.GetChild( 0 );
 
-          //find the room the player is in
+        //find the room the player is in
 
 
-          foreach(Player player in playerManager.activePlayers)
-          {
-              //check that the player has the trap to use
-              if(player.GetComponent<PhotonView>().ownerId == actingPlayer )
-              {
+        foreach ( Player player in playerManager.activePlayers )
+        {
+            //check that the player has the trap to use
+            if ( player.GetComponent<PhotonView>().ownerId == actingPlayer )
+            {
                 acting_Player = player;
-              }
-          }
-          // foreach(Transform room in rooms)
-          // {
-          //   if( Vector3.Distance(acting_Player.transform.position, room.position) < Vector3.Distance(acting_Player.transform.position, closestRoom.position))
-          //   {closestRoom = room;}
-          // }
+            }
+        }
+        // foreach(Transform room in rooms)
+        // {
+        //   if( Vector3.Distance(acting_Player.transform.position, room.position) < Vector3.Distance(acting_Player.transform.position, closestRoom.position))
+        //   {closestRoom = room;}
+        // }
 
-          //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
-          if(tempTrap.spawnOnPlayer == true)
-          {
-            Instantiate(tempTrap.trapEffect,acting_Player.transform.position,debugExplosion.transform.rotation);
-          }
-          else
-          {
-            Instantiate(tempTrap.trapEffect, hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position,debugExplosion.transform.rotation);
-          }
+        //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+        if ( tempTrap.spawnOnPlayer == true )
+        {
+            Instantiate( tempTrap.trapEffect, acting_Player.transform.position, debugExplosion.transform.rotation );
+        }
+        else
+        {
+            Instantiate( tempTrap.trapEffect, hidingSpotManager.GetHidingSpot( whichHidingSpot ).transform.position,
+                debugExplosion.transform.rotation );
+        }
 
-          if ( PhotonNetwork.isMasterClient )
-          {
-                if(tempTrap.hasKnockback == true)
-                {
-                    Vector3 dir = (acting_Player.transform.position - hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position).normalized;
-                    acting_Player.GetComponent<PhotonView>().RPC( "rpcGetThrownByTrap", PhotonTargets.AllViaServer, dir * tempTrap.knockbackForce, 1.0f);
-                }
+        if ( PhotonNetwork.isMasterClient )
+        {
+            if ( tempTrap.hasKnockback == true )
+            {
+                Vector3 dir = (acting_Player.transform.position -
+                               hidingSpotManager.GetHidingSpot( whichHidingSpot ).transform.position).normalized;
+                acting_Player.GetComponent<PhotonView>().RPC( "rpcGetThrownByTrap", PhotonTargets.AllViaServer,
+                    dir * tempTrap.knockbackForce, 1.0f );
+            }
 
-                acting_Player.ServerUpdateLives(tempTrap.oneTimeDamage);
-                //set the spot to no longer be trapped since it was just used
-                this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, traptype.name);
-                this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
-
-
-          }
+            acting_Player.ServerUpdateLives( tempTrap.oneTimeDamage );
+            //set the spot to no longer be trapped since it was just used
+            this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, traptype.name );
+            this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot, null );
+        }
     }
 
 
     [PunRPC]
-    public void AnimateHidingSpot(int whichHidingSpot,string animation)
+    public void AnimateHidingSpot(int whichHidingSpot, string animation)
     {
-      //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
-       hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation(animation);
+        //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+        hidingSpotManager.GetHidingSpot( whichHidingSpot ).PlayAnimation( animation );
     }
 
     [PunRPC]
     public void rpcPlayerSetTrapForHidingSpot(int playerId, int whichHidingSpot, TrapType trapType)
     {
-
-      // this.photonView.RPC( "AnimateHidingSpot", PhotonTargets.AllViaServer, whichHidingSpot);
-      if ( PhotonNetwork.isMasterClient )
-      {
-        foreach(Player player in playerManager.activePlayers)
+        // this.photonView.RPC( "AnimateHidingSpot", PhotonTargets.AllViaServer, whichHidingSpot);
+        if ( PhotonNetwork.isMasterClient )
         {
-            //check that the player has the trap to use
-            if(player.GetComponent<PhotonView>().ownerId == playerId )
+            foreach ( Player player in playerManager.activePlayers )
             {
-              //check that the hiding spot exists and isnt already trapped
-                  HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
-                  if(temphidingspot != null )
-                  {
-                        if( temphidingspot.trapValue != null)
+                //check that the player has the trap to use
+                if ( player.GetComponent<PhotonView>().ownerId == playerId )
+                {
+                    //check that the hiding spot exists and isnt already trapped
+                    HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot( whichHidingSpot );
+                    if ( temphidingspot != null )
+                    {
+                        if ( temphidingspot.trapValue != null )
                         {
-                          this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerId, whichHidingSpot, temphidingspot.trapValue);
-
-
+                            this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, playerId,
+                                whichHidingSpot, temphidingspot.trapValue );
                         }
-                          else
+                        else
                         {
-                          //always set the sprite to blank, even if the player doesnt have a trap, because it that scenario its a server/client/client info mismatch
-                          player.photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[0]);
-                              if(player.GetInventory().HasTrap(trapType))
-                              {
+                            //always set the sprite to blank, even if the player doesnt have a trap, because it that scenario its a server/client/client info mismatch
+                            player.photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer,
+                                gameConstants.trapTypes[0] );
+                            if ( player.GetInventory().HasTrap( trapType ) )
+                            {
+                                player.photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,
+                                    0 );
+                                this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,
+                                    whichHidingSpot, trapType );
 
-                                player.photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer, trapType,0);
-                                this.photonView.RPC( "rpcSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,trapType);
-
-                                photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, playerId, 0, 0,trapType.uniqueId,0);
-
-                              }
-
+                                photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, playerId, 0,
+                                    0, trapType.uniqueId, 0 );
+                            }
                         }
-                  }
-              return;
+                    }
+
+                    return;
+                }
             }
         }
-
-      }
     }
 
     [PunRPC]
     public void rpcSetTrapForHidingSpot(int whichHidingSpot, TrapType trapType)
     {
-        hidingSpotManager.SetTrapForHidingSpot(whichHidingSpot, trapType);
+        hidingSpotManager.SetTrapForHidingSpot( whichHidingSpot, trapType );
     }
 
     [PunRPC]
     public void rpcSetCollectibleForHidingSpot(int whichHidingSpot, int whatitem)
     {
-      hidingSpotManager.SetCollectibleForHidingSpot(whichHidingSpot,whatitem);
+        hidingSpotManager.SetCollectibleForHidingSpot( whichHidingSpot, whatitem );
     }
 
     [PunRPC]
     public void rpcNewScrollLine(string newline)
     {
-      scrollingText.NewLine(newline);
+        scrollingText.NewLine( newline );
     }
 
     [PunRPC]
-    public void OpenDoor( int whichDoor, bool open )
+    public void OpenDoor(int whichDoor, bool open)
     {
-      hidingSpotManager.OpenDoor(whichDoor, open);
+        hidingSpotManager.OpenDoor( whichDoor, open );
     }
 
     public void EnableBubbles()
     {
-
-      bubblePlayer.transform.rotation = transform.rotation;
-      bubbleHidingspot.transform.rotation = transform.rotation;
-      bubblePlayer.GetComponent<Animator>().Play("turnoff");
-      bubbleHidingspot.GetComponent<Animator>().Play("turnoff");
-
+        bubblePlayer.transform.rotation = transform.rotation;
+        bubbleHidingspot.transform.rotation = transform.rotation;
+        bubblePlayer.GetComponent<Animator>().Play( "turnoff" );
+        bubbleHidingspot.GetComponent<Animator>().Play( "turnoff" );
     }
 
     [PunRPC]
-    public void SetBubbles( int whichspot, int whichplayer, int collectible,int collectibleInSpot, int trapInSpot, int weaponInSpot)
+    public void SetBubbles(int whichspot, int whichplayer, int collectible, int collectibleInSpot, int trapInSpot,
+        int weaponInSpot)
     {
-
         //move the search bubbles that display the items pulled from or put in a hidingspot to the player and spots Location
         //then tell the localplayer to enable them so only the local player sees
         //NOTE: idea -a trap could make it so that everyone can see
         foreach ( Transform go in playerManager.transform )
         {
-
-              if ( go.GetComponent<PhotonView>().ownerId == whichplayer )
-              {
+            if ( go.GetComponent<PhotonView>().ownerId == whichplayer )
+            {
                 bubblePlayer.transform.position = go.position;
-                bubblePlayer.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[collectible].sprite;
-                bubbleHidingspot.transform.position = hidingSpotManager.GetHidingSpot(whichspot).transform.position;
+                bubblePlayer.transform.GetChild( 0 ).GetComponent<SpriteRenderer>().sprite =
+                    gameConstants.collectibleTypes[collectible].sprite;
+                bubbleHidingspot.transform.position = hidingSpotManager.GetHidingSpot( whichspot ).transform.position;
                 //pass the value to avoid a race condition
 
-                if(collectibleInSpot != 0)
-                {bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.collectibleTypes[collectibleInSpot].sprite;}
-                else if (trapInSpot != 0)
-                {bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.trapTypes[trapInSpot].sprite;}
+                if ( collectibleInSpot != 0 )
+                {
+                    bubbleHidingspot.transform.GetChild( 0 ).GetComponent<SpriteRenderer>().sprite =
+                        gameConstants.collectibleTypes[collectibleInSpot].sprite;
+                }
+                else if ( trapInSpot != 0 )
+                {
+                    bubbleHidingspot.transform.GetChild( 0 ).GetComponent<SpriteRenderer>().sprite =
+                        gameConstants.trapTypes[trapInSpot].sprite;
+                }
                 // else if (weaponInSpot != 0)
                 // {bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = gameConstants.weaponTypes[weaponInSpot].sprite;}
 
 
-
                 go.GetComponent<Player>().BubbleAnimation();
                 bubblePlayer.transform.parent = go;
-
-              }
-
+            }
         }
-
     }
 
 
     [PunRPC]
     public void OpenHidingSpot(int whichPlayer, int whichHidingSpot)
     {
-      hidingSpotManager.GetHidingSpot(whichHidingSpot).PlayAnimation("search");
+        hidingSpotManager.GetHidingSpot( whichHidingSpot ).PlayAnimation( "search" );
         if ( PhotonNetwork.isMasterClient )
         {
-              Player actingPlayer = null;
-              foreach(Transform go in playerManager.transform)
-              {
-                  if(go.GetComponent<PhotonView>().ownerId == whichPlayer)
-                  {
+            Player actingPlayer = null;
+            foreach ( Transform go in playerManager.transform )
+            {
+                if ( go.GetComponent<PhotonView>().ownerId == whichPlayer )
+                {
                     actingPlayer = go.GetComponent<Player>();
+                }
+            }
 
-
-                  }
-              }
-
-              //check that the hiding spot is in the list range
-              if(whichHidingSpot < hidingSpotManager.hidingSpots.Count)
-              {
-
-                  HidingSpot activatedHidingSpot = hidingSpotManager.hidingSpots[whichHidingSpot];
-                  //if trapped, activate, otherwise check for hidden object
-                  // TODO: question - placing a trap requires the playing to be holding it out?
-                    if(activatedHidingSpot.GetTrap() != null)
+            //check that the hiding spot is in the list range
+            if ( whichHidingSpot < hidingSpotManager.hidingSpots.Count )
+            {
+                HidingSpot activatedHidingSpot = hidingSpotManager.hidingSpots[whichHidingSpot];
+                //if trapped, activate, otherwise check for hidden object
+                // TODO: question - placing a trap requires the playing to be holding it out?
+                if ( activatedHidingSpot.GetTrap() != null )
+                {
+                    this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, whichPlayer, whichHidingSpot,
+                        activatedHidingSpot.trapValue );
+                }
+                else
+                {
+                    if ( activatedHidingSpot.GetCollectible() != 0 )
                     {
-
-                      this.photonView.RPC( "ActivateTrapEffect", PhotonTargets.AllViaServer, whichPlayer, whichHidingSpot, activatedHidingSpot.trapValue);
-
-                    }
-                    else
-                    {
-
-                          if(activatedHidingSpot.GetCollectible() != 0)
-                          {
-                            //-1 is the briefcase | use negative numbers for special conditions
-                            if(activatedHidingSpot.GetCollectible() == -1)
+                        //-1 is the briefcase | use negative numbers for special conditions
+                        if ( activatedHidingSpot.GetCollectible() == -1 )
+                        {
+                            this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Briefcase Found" );
+                            //set the hiding spot to no longer have a collectible
+                            this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer,
+                                whichHidingSpot, 0 );
+                        }
+                        else
+                        {
+                            if ( actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
                             {
-                              this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Briefcase Found");
-                              //set the hiding spot to no longer have a collectible
-                              this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
+                                int collectiblegrabbed = activatedHidingSpot.GetCollectible();
+                                actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible",
+                                    PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue, 1 );
+
+
+                                this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found" );
+
+
+                                //move the item in the hiding spot to the players inventory
+                                this.photonView.RPC( "rpcSetCollectibleForHidingSpot",
+                                    PhotonTargets.AllBufferedViaServer, whichHidingSpot, 0 );
+
+                                //set the bubbles to show the item picked up
+                                photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, whichPlayer,
+                                    collectiblegrabbed, 0, 0, 0 );
                             }
-                              else
-                              {
-                                if(actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
-                                {
-                                  int collectiblegrabbed = activatedHidingSpot.GetCollectible();
-                                  actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible", PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue, 1);
-
-
-                                  this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found");
-
-
-                                  //move the item in the hiding spot to the players inventory
-                                  this.photonView.RPC( "rpcSetCollectibleForHidingSpot", PhotonTargets.AllBufferedViaServer, whichHidingSpot,0 );
-
-                                  //set the bubbles to show the item picked up
-                                    photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, whichPlayer, collectiblegrabbed, 0,0,0);
-                                }
-                              }
-
-
-
                         }
                     }
-                }//end of size check - if block
-
-
-          }//end of if server
-
-
+                }
+            } //end of size check - if block
+        } //end of if server
     }
-
-
-
 
 
     public void PopulateScoreBoard(int newPlayer, string newname)
@@ -526,70 +504,75 @@ public class GameManager : Photon.MonoBehaviour
 
             nextPlayerInOrder.GetComponent<Player>().playerNum = nextPlayerInOrder.GetComponent<PhotonView>().ownerId;
         }
+
         int lowestPlayerNum = 99999;
         int lastPlayerNum = -1;
 
         while ( playercount < playerManager.transform.childCount )
         {
-
-
             foreach ( Transform go in playerManager.transform )
             {
-
                 //So the new players has their name when they join
                 if ( go.GetComponent<Player>().name.Length <= 0 )
                 {
                     go.GetComponent<Player>().name = newname;
-
                 }
+
                 if ( go.GetComponent<Player>().playerNum <= 0 )
                 {
                     go.GetComponent<Player>().playerNum = go.GetComponent<PhotonView>().ownerId;
-
                 }
-                if ( go.GetComponent<Player>().playerNum > lastPlayerNum && go.GetComponent<Player>().playerNum < lowestPlayerNum )
+
+                if ( go.GetComponent<Player>().playerNum > lastPlayerNum &&
+                     go.GetComponent<Player>().playerNum < lowestPlayerNum )
                 {
                     nextPlayerInOrder = go;
                     lowestPlayerNum = go.GetComponent<Player>().playerNum;
                 }
-
             }
+
             lastPlayerNum = lowestPlayerNum;
             lowestPlayerNum = 99999;
 
             scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( true );
 
-            nextPlayerInOrder.GetComponent<Player>().myScoreCard = scoreBoard.transform.GetChild( playercount ).gameObject;
+            nextPlayerInOrder.GetComponent<Player>().myScoreCard =
+                scoreBoard.transform.GetChild( playercount ).gameObject;
             // nextPlayerInOrder.parent = playerManager.transform;
             if ( PhotonNetwork.isMasterClient )
             {
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives",
+                    PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
                 // nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().score );
                 // nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().money );
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playercount );
+                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList",
+                    PhotonTargets.AllBufferedViaServer, playercount );
             }
 
 
-            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color = nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>().colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
+            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color =
+                nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>()
+                    .colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
 
             // scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = colors[playercount].color;
             playercount++;
-            if ( playercount >= scoreBoard.transform.childCount ) { return; }
+            if ( playercount >= scoreBoard.transform.childCount )
+            {
+                return;
+            }
         }
+
         while ( playercount < scoreBoard.transform.childCount )
         {
             scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( false );
             playercount++;
         }
-
     }
 
 
     public void OnMasterClientSwitched(PhotonPlayer player)
     {
         Debug.Log( "XXXXXXOnMasterClientSwitched: " + player );
-
-
     }
 
     public void OnLeftRoom()
@@ -610,18 +593,16 @@ public class GameManager : Photon.MonoBehaviour
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        Debug.Log( "XXXXXOnPhotonInstantiate " + info.sender );    // you could use this info to store this or react
+        Debug.Log( "XXXXXOnPhotonInstantiate " + info.sender ); // you could use this info to store this or react
     }
 
     public void OnPhotonPlayerConnected(PhotonPlayer player)
     {
-
         // Debug.Log("XXXXXX  OnPhotonPlayerConnected: " + player);
 
         // PhotonNetwork.playerList[player.ID - 1].SetCustomProperties(hash);
 
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0) ;
-
     }
 
     public void OnPhotonPlayerDisconnected(PhotonPlayer player)
