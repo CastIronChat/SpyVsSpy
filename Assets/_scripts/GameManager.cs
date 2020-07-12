@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using CastIronChat.EntityRegistry;
 using ComponentReferenceAttributes;
 using ExitGames.Client.Photon;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class GameManager : Photon.MonoBehaviour
@@ -18,12 +20,10 @@ public class GameManager : Photon.MonoBehaviour
     private static GlobalSingletonGetter<GameManager> singleton =
         new GlobalSingletonGetter<GameManager>( gameObjectName: "GameManager" );
 
-    [Description( "Trying out an annotation that will automatically set a component reference with a button." )]
     [ChildComponent]
     public PlayerManager playerManager;
 
-    [ChildComponent]
-    public HidingspotManager
+    [ChildComponent] public HidingspotManager
         hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
 
     [ChildComponent] public CollectibleManager collectibleManager;
@@ -65,13 +65,21 @@ public class GameManager : Photon.MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Called on all clients by a newly-spawned Player instance to announce itself.
+    /// </summary>
+    /// <param name="newPlayerId">ID of the new player so we can look it up locally.</param>
     [PunRPC]
-    public void PlayerJoinGame(int newPlayer, string newname)
+    public void PlayerJoinGame(int newPlayerId, string newname)
     {
-        print( "new player Number: " + newPlayer );
-        PopulateScoreBoard( newPlayer, newname );
+        print( "new player Number: " + newPlayerId );
+        var player = playerManager.activePlayers.First( p => p.playerId == newPlayerId );
+        Assert.IsNotNull(player);
+        player.name = newname;
+        reSortPlayers();
+        initNewPlayerForGameplay( player );
+        reassignScoreboards();
     }
-
 
     void Update()
     {
@@ -114,89 +122,98 @@ public class GameManager : Photon.MonoBehaviour
     {
         startbutton.SetActive( false );
 
-        int playercount = 0;
+        // Move all idle players onto playerManager
         foreach ( Transform go in idleplayerManager )
         {
             go.transform.parent = playerManager.transform;
         }
 
+        reSortPlayers();
 
-        Transform nextPlayerInOrder = playerManager.transform.GetChild( 0 );
-        if ( nextPlayerInOrder.GetComponent<Player>().playerNum <= 0 )
+        var allPlayers = new List<Player>( playerManager.GetComponentsInChildren<Player>() );
+
+        for ( var playerIndex = 0;
+            playerIndex < allPlayers.Count && playerIndex < scoreBoard.transform.childCount;
+            playerIndex++ )
         {
-            // nextPlayerInOrder.GetComponent<Player>().lives = startingLives;
+            var player = allPlayers[playerIndex];
+            initNewPlayerForGameplay( player );
 
-            nextPlayerInOrder.GetComponent<Player>().playerNum = nextPlayerInOrder.GetComponent<PhotonView>().ownerId;
-        }
-
-        int lowestPlayerNum = 99999;
-        int lastPlayerNum = -1;
-
-        //sort players by their ownerid so that the transform has the same child order for all players
-        while ( playercount < playerManager.transform.childCount )
-        {
-            foreach ( Transform go in playerManager.transform )
-            {
-                if ( go.GetComponent<PhotonView>().ownerId > lastPlayerNum &&
-                     go.GetComponent<PhotonView>().ownerId < lowestPlayerNum )
-                {
-                    nextPlayerInOrder = go;
-                    lowestPlayerNum = go.GetComponent<Player>().playerNum;
-                }
-            }
-
-            lastPlayerNum = lowestPlayerNum;
-            lowestPlayerNum = 99999;
-
-            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( true );
-            scoreBoard.transform.GetChild( playercount ).GetChild( 1 ).GetComponent<Text>().text =
-                nextPlayerInOrder.GetComponent<Player>().name + " : ";
-            scoreBoard.transform.GetChild( playercount ).GetChild( 2 ).GetComponent<Text>().text =
-                nextPlayerInOrder.GetComponent<Player>().score.ToString();
-
-            nextPlayerInOrder.GetComponent<Player>().myScoreCard =
-                scoreBoard.transform.GetChild( playercount ).gameObject;
-            nextPlayerInOrder.parent = playerManager.transform;
-            if ( PhotonNetwork.isMasterClient )
-            {
-                int addtraps = gameConstants.startingTraps;
-                while ( addtraps > 0 )
-                {
-                    nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "AddorRemoveTrap",
-                        PhotonTargets.AllBufferedViaServer, gameConstants.trapTypes[addtraps], 1 );
-                    addtraps--;
-                }
-
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives",
-                    PhotonTargets.AllBufferedViaServer, gameConstants.playerMaxDeaths );
-
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList",
-                    PhotonTargets.AllBufferedViaServer, playercount );
-            }
-
-
-            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color =
-                nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>()
-                    .colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
-
-            nextPlayerInOrder.transform.position = rooms.GetChild( playercount ).position;
-
-            playercount++;
-            //if there is somehow more players than there are scoreboard elements break out of the loop
-            if ( playercount >= scoreBoard.transform.childCount )
-            {
-                return;
-            }
-        }
-
-        //disable all unused scorecards
-        while ( playercount < scoreBoard.transform.childCount )
-        {
-            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( false );
-            playercount++;
+            // place the player into the room matching this player's index
+            player.transform.position = rooms.GetChild( playerIndex ).position;
         }
     }
 
+    /// <summary>
+    /// Initialize a new Player for the start of gameplay, either at round start or as soon as they join the server
+    /// if they joined late.
+    /// </summary>
+    private void initNewPlayerForGameplay(Player player)
+    {
+        if ( PhotonNetwork.isMasterClient )
+        {
+            int addtraps = gameConstants.startingTraps;
+            while ( addtraps > 0 )
+            {
+                player.photonView.RPC( "AddorRemoveTrap", PhotonTargets.AllBufferedViaServer,
+                    gameConstants.trapTypes[addtraps], 1 );
+                addtraps--;
+            }
+
+            player.photonView.RPC( "UpdateLives", PhotonTargets.AllBufferedViaServer,
+                gameConstants.playerMaxDeaths );
+        }
+    }
+
+    /// <summary>
+    /// Put players in canonical ordering, sorted by playerId
+    /// </summary>
+    private void reSortPlayers()
+    {
+        var allPlayers = new List<Player>( playerManager.GetComponentsInChildren<Player>() );
+        allPlayers.Sort(
+            (playerA, playerB) => playerA.playerId > playerB.playerId ? 1 : -1
+        );
+        for ( var playerIndex = 0;
+            playerIndex < allPlayers.Count && playerIndex < scoreBoard.transform.childCount;
+            playerIndex++ )
+        {
+            var player = allPlayers[playerIndex];
+            player.transform.SetSiblingIndex( playerIndex );
+            player.photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playerIndex );
+        }
+    }
+
+    /// <summary>
+    /// Re-assign scoreboards to players.  Should be re-done when someone joins or leaves the game.
+    /// </summary>
+    private void reassignScoreboards()
+    {
+        var allPlayers = new List<Player>( playerManager.GetComponentsInChildren<Player>() );
+
+        for ( var playerIndex = 0;
+            playerIndex < allPlayers.Count && playerIndex < scoreBoard.transform.childCount;
+            playerIndex++ )
+        {
+            var player = allPlayers[playerIndex];
+            var scoreboardForPlayer = scoreBoard.transform.GetChild( playerIndex );
+            scoreboardForPlayer.gameObject.SetActive( true );
+            scoreboardForPlayer.GetChild( 1 ).GetComponent<Text>().text = player.name + " : ";
+            scoreboardForPlayer.GetChild( 2 ).GetComponent<Text>().text = player.score.ToString();
+
+            player.myScoreCard = scoreboardForPlayer.gameObject;
+
+            scoreboardForPlayer.GetChild( 5 ).GetComponent<RawImage>().color =
+                player.GetComponent<SpriteRenderer>().color =
+                    player.colors[player.playerIndex];
+        }
+
+        //disable all unused scorecards
+        for ( var i = allPlayers.Count; i < scoreBoard.transform.childCount; i++ )
+        {
+            scoreBoard.transform.GetChild( i ).gameObject.SetActive( false );
+        }
+    }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -257,20 +274,11 @@ public class GameManager : Photon.MonoBehaviour
     public void ActivateTrapEffect(int actingPlayer, int whichHidingSpot, TrapType traptype)
     {
         TrapType tempTrap = traptype;
-        Player acting_Player = null;
-        Transform closestRoom = rooms.GetChild( 0 );
+        HidingSpot hidingSpot = hidingSpotManager.GetHidingSpot(whichHidingSpot);
+
+        Player acting_Player = playerManager.getPlayerById( actingPlayer );
 
         //find the room the player is in
-
-
-        foreach ( Player player in playerManager.activePlayers )
-        {
-            //check that the player has the trap to use
-            if ( player.GetComponent<PhotonView>().ownerId == actingPlayer )
-            {
-                acting_Player = player;
-            }
-        }
         // foreach(Transform room in rooms)
         // {
         //   if( Vector3.Distance(acting_Player.transform.position, room.position) < Vector3.Distance(acting_Player.transform.position, closestRoom.position))
@@ -284,7 +292,7 @@ public class GameManager : Photon.MonoBehaviour
         }
         else
         {
-            Instantiate( tempTrap.trapEffect, hidingSpotManager.GetHidingSpot( whichHidingSpot ).transform.position,
+            Instantiate( tempTrap.trapEffect, hidingSpot.transform.position,
                 debugExplosion.transform.rotation );
         }
 
@@ -293,7 +301,7 @@ public class GameManager : Photon.MonoBehaviour
             if ( tempTrap.hasKnockback == true )
             {
                 Vector3 dir = (acting_Player.transform.position -
-                               hidingSpotManager.GetHidingSpot( whichHidingSpot ).transform.position).normalized;
+                               hidingSpot.transform.position).normalized;
                 acting_Player.GetComponent<PhotonView>().RPC( "rpcGetThrownByTrap", PhotonTargets.AllViaServer,
                     dir * tempTrap.knockbackForce, 1.0f );
             }
@@ -322,7 +330,7 @@ public class GameManager : Photon.MonoBehaviour
             foreach ( Player player in playerManager.activePlayers )
             {
                 //check that the player has the trap to use
-                if ( player.GetComponent<PhotonView>().ownerId == playerId )
+                if ( player.playerId == playerId )
                 {
                     //check that the hiding spot exists and isnt already trapped
                     HidingSpot temphidingspot = hidingSpotManager.GetHidingSpot( whichHidingSpot );
@@ -398,7 +406,7 @@ public class GameManager : Photon.MonoBehaviour
         //NOTE: idea -a trap could make it so that everyone can see
         foreach ( Transform go in playerManager.transform )
         {
-            if ( go.GetComponent<PhotonView>().ownerId == whichplayer )
+            if ( go.GetComponent<Player>().playerId == whichplayer )
             {
                 bubblePlayer.transform.position = go.position;
                 bubblePlayer.transform.GetChild( 0 ).GetComponent<SpriteRenderer>().sprite =
@@ -436,7 +444,7 @@ public class GameManager : Photon.MonoBehaviour
             Player actingPlayer = null;
             foreach ( Transform go in playerManager.transform )
             {
-                if ( go.GetComponent<PhotonView>().ownerId == whichPlayer )
+                if ( go.GetComponent<Player>().playerId == whichPlayer )
                 {
                     actingPlayer = go.GetComponent<Player>();
                 }
@@ -491,84 +499,6 @@ public class GameManager : Photon.MonoBehaviour
             } //end of size check - if block
         } //end of if server
     }
-
-
-    public void PopulateScoreBoard(int newPlayer, string newname)
-    {
-        int playercount = 0;
-
-        Transform nextPlayerInOrder = playerManager.transform.GetChild( 0 );
-        if ( nextPlayerInOrder.GetComponent<Player>().playerNum <= 0 )
-        {
-            // nextPlayerInOrder.GetComponent<Player>().lives = startingLives;
-
-            nextPlayerInOrder.GetComponent<Player>().playerNum = nextPlayerInOrder.GetComponent<PhotonView>().ownerId;
-        }
-
-        int lowestPlayerNum = 99999;
-        int lastPlayerNum = -1;
-
-        while ( playercount < playerManager.transform.childCount )
-        {
-            foreach ( Transform go in playerManager.transform )
-            {
-                //So the new players has their name when they join
-                if ( go.GetComponent<Player>().name.Length <= 0 )
-                {
-                    go.GetComponent<Player>().name = newname;
-                }
-
-                if ( go.GetComponent<Player>().playerNum <= 0 )
-                {
-                    go.GetComponent<Player>().playerNum = go.GetComponent<PhotonView>().ownerId;
-                }
-
-                if ( go.GetComponent<Player>().playerNum > lastPlayerNum &&
-                     go.GetComponent<Player>().playerNum < lowestPlayerNum )
-                {
-                    nextPlayerInOrder = go;
-                    lowestPlayerNum = go.GetComponent<Player>().playerNum;
-                }
-            }
-
-            lastPlayerNum = lowestPlayerNum;
-            lowestPlayerNum = 99999;
-
-            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( true );
-
-            nextPlayerInOrder.GetComponent<Player>().myScoreCard =
-                scoreBoard.transform.GetChild( playercount ).gameObject;
-            // nextPlayerInOrder.parent = playerManager.transform;
-            if ( PhotonNetwork.isMasterClient )
-            {
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateLives",
-                    PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().lives );
-                // nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdateScore", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().score );
-                // nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "UpdatePower", PhotonTargets.AllBufferedViaServer, nextPlayerInOrder.GetComponent<Player>().money );
-                nextPlayerInOrder.GetComponent<Player>().photonView.RPC( "SetNumberInList",
-                    PhotonTargets.AllBufferedViaServer, playercount );
-            }
-
-
-            scoreBoard.transform.GetChild( playercount ).GetChild( 5 ).GetComponent<RawImage>().color =
-                nextPlayerInOrder.GetComponent<SpriteRenderer>().color = nextPlayerInOrder.GetComponent<Player>()
-                    .colors[nextPlayerInOrder.GetComponent<Player>().photonView.ownerId];
-
-            // scoreBoard.transform.GetChild(playercount).GetChild(5).GetComponent<RawImage>().color = colors[playercount].color;
-            playercount++;
-            if ( playercount >= scoreBoard.transform.childCount )
-            {
-                return;
-            }
-        }
-
-        while ( playercount < scoreBoard.transform.childCount )
-        {
-            scoreBoard.transform.GetChild( playercount ).gameObject.SetActive( false );
-            playercount++;
-        }
-    }
-
 
     public void OnMasterClientSwitched(PhotonPlayer player)
     {

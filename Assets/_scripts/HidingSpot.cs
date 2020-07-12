@@ -70,7 +70,7 @@ public class HidingSpot : MonoBehaviour
         {
               if(  col.transform.GetComponent<Player>() && GetTrap() != null)
               {
-                  gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
+                  gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<Player>().playerId, spotInList ,GetTrap());
               }
             //  gameManager.SyncPyhsicsLocation(spotInList);
         }
@@ -91,7 +91,7 @@ public class HidingSpot : MonoBehaviour
     {
         if(  canBeBumpedInto && col.transform.GetComponent<Player>() && GetTrap() != null)
         {
-          gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<PhotonView>().ownerId, spotInList ,GetTrap());
+          gameManager.PlayerBumpHidingSpot(col.transform.GetComponent<Player>().playerId, spotInList ,GetTrap());
         }
 
     }

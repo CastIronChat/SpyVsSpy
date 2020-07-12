@@ -7,12 +7,48 @@ using UnityEngine.UI;
 
 public class PlayerRegistry : Registry<Player>
 {
-    public PlayerRegistry() : base(id: RegistryIds.Player, name: "players", validIdsStartAt: 1) {}
+    // Never allocate IDs because we are using values provided by Photon for this (ownerId at present, possibly viewID in the future)
+    public PlayerRegistry() : base(id: RegistryIds.Player, name: "players", validIdsStartAt: 1, idAllocationMode: IdAllocationMode.Never) {}
 }
 public class Player : Photon.MonoBehaviour, Entity
 {
-    public GameManager gameManager;
-    public int numberInList, playerNum, score, lostScore, money;
+    public GameManager gameManager
+    {
+        get => GameManager.instance;
+    }
+
+    public GameConstants gameConstants
+    {
+        get => gameManager.gameConstants;
+    }
+
+    public PlayerManager playerManager
+    {
+        get => gameManager.playerManager;
+    }
+
+    /// <summary>
+    /// Unique ID to identify this player over the network.
+    /// NOTE using ownerID will not work if we want to support 2x players on one client.
+    /// We can switch photon ViewID instead.
+    /// </summary>
+    public int playerId
+    {
+        get => photonView.ownerId;
+    }
+
+    /// <summary>
+    /// Sometimes we want players to be numbered starting from 0, without any gaps.
+    /// This technically does not follow the rules of playerId.  If one player leaves and another
+    /// enters, the new player may reuse the index of the leaving player, but playerId will be unique for both.
+    ///
+    /// Exposing as a second property so that we can make these numbers different in the future without crazy code changes.
+    /// </summary>
+    public int playerIndex
+    {
+        get => playerId;
+    }
+    public int score, lostScore, money;
     public int lives, gamesPlayed, wins;
     public float speed,networkspeed = 15.0f,interactDistance = 0.4f,attackInputLock = 0.5f,inputLockTimer;
     new public string name;
@@ -35,21 +71,20 @@ public class Player : Photon.MonoBehaviour, Entity
     private bool isPoisoned; //after a time defined on the gameconstants the player takes damage from poison, clear poison by leaving the room...or opening a window?
     public int uniqueId
     {
-        get => photonView.viewID;
+        get => playerId;
         set => throw new Exception("not supported");
     }
     public BaseRegistry registry { get; set; }
 
     void Start()
     {
-        if ( this.photonView.ownerId < colors.Count )
-        { characterSprite.GetComponent<SpriteRenderer>().color = colors[this.photonView.ownerId]; }
+        if ( playerIndex < colors.Count )
+        { characterSprite.GetComponent<SpriteRenderer>().color = colors[this.playerIndex]; }
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        gameManager = GameManager.instance;
-        gameManager.playerManager.players.add(this);
-        transform.parent = gameManager.playerManager.transform;
+        playerManager.players.add(this);
+        transform.parent = playerManager.transform;
 
         if(heldSprite == null)
         {heldSprite = transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>();}
@@ -63,25 +98,20 @@ public class Player : Photon.MonoBehaviour, Entity
     }
     void OnEnable()
     {
-        gameManager = GameManager.instance;
-
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         inventory = new Inventory();
-        inventory.traps[gameManager.gameConstants.trapTypes[0]] = 1;
-        inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
-        inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
-        inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
+        inventory.traps[gameConstants.trapTypes[0]] = 1;
+        inventory.traps[gameConstants.trapTypes[1]] = 1;
+        inventory.traps[gameConstants.trapTypes[2]] = 1;
+        inventory.traps[gameConstants.trapTypes[3]] = 1;
         heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
-        transform.parent = gameManager.playerManager.transform;
+        playerManager.add( this );
         if ( photonView.isMine )
         {
-            playerNum = this.photonView.ownerId;
             name = PhotonNetwork.playerName;
-            gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerNum, name );
-            this.photonView.RPC( "JoinGame", PhotonTargets.AllBufferedViaServer, name, photonView.ownerId );
-
+            gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerId, name );
         }
     }
 
@@ -107,23 +137,6 @@ public class Player : Photon.MonoBehaviour, Entity
 
 
         }
-    }
-
-
-    [PunRPC]
-    public void JoinGame(string newname, int photonNumber)
-    {
-        name = newname;
-        playerNum = photonNumber;
-        numberInList = -1;
-        gameManager = GameObject.Find( "GameManager" ).GetComponent<GameManager>();
-        transform.parent = gameManager.playerManager.transform;
-    }
-
-    [PunRPC]
-    public void SetNumberInList(int listPlace)
-    {
-        numberInList = listPlace;
     }
 
     [PunRPC]
@@ -176,14 +189,14 @@ public class Player : Photon.MonoBehaviour, Entity
     [PunRPC]
     public void RemoveCollectible(int whichCollectible,int setto)
     {
-        var collectible = gameManager.gameConstants.collectibleTypes[whichCollectible];
+        var collectible = gameConstants.collectibleTypes[whichCollectible];
         inventory.RemoveCollectible(collectible);
     }
 
     [PunRPC]
     public void AddCollectible(int whichCollectible,int setto)
     {
-        var collectible = gameManager.gameConstants.collectibleTypes[whichCollectible];
+        var collectible = gameConstants.collectibleTypes[whichCollectible];
         inventory.AddCollectible(collectible,setto);
     }
 
@@ -225,7 +238,7 @@ public class Player : Photon.MonoBehaviour, Entity
             if(isPoisoned == true)
             {
                 poisonTimer += Time.deltaTime;
-                if(poisonTimer >= gameManager.gameConstants.poisonTime)
+                if(poisonTimer >= gameConstants.poisonTime)
                 {
                   isPoisoned = false;
                   poisonTimer = -1;
@@ -239,10 +252,10 @@ public class Player : Photon.MonoBehaviour, Entity
           {
               if(input.__debugInventoryResetDown())
               {
-                inventory.traps[gameManager.gameConstants.trapTypes[0]] = 0;
-                inventory.traps[gameManager.gameConstants.trapTypes[1]] = 1;
-                inventory.traps[gameManager.gameConstants.trapTypes[2]] = 1;
-                inventory.traps[gameManager.gameConstants.trapTypes[3]] = 1;
+                inventory.traps[gameConstants.trapTypes[0]] = 0;
+                inventory.traps[gameConstants.trapTypes[1]] = 1;
+                inventory.traps[gameConstants.trapTypes[2]] = 1;
+                inventory.traps[gameConstants.trapTypes[3]] = 1;
               }
                 Move();
                 UseTraps();
@@ -301,7 +314,7 @@ public class Player : Photon.MonoBehaviour, Entity
             }
         }
         if(trapIndexToEquip.HasValue) {
-            var trap = gameManager.gameConstants.trapTypes[trapIndexToEquip.Value];
+            var trap = gameConstants.trapTypes[trapIndexToEquip.Value];
             photonView.RPC( "rpcSetEquippedTrap", PhotonTargets.AllBufferedViaServer, trap);
         }
 
@@ -397,7 +410,7 @@ public class Player : Photon.MonoBehaviour, Entity
           }
           if (hit.transform.GetComponent<HidingSpot>() != null)
           {
-            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+            gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, playerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
 
           }
         }
@@ -451,7 +464,7 @@ public class Player : Photon.MonoBehaviour, Entity
 
         if (hit.transform.GetComponent<HidingSpot>() != null)
         {
-          gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(),whattrap );
+          gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  playerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(),whattrap );
 
         }
     }
@@ -470,11 +483,11 @@ public class Player : Photon.MonoBehaviour, Entity
             //if the player has a trap equipped, try to plant it
             if(inventory.equippedTrap.isUsable && inventory.HasTrap(inventory.equippedTrap))
             {
-                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  photonView.ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), inventory.equippedTrap );
+                  gameManager.photonView.RPC( "rpcPlayerSetTrapForHidingSpot", PhotonTargets.AllBufferedViaServer,  playerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList(), inventory.equippedTrap );
             }
             else//if not holding a trap, try to open the spot
             {
-              gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, GetComponent<PhotonView>().ownerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+              gameManager.photonView.RPC( "OpenHidingSpot", PhotonTargets.AllBufferedViaServer, playerId, hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
             }
 
 
