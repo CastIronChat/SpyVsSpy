@@ -5,7 +5,10 @@ using UnityEngine;
 public class HidingspotManager : MonoBehaviour
 {
 
-  public GameManager gameManager;
+    public GameManager gameManager
+    {
+        get => GameManager.instance;
+    }
   public Map map
   {
       get => gameManager.map;

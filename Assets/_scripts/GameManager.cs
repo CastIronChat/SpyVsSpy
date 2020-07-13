@@ -182,7 +182,6 @@ public class GameManager : Photon.MonoBehaviour
         {
             var player = allPlayers[playerIndex];
             player.transform.SetSiblingIndex( playerIndex );
-            player.photonView.RPC( "SetNumberInList", PhotonTargets.AllBufferedViaServer, playerIndex );
         }
     }
 
