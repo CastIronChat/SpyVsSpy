@@ -25,7 +25,7 @@ public class TrapType : MonoBehaviour, Entity
 
     public GameObject trapEffect;
     public bool onlyHitTarget, hasKnockback, spawnOnPlayer; //or center in the room
-    public float lifeTime, knockbackForce, dmgPerSecond;
+    public float lifeTime, knockbackForce, dmgPerSecond,inputLockOut;
     public int oneTimeDamage;
     /// Can this trap be used?  For example, if it's the "None" trap then it cannot.
     public bool isUsable {

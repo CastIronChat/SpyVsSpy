@@ -67,7 +67,7 @@ public class Player : Photon.MonoBehaviour, Entity
     private Quaternion serverRot;
 
 
-    private float iFrames, poisonTimer; //invincibility frames
+    private float iFrames, poisonTimer, disarmingTimer; //invincibility frames. Disarm traps by interacting over a period of time. how long should disarming take?
     private bool isPoisoned; //after a time defined on the gameconstants the player takes damage from poison, clear poison by leaving the room...or opening a window?
     public int uniqueId
     {
@@ -103,7 +103,6 @@ public class Player : Photon.MonoBehaviour, Entity
         inventory.traps[gameConstants.trapTypes[1]] = 1;
         inventory.traps[gameConstants.trapTypes[2]] = 1;
         inventory.traps[gameConstants.trapTypes[3]] = 1;
-        heldSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
         playerManager.add( this );
         if ( photonView.isMine )
@@ -224,6 +223,34 @@ public class Player : Photon.MonoBehaviour, Entity
 
 
 
+    [PunRPC]
+    public void rpcSetInputLockOut(float newlockouttime)
+    {
+      inputLockTimer = newlockouttime;
+    }
+
+
+    [PunRPC]
+    public void StartDisarming()
+    {
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance + 0.1f);
+
+        if (hit)
+        {
+
+          if (hit.transform.GetComponent<HidingSpot>() != null)
+          {
+            disarmingTimer = gameManager.gameConstants.disarmTime;
+            anim.SetBool("disarming",true);
+
+          }
+        }
+
+
+
+    }
+
 
     void Update()
     {
@@ -244,10 +271,19 @@ public class Player : Photon.MonoBehaviour, Entity
                 }
             }
 
+            if(disarmingTimer > 0)
+            {
+              disarmingTimer -= Time.deltaTime;
+              if(disarmingTimer <= 0){FinishDisarming();}
+            }
+
           //to prevent weapon spam and multi directional attack, have a brief input lock after attacking
           if(inputLockTimer > 0){inputLockTimer -= Time.deltaTime;}
           else
           {
+              if(Input.GetKeyDown(KeyCode.P))
+              {this.photonView.RPC( "StartDisarming", PhotonTargets.AllBufferedViaServer );}
+
               if(input.__debugInventoryResetDown())
               {
                 inventory.traps[gameConstants.trapTypes[0]] = 0;
@@ -281,6 +317,11 @@ public class Player : Photon.MonoBehaviour, Entity
     {
         characterSprite.GetComponent<SpriteRenderer>().flipX = flip;
         characterSprite.transform.eulerAngles = new Vector3( 0, 0, rot );
+        if(flip == true)
+        {heldSprite.transform.localPosition = new Vector3(0.1f,0,0);}
+        else
+        {heldSprite.transform.localPosition = new Vector3(-0.1f,0,0);}
+
     }
     [PunRPC]
     public void SetVelocity(Vector3 newvel)
@@ -337,6 +378,8 @@ public class Player : Photon.MonoBehaviour, Entity
         if(upHeld && !downHeld) newDirection = CardinalDirection.Up;
         if(!upHeld && downHeld) newDirection = CardinalDirection.Down;
 
+        if(newDirection != CardinalDirection.None && disarmingTimer != -1)
+        {FinishDisarming();}
         // keep same movement direction if possible
         if(movementDirection != CardinalDirection.None && input.GetDirectionPressed(movementDirection)) {
             newDirection = movementDirection;
@@ -390,6 +433,7 @@ public class Player : Photon.MonoBehaviour, Entity
         heldSprite.sprite = trapType.sprite;
         gameManager.scrollingText.NewLine("Equipped trap #" + trapType.uniqueId + ": " + trapType.name);
       }
+
     }
 
     [PunRPC]
@@ -453,6 +497,12 @@ public class Player : Photon.MonoBehaviour, Entity
           }
         }
 
+    }
+
+    [PunRPC]
+    public void rpcPlayAnimation(string newanimation)
+    {
+        anim.Play("newanimation");
     }
 
     public void TryToPlantTrap(TrapType whattrap)
@@ -543,6 +593,37 @@ public class Player : Photon.MonoBehaviour, Entity
         }
 
     }
+
+
+    public void FinishDisarming()
+    {
+        //call to stop the animation whether it's done or the player moves away
+
+          if(disarmingTimer <= 0)
+          {
+              if(photonView.isMine)
+              {
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, CardinalDirectionHelper.ToVector3(facingDirection),interactDistance + 0.1f);
+
+                if (hit)
+                {
+
+                  if (hit.transform.GetComponent<HidingSpot>() != null)
+                  {
+                    gameManager.photonView.RPC( "DisarmHidingSpot", PhotonTargets.AllBufferedViaServer,  hit.transform.GetComponent<HidingSpot>().GetPlaceInList() );
+
+                  }
+                }
+
+              }
+        }
+
+        anim.SetBool("disarming",false);
+        disarmingTimer = -1;
+
+    }
+
+
 
 
       void OnParticleCollision(GameObject other)
