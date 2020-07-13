@@ -10,6 +10,11 @@ public class PlayerCamera : MonoBehaviour, IDisposable
     public float y;
     public float width;
     public float height;
+
+    private RectTransformUtility roomSizeReference
+    {
+        get => manager.gameManager.map.roomSizeReference;
+    }
     void Awake() {
         if(cam == null) cam = GetComponent<Camera>();
         // TODO AudioListener?
@@ -19,7 +24,6 @@ public class PlayerCamera : MonoBehaviour, IDisposable
         followPlayer();
     }
     void followPlayer() {
-        var roomSizeReference = manager.roomSizeReference;
         // Camera snaps to a grid.
         // A dummy box collider is used as a visual reference of this grid.
         float roomWidth = roomSizeReference.width;

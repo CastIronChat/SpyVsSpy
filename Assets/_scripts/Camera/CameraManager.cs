@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 #if UNITY_EDITOR
@@ -10,15 +11,14 @@ using UnityEditor;
 
 public class CameraManager : MonoBehaviour
 {
-    public PlayerManager playerManager;
-
-    public GameConstants gameConstants {
-        get => GameConstants.instance;
+    public GameManager gameManager;
+    public PlayerManager playerManager
+    {
+        get => gameManager.playerManager;
     }
 
     public GameObject cameraPrefab;
 
-    public RectTransformUtility roomSizeReference;
     [HideInInspector]
     public List<PlayerCamera> cameras = new List<PlayerCamera>();
     [HideInInspector]
@@ -85,7 +85,7 @@ public class CameraManager : MonoBehaviour
         // If so, recompute layout
 
         var activePlayers = playerManager.activePlayers;
-        var playersWithCameras = playerToCamera.Keys;
+        var playersWithCameras = new List<Player>(Enumerable.ToArray(playerToCamera.Keys));
         var dirty = forceReLayoutEveryFrame;
         Player firstPlayer = null;
         foreach ( var p in playersWithCameras )

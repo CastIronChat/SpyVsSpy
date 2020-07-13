@@ -19,7 +19,7 @@ public class WorkerMenu : MonoBehaviour
 
     private bool connectFailed = false;
 
-    public static readonly string SceneNameMenu = "worker_lobby_resave";
+    public static readonly string SceneNameMenu = "server-connect-ui";
 
     public static string SceneNameGame = "Dan_game";
 
