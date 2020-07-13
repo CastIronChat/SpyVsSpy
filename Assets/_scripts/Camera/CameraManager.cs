@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 #if UNITY_EDITOR
@@ -84,7 +85,7 @@ public class CameraManager : MonoBehaviour
         // If so, recompute layout
 
         var activePlayers = playerManager.activePlayers;
-        var playersWithCameras = playerToCamera.Keys;
+        var playersWithCameras = new List<Player>(Enumerable.ToArray(playerToCamera.Keys));
         var dirty = forceReLayoutEveryFrame;
         Player firstPlayer = null;
         foreach ( var p in playersWithCameras )
