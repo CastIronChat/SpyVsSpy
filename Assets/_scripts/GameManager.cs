@@ -36,7 +36,6 @@ public class GameManager : Photon.MonoBehaviour
         get => GameConstants.instance;
     }
 
-    public GameObject playerPrefab;
     public GameObject scoreBoard, startbutton, bubbleHidingspot, bubblePlayer;
     public int activePlayers;
     public Renderer myRenderer;
