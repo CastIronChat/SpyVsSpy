@@ -16,74 +16,64 @@ MonoBehaviour:
   VoiceAppID: 
   ChatAppID: 
   HostType: 1
-  PreferredRegion: 0
+  PreferredRegion: 1
   EnabledRegions: -1
   Protocol: 0
   ServerAddress: 
   ServerPort: 5055
   VoiceServerPort: 5055
-  JoinLobby: 0
+  JoinLobby: 1
   EnableLobbyStatistics: 0
   PunLogging: 0
   NetworkLogging: 1
   RunInBackground: 1
   RpcList:
-  - Accelerate
-  - ActivateHazardRPC
-  - AttemptToActivateHazardRPC
+  - ActivateTrapEffect
+  - AddCollectible
+  - AddorRemoveTrap
+  - AnimateHidingSpot
   - Chat
   - ColorRpc
+  - CreateExplosion
   - DestroyRpc
+  - DisarmHidingSpot
   - DoJump
   - Flash
-  - HitSomething
   - InstantiateRpc
   - JoinGame
   - Marco
   - NewTurn
-  - NextTurn
+  - OpenDoor
+  - OpenHidingSpot
   - PickupItemInit
   - PlayerJoinGame
   - Polo
   - PunPickup
   - PunPickupSimple
   - PunRespawn
+  - RemoveCollectible
   - RequestForPickupItems
   - RequestForPickupTimes
+  - rpcAttackAnimation
+  - rpcGetThrownByTrap
+  - rpcInteract
+  - rpcNewScrollLine
+  - rpcPlayAnimation
+  - rpcPlayerSetTrapForHidingSpot
+  - rpcSetCollectibleForHidingSpot
+  - rpcSetEquippedTrap
+  - rpcSetInputLockOut
+  - rpcSetTrapForHidingSpot
+  - rpcSyncPyhsicsLocation
   - rpcVoteForNewRoundType
+  - SetBriefcase
+  - SetBubbles
   - SetNumberInList
-  - StartMyTurn
+  - SetSpriteFlip
+  - SetVelocity
+  - StartDisarming
   - StartRound
   - TaggedPlayer
   - UpdateLives
-  - UpdatePower
   - UpdateScore
-  - SetSpriteFlip
-  - ActivateHidingSpot
-  - OpenHidingSpot
-  - rpcSetCollectibleForHidingSpot
-  - rpcSetTrapForHidingSpot
-  - rpcNewScrollLine
-  - UpdateTraps
-  - rpcPlayerSetTrapForHidingSpot
-  - rpcInteract
-  - SetVelocity
-  - OpenDoor
-  - AddorRemoveTrap
-  - SetHeldSprite
-  - rpcSetEquippedTrap
-  - SetBriefcase
-  - AddCollectible
-  - RemoveCollectible
-  - rpcAttackAnimation
-  - CreateExplosion
-  - AnimateHidingSpot
-  - ActivateTrapEffect
-  - rpcGetThrownByTrap
-  - rpcSyncPyhsicsLocation
-  - SetBubbles
-  - StartDisarming
-  - DisarmHidingSpot
-  - rpcSetInputLockOut
-  - rpcPlayAnimation
   DisableAutoOpenWizard: 1

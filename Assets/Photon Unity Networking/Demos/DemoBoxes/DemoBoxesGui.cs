@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 #pragma warning disable 618
@@ -8,7 +8,7 @@ public class DemoBoxesGui : MonoBehaviour
     public bool HideUI = false;
 
     /// <summary>A GUI element to show tips in.</summary>
-    public GUIText GuiTextForTips;
+    //public GUIText GuiTextForTips;
 
     private int tipsIndex;
 
@@ -33,10 +33,10 @@ public class DemoBoxesGui : MonoBehaviour
 
     private void Update()
     {
-        if (this.GuiTextForTips == null)
-        {
-            return;
-        }
+        //if (this.GuiTextForTips == null)
+        //{
+        //    return;
+        //}
 
         this.timeSinceLastTip += Time.deltaTime;
         if (this.timeSinceLastTip > TimePerTip)
@@ -54,16 +54,16 @@ public class DemoBoxesGui : MonoBehaviour
         {
             alpha -= FadeSpeedForTip;
             this.timeSinceLastTip = 0;
-            this.GuiTextForTips.color = new Color(this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, alpha);
+            //this.GuiTextForTips.color = new Color(this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, alpha);
             yield return null;
         }
         this.tipsIndex = (this.tipsIndex + 1)%this.tips.Length;
-        this.GuiTextForTips.text = this.tips[this.tipsIndex];
+       // this.GuiTextForTips.text = this.tips[this.tipsIndex];
         while (alpha < 1.0f)
         {
             alpha += FadeSpeedForTip;
             this.timeSinceLastTip = 0;
-            this.GuiTextForTips.color = new Color(this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, alpha);
+            //this.GuiTextForTips.color = new Color(this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, this.GuiTextForTips.color.r, alpha);
             yield return null;
         }
     }
