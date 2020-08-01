@@ -5,29 +5,14 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/boxes_resave.unity
-    guid: fba7ff4e3966fde4fb32cd53a0ce8ba0
   - enabled: 1
     path: Assets/Scenes/dan_gameplay 1.unity
     guid: 383453aed14e848469d53fab13915498
   - enabled: 1
-    path: Assets/Scenes/worker_lobby_resave.unity
+    path: Assets/Scenes/server-connect-ui.unity
     guid: cea7bc7a40e09624f8dc6c4b7d0ab317
-  - enabled: 0
-    path: Assets/Scenes/worker_resave.unity
-    guid: 748bf57872564f24380675d19779bfb0
-  - enabled: 0
-    path: Assets/Photon Unity Networking/Demos/DemoChangeOwner/DemoChangeOwner-Scene.unity
-    guid: efb7b18562339d8459d546ede0a9e4cc
   - enabled: 1
-    path: Assets/Scenes/Dan_Game.unity
-    guid: 2bf58ee0332caf84ea6b0b325325f00c
-  - enabled: 0
-    path: Assets/Scenes/old_Dan_game.unity
-    guid: ff39d5dde291695418f16211546a44e6
-  - enabled: 1
-    path: Assets/Scenes/Andrew/init.unity
+    path: Assets/Scenes/init.unity
     guid: a72811a02deaf2840a05c3f6279e951b
   - enabled: 0
     path: Assets/Scenes/Andrew/gameplay.unity

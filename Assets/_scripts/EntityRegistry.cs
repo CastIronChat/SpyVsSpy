@@ -18,8 +18,8 @@ namespace CastIronChat.EntityRegistry
         public static Id TrapType = 1;
         public static Id CollectibleType = 2;
         public static Id Player = 3;
-
         public static Id HidingSpot = 4;
+        public static Id Doors = 5;
 
         // Used by ID allocator to allocate new ones for other registries
         public static Id unclaimedIdsStartAt = 100;

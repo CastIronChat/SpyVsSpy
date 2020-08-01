@@ -103,10 +103,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b727b0ed3736d844fa30d4b0de03f18c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerManager: {fileID: 0}
+  gameManager: {fileID: 0}
   cameraPrefab: {fileID: 54122230879598878, guid: 826e17f8281e38543b56fe0e6da4791f,
     type: 3}
-  roomSizeReference: {fileID: 0}
   cameras: []
   dummyCameras: []
   forceReLayoutEveryFrame: 0

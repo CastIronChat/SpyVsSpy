@@ -5,16 +5,23 @@ using UnityEngine;
 public class HidingspotManager : MonoBehaviour
 {
 
-  public GameManager gameManager;
+    public GameManager gameManager
+    {
+        get => GameManager.instance;
+    }
+  public Map map
+  {
+      get => gameManager.map;
+  }
   public ScrollingText scrollingText;
-  public Transform hidingSpotParent,doorsParent,activeHidingSpots;
   public List<HidingSpot> hidingSpots;
-  public List<Door> doors;
+  public DoorRegistry doors = new DoorRegistry();
     // Start is called before the first frame update
     void Start()
     {
       SetHidingspotList();
       SetDoorList();
+      doors.installAsSerializer();
     }
     void OnEnable()
     {
@@ -63,63 +70,28 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
-      foreach ( Transform go in doorsParent )
-      {
-        go.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
-        doors.Add( go.GetComponent<Door>() );
-      }
-
-        // while ( doors.Count < doorsParent.childCount )
-        // {
-        //     Transform closestDoor =  doorsParent.GetChild( 0 );
-        //     float dist = Vector3.Distance( closestDoor.position, transform.position );
-        //     foreach ( Transform go in doorsParent )
-        //     {
-        //         if (closestDoor.GetComponent<Door>().spotInList != -1 || Vector3.Distance( go.transform.position, transform.position ) < dist  )
-        //         {
-        //             closestDoor = go;
-        //             dist = Vector3.Distance( go.transform.position, transform.position );
-        //         }
-        //     }
-        //
-        //
-        //     closestDoor.GetComponent<Door>().SetSpotInList( doors.Count,gameManager );
-        //
-        //     doors.Add( closestDoor.GetComponent<Door>() );
-        // }
-
+        var allDoors = new List<Door>(map.getComponents<Door>());
+        // Assign all doors IDs based on their position in the scene, like words in a book:
+        // sorted top to bottom, left to right.
+        allDoors.Sort(HelperMethods.compareByTransform);
+        foreach ( var door in allDoors )
+        {
+            doors.add(door);
+            door.gameManager = gameManager;
+            door.doorManager = this;
+        }
     }
 
     public void SetHidingspotList()
     {
-
-        while ( 0 < hidingSpotParent.childCount )
+        var allHidingSpots = new List<HidingSpot>(map.getComponents<HidingSpot>());
+        // Assign all doors IDs based on their position in the scene, like words in a book:
+        // sorted top to bottom, left to right.
+        allHidingSpots.Sort(HelperMethods.compareByTransform);
+        foreach ( var hidingSpot in allHidingSpots )
         {
-            Transform closestHidingSpot = hidingSpotParent.GetChild( 0 );
-            float dist = Vector3.Distance( closestHidingSpot.position, transform.position );
-            foreach ( Transform go in hidingSpotParent )
-            {
-                if (Vector3.Distance( go.position, transform.position ) <= dist || closestHidingSpot.GetComponent<HidingSpot>().spotInList != -1)
-                {
-                    closestHidingSpot = go;
-                    dist = Vector3.Distance( go.position, transform.position );
-                }
-            }
-
-          //  if(closestHidingSpot.GetComponent<HidingSpot>().spotInList == -1)
-          //  {
-              closestHidingSpot.GetComponent<HidingSpot>().SetSpotInList( hidingSpots.Count, gameManager );
-
-              hidingSpots.Add( closestHidingSpot.GetComponent<HidingSpot>() );
-              closestHidingSpot.parent = activeHidingSpots;
-              // if(PhotonNetwork.isMasterClient == false)
-              // {
-              //   closestHidingSpot.GetComponent<Rigidbody2D>().isKinematic = true;
-              // }
-
-          //  }
-
+            hidingSpot.SetSpotInList( hidingSpots.Count, gameManager );
+            hidingSpots.Add(hidingSpot);
         }
-
     }
 }
