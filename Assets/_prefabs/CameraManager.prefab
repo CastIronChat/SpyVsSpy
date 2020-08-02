@@ -620,16 +620,18 @@ MonoBehaviour:
     I use it to layout the locations of all cameras.
 
 
-    There are multiple layouts for different numbers of players.  The first layout
-    that can handle enough players is chosen.
+    There
+    are multiple layouts for different numbers of players.  The first layout that
+    can handle enough players is chosen.
 
 
-    The sidebar layout engine then queries these RectTransforms for their locations,
-    converts to screenspace, and sets the camera viewports to match.
+    The sidebar layout engine then queries
+    these RectTransforms for their locations, converts to screenspace, and sets the
+    camera viewports to match.
 
 
-    If the RectTransforms are synced over the network, animated, lerped, or anything
-    else, the cameras will follow.'
+    If the RectTransforms are synced over the network,
+    animated, lerped, or anything else, the cameras will follow.'
 --- !u!1 &3801106787780005572
 GameObject:
   m_ObjectHideFlags: 0
