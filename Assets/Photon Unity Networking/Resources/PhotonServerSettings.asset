@@ -76,4 +76,8 @@ MonoBehaviour:
   - TaggedPlayer
   - UpdateLives
   - UpdateScore
+  - DoorOrWall
+  - RoomLayout
+  - ResetHidingSpots
+  - SetHidingSpotAndDoorLists
   DisableAutoOpenWizard: 1
