@@ -399,7 +399,7 @@ public class Player : Photon.MonoBehaviour, Entity
         {facingDirection = movementDirection;}
         // Update velocity
         var movementUnitVector = CardinalDirectionHelper.ToVector3(movementDirection);
-        rb.velocity = movementUnitVector * speed * Time.deltaTime;
+        rb.velocity = movementUnitVector * speed;
         this.photonView.RPC( "SetVelocity", PhotonTargets.AllViaServer, movementUnitVector );
         // Update sprite
         switch(movementDirection) {
