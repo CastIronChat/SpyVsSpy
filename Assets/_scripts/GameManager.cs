@@ -36,12 +36,14 @@ public class GameManager : Photon.MonoBehaviour
         get => GameConstants.instance;
     }
 
+    public GenerateRoom spawnRoom;
     public GameObject scoreBoard, startbutton, bubbleHidingspot, bubblePlayer;
     public int activePlayers;
     public Renderer myRenderer;
     public List<Material> colors;
     public IconRowHUD playerinventoryimages;
     public IconRowHUD playertrapimages;
+
     public Transform rooms {
         get => map.rooms;
     }
@@ -100,6 +102,67 @@ public class GameManager : Photon.MonoBehaviour
     }
 
 
+    
+    public void BroadCastDoorOrWall(int whichspot,bool dooron,bool wallon)
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            photonView.RPC("DoorOrWall", PhotonTargets.AllBufferedViaServer, whichspot,dooron,wallon);
+        }
+    }
+
+    [PunRPC]
+    public void DoorOrWall(int whichspot, bool dooron, bool wallon)
+    {
+        spawnRoom.SetDoorOrWall(whichspot,dooron,wallon);
+    }
+
+    public void BroadcastRoomLayout(int whichlayout, Vector3 pos, Quaternion rot)
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            photonView.RPC("RoomLayout", PhotonTargets.AllBufferedViaServer, whichlayout, pos, rot);
+        }
+    }
+
+    [PunRPC]
+    public void RoomLayout(int whichlayout, Vector3 pos, Quaternion rot)
+    {
+        spawnRoom.SetLayout(whichlayout, pos, rot);
+    }
+
+
+    public void BroadcastResetHidingSpots()
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            photonView.RPC("ResetHidingSpots", PhotonTargets.AllBufferedViaServer);
+        }
+    }
+
+    [PunRPC]
+    public void ResetHidingSpots()
+    {
+        spawnRoom.ResetHidingSpots();
+    }
+
+    public void BroadcastSetHidingSpotAndDoorLists()
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            photonView.RPC("SetHidingSpotAndDoorLists", PhotonTargets.AllBufferedViaServer);
+        }
+    }
+
+    [PunRPC]
+    public void SetHidingSpotAndDoorLists()
+    {
+        hidingSpotManager.SetHidingspotList();
+        hidingSpotManager.SetDoorList();
+    }
+
+
+
     public void TryToStartRound(int rndtype)
     {
         if ( PhotonNetwork.isMasterClient )
@@ -140,8 +203,9 @@ public class GameManager : Photon.MonoBehaviour
             var player = allPlayers[playerIndex];
             initNewPlayerForGameplay( player );
 
-            // place the player into the room matching this player's index
-            player.transform.position = rooms.GetChild( playerIndex ).position;
+            // place the player into the room matching this player's index // offset towards a door as to not land in a hiding spot
+            Vector3 spawnlocation = new Vector3(rooms.GetChild(playerIndex).position.x - 2.5f, rooms.GetChild(playerIndex).position.y);
+            player.transform.position = spawnlocation;
         }
     }
 

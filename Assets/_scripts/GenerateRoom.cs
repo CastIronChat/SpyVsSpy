@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class GenerateRoom : MonoBehaviour
 {
+
+    public GameManager gameManager
+    {
+        get => GameManager.instance;
+    }
+
   public SpriteRenderer wallSprite;
     public List<Sprite> roomDoorLayouts,floorPattern;
     public List<GameObject> hidingSpotPrefabs;
@@ -12,10 +18,19 @@ public class GenerateRoom : MonoBehaviour
     public float roomradius = 2.75f;
     public int yCount = 0,xCount = 0;
 
-    public Transform doors, walls, rooms, hazards, layouts;
+    public List<GameObject> roomLayOutPrefabs;
+    public List<int>  activeRoomLayOutPrefabs;
+
+    public Transform doors, walls, rooms, hazards, layouts, wholelayouts;
     void Start()
     {
-        
+        //int count = 0;
+        //while (count < doors.childCount)
+        //{
+        //    doors.GetChild(count).name = "door" + count.ToString();
+        //    walls.GetChild(count).name = "wall" + count.ToString();
+        //    count++;
+        //}
     }
 
 
@@ -24,11 +39,38 @@ public class GenerateRoom : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.I))
         {
-            foreach (Transform hazard in hazards)
-            { Destroy(hazard.gameObject); }
-            RandomizeDoors();
+            //foreach (Transform hazard in hazards)
+            while(hazards.childCount > 0)
+            {
+                Transform temp = hazards.GetChild(0);
+                temp.parent = wholelayouts;
+                temp.position = wholelayouts.position;
+                temp.gameObject.active = false;
+                //Destroy(hazard.gameObject);
+            }
 
-            RandomizeRoomSpots(); }
+            while (activeRoomLayOutPrefabs.Count > 0)
+            {
+                roomLayOutPrefabs[activeRoomLayOutPrefabs[0]].active = false;
+                activeRoomLayOutPrefabs.RemoveAt(0);
+
+            }
+            RandomizeDoors();
+          
+
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+
+            foreach (Transform hazard in hazards)
+            {
+                hazard.parent = wholelayouts;
+                hazard.position = wholelayouts.position;
+                hazard.gameObject.active = false;
+                //Destroy(hazard.gameObject);
+            }
+            RandomizeRoomSpots();
+        }
 
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -106,14 +148,105 @@ public class GenerateRoom : MonoBehaviour
         while (count < doors.childCount)
         {
             if (Random.Range(0, 2.0f) > 1.5f)
-            { doors.GetChild(count).gameObject.active = false ; walls.GetChild(count).gameObject.active = true; }
+            {
+                gameManager.BroadCastDoorOrWall(count,false,true);
+
+            }
             else
-            { walls.GetChild(count).gameObject.active = false; doors.GetChild(count).gameObject.active = true; }
+            { gameManager.BroadCastDoorOrWall(count, true, false); }
             count++;
         }
     }
 
+    public void ResetHidingSpots()
+    {
+        int count = 0;
+        while (count < roomLayOutPrefabs.Count)
+        {
+            roomLayOutPrefabs[count].transform.parent = layouts;
+            roomLayOutPrefabs[count].active = false;
+            count++;
+        }
+    }
+
+    public void SetDoorOrWall(int whichspot,bool dooron, bool wallon)
+    {
+        doors.GetChild(whichspot).gameObject.active = dooron;
+        walls.GetChild(whichspot).gameObject.active = wallon;
+    }
+
+    public void SetLayout(int whichlayout, Vector3 pos, Quaternion rot)
+    {
+        roomLayOutPrefabs[whichlayout].active = true;
+        roomLayOutPrefabs[whichlayout].transform.position = pos;
+        roomLayOutPrefabs[whichlayout].transform.rotation = rot;
+        roomLayOutPrefabs[whichlayout].transform.parent = hazards;
+    }
+
     public void RandomizeRoomSpots()
+    {
+        //check that it has a door connected to it
+        bool validRoom = false;
+
+        gameManager.BroadcastResetHidingSpots();
+        List<GameObject> templayouts = roomLayOutPrefabs.GetRange(0,roomLayOutPrefabs.Count);//new List<GameObject>();
+        while (activeRoomLayOutPrefabs.Count > 0)
+        {
+            roomLayOutPrefabs[activeRoomLayOutPrefabs[0]].active = false;
+            activeRoomLayOutPrefabs.RemoveAt(0);
+
+        }
+        activeRoomLayOutPrefabs.Clear();
+        int rnd = 0;
+        int count = 0;
+        while (activeRoomLayOutPrefabs.Count < rooms.childCount)
+        {
+             rnd = (int)Random.Range(0, roomLayOutPrefabs.Count);
+            if (activeRoomLayOutPrefabs.Contains(rnd) == false)
+            { activeRoomLayOutPrefabs.Add(rnd); }
+        }
+
+        foreach (Transform room in rooms)
+        {
+            validRoom = false;
+            foreach (Transform doorobj in doors)
+            {
+                if (doorobj.gameObject.active == true && Vector3.Distance(doorobj.position, room.position) < 5)
+                { validRoom = true; }
+            }
+
+            if (validRoom == true)
+            {
+                GameObject newlayout = roomLayOutPrefabs[count];
+                //GameObject clone = Instantiate(newlayout, room.position, newlayout.transform.rotation);
+                newlayout.transform.parent = hazards;
+                newlayout.transform.position = room.position;
+                if (Random.Range(0, 2.0f) < 5.0f)
+                {
+
+                    newlayout.transform.Rotate(0, 0, 270);
+                }
+                else if (Random.Range(0, 2.0f) < 1.0f) { newlayout.transform.Rotate(0, 0, 180); }
+                else if (Random.Range(0, 2.0f) < 1.5f) { newlayout.transform.Rotate(0, 0, 90); }
+                else { }
+                //activeRoomLayOutPrefabs.Add(newlayout);
+                //templayouts.Remove(newlayout);
+
+                gameManager.BroadcastRoomLayout(activeRoomLayOutPrefabs[count], room.position, newlayout.transform.rotation);
+            }
+
+            count++;
+        }
+
+
+
+        gameManager.BroadcastSetHidingSpotAndDoorLists();
+
+
+
+    }
+
+    public void RandomizeRoomSpotsWithCorners()
     {
         //check that it has a door connected to it
         bool validRoom = false;
