@@ -76,7 +76,11 @@ public class GameManager : Photon.MonoBehaviour
     public void PlayerJoinGame(int newPlayerId, string newname)
     {
         print( "new player Number: " + newPlayerId );
-        var player = playerManager.activePlayers.First( p => p.playerId == newPlayerId );
+        
+        
+        var player = playerManager.activePlayers.First(p => p.GetComponent<PhotonView>().ownerId == newPlayerId);
+
+        //player.playerIndex = newPlayerId;
         Assert.IsNotNull(player);
         player.name = newname;
         reSortPlayers();
@@ -167,6 +171,8 @@ public class GameManager : Photon.MonoBehaviour
     {
         if ( PhotonNetwork.isMasterClient )
         {
+            spawnRoom.Randomizer(true);
+            BroadcastSetHidingSpotAndDoorLists();
             photonView.RPC( "StartRound", PhotonTargets.AllBufferedViaServer );
         }
     }
@@ -204,7 +210,7 @@ public class GameManager : Photon.MonoBehaviour
             initNewPlayerForGameplay( player );
 
             // place the player into the room matching this player's index // offset towards a door as to not land in a hiding spot
-            Vector3 spawnlocation = new Vector3(rooms.GetChild(playerIndex).position.x - 2.5f, rooms.GetChild(playerIndex).position.y);
+            Vector3 spawnlocation = new Vector3(rooms.GetChild(player.GetComponent<PhotonView>().ownerId).position.x - 2.5f, rooms.GetChild(player.GetComponent<PhotonView>().ownerId).position.y);
             player.transform.position = spawnlocation;
         }
     }
@@ -237,7 +243,7 @@ public class GameManager : Photon.MonoBehaviour
     {
         var allPlayers = new List<Player>( playerManager.GetComponentsInChildren<Player>() );
         allPlayers.Sort(
-            (playerA, playerB) => playerA.playerId > playerB.playerId ? 1 : -1
+            (playerA, playerB) => playerA.GetComponent<PhotonView>().ownerId > playerB.GetComponent<PhotonView>().ownerId ? 1 : -1
         );
         for ( var playerIndex = 0;
             playerIndex < allPlayers.Count && playerIndex < scoreBoard.transform.childCount;
@@ -260,7 +266,7 @@ public class GameManager : Photon.MonoBehaviour
             playerIndex++ )
         {
             var player = allPlayers[playerIndex];
-            var scoreboardForPlayer = scoreBoard.transform.GetChild( playerIndex );
+            var scoreboardForPlayer = scoreBoard.transform.GetChild(player.GetComponent<PhotonView>().ownerId);
             scoreboardForPlayer.gameObject.SetActive( true );
             scoreboardForPlayer.GetChild( 1 ).GetComponent<Text>().text = player.name + " : ";
             scoreboardForPlayer.GetChild( 2 ).GetComponent<Text>().text = player.score.ToString();
@@ -269,7 +275,7 @@ public class GameManager : Photon.MonoBehaviour
 
             scoreboardForPlayer.GetChild( 5 ).GetComponent<RawImage>().color =
                 player.GetComponent<SpriteRenderer>().color =
-                    player.colors[player.playerIndex];
+                    player.colors[player.GetComponent<PhotonView>().ownerId];
         }
 
         //disable all unused scorecards
@@ -330,7 +336,9 @@ public class GameManager : Photon.MonoBehaviour
     public void CreateExplosion(Vector3 explosionLocation)
     {
         //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
-        Instantiate( debugExplosion, explosionLocation, debugExplosion.transform.rotation );
+
+
+        Instantiate(debugExplosion, explosionLocation, debugExplosion.transform.rotation );
     }
 
 
@@ -350,9 +358,11 @@ public class GameManager : Photon.MonoBehaviour
         // }
 
         //The trap effects should be purely visual so spawning a local prefab for each player rather than a network object makes this simplier. The explosion should have a die in time script to clean itself up
+        GameObject clone = null;
         if ( tempTrap.spawnOnPlayer == true )
         {
-            Instantiate( tempTrap.trapEffect, acting_Player.transform.position, debugExplosion.transform.rotation );
+             clone = Instantiate( tempTrap.trapEffect, acting_Player.transform.position, debugExplosion.transform.rotation );
+            clone.transform.parent = acting_Player.transform;
         }
         else
         {

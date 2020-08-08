@@ -10,16 +10,16 @@ public class GenerateRoom : MonoBehaviour
         get => GameManager.instance;
     }
 
-  public SpriteRenderer wallSprite;
-    public List<Sprite> roomDoorLayouts,floorPattern;
+    public SpriteRenderer wallSprite;
+    public List<Sprite> roomDoorLayouts, floorPattern;
     public List<GameObject> hidingSpotPrefabs;
-    public GameObject roomPrefab,westCollider,eastCollider,northCollider,southCollider; //for when theyre isnt a door on that side
+    public GameObject roomPrefab, westCollider, eastCollider, northCollider, southCollider; //for when theyre isnt a door on that side
     public Transform newroomparent;
     public float roomradius = 2.75f;
-    public int yCount = 0,xCount = 0;
+    public int yCount = 0, xCount = 0;
 
     public List<GameObject> roomLayOutPrefabs;
-    public List<int>  activeRoomLayOutPrefabs;
+    public List<int> activeRoomLayOutPrefabs;
 
     public Transform doors, walls, rooms, hazards, layouts, wholelayouts;
     void Start()
@@ -35,11 +35,15 @@ public class GenerateRoom : MonoBehaviour
 
 
     void Update()
+    { Randomizer(); }
+
+
+    public void Randomizer(bool generate = false)
     {
 
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.I) || generate == true)
         {
-            //foreach (Transform hazard in hazards)
+            // disable hazards that might be already include, for playing multiple rounds
             while(hazards.childCount > 0)
             {
                 Transform temp = hazards.GetChild(0);
@@ -48,7 +52,7 @@ public class GenerateRoom : MonoBehaviour
                 temp.gameObject.active = false;
                 //Destroy(hazard.gameObject);
             }
-
+            //reset room layouts for playing multiple rounds
             while (activeRoomLayOutPrefabs.Count > 0)
             {
                 roomLayOutPrefabs[activeRoomLayOutPrefabs[0]].active = false;
@@ -59,7 +63,9 @@ public class GenerateRoom : MonoBehaviour
           
 
         }
-        if (Input.GetKeyDown(KeyCode.U))
+
+
+        if (Input.GetKeyDown(KeyCode.U) || generate == true)
         {
 
             foreach (Transform hazard in hazards)

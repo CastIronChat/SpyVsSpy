@@ -34,7 +34,7 @@ public class Player : Photon.MonoBehaviour, Entity
     /// </summary>
     public int playerId
     {
-        get => photonView.ownerId;
+        get => this.photonView.ownerId;
     }
 
     /// <summary>
@@ -78,8 +78,8 @@ public class Player : Photon.MonoBehaviour, Entity
 
     void Start()
     {
-        if ( playerIndex < colors.Count )
-        { characterSprite.GetComponent<SpriteRenderer>().color = colors[this.playerIndex]; }
+        if (this.photonView.ownerId < colors.Count )
+        { characterSprite.GetComponent<SpriteRenderer>().color = colors[this.photonView.ownerId]; }
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -108,7 +108,7 @@ public class Player : Photon.MonoBehaviour, Entity
         if ( photonView.isMine )
         {
             name = PhotonNetwork.playerName;
-            gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerId, name );
+            gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, photonView.ownerId, name );
         }
     }
 

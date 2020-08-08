@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -90,8 +90,11 @@ public class HidingspotManager : MonoBehaviour
         allHidingSpots.Sort(HelperMethods.compareByTransform);
         foreach ( var hidingSpot in allHidingSpots )
         {
-            hidingSpot.SetSpotInList( hidingSpots.Count, gameManager );
-            hidingSpots.Add(hidingSpot);
+            if (hidingSpot.transform.gameObject.active == true)
+            {
+                hidingSpot.SetSpotInList(hidingSpots.Count, gameManager);
+                hidingSpots.Add(hidingSpot);
+            }
         }
     }
 }
