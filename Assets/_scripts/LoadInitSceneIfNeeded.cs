@@ -15,7 +15,7 @@ public class LoadInitSceneIfNeeded : MonoBehaviour
     ")]
     public static GlobalSingletonGetter<GameConstants> gameConstantsGetter = new GlobalSingletonGetter<GameConstants>();
     public string initSceneName = "init";
-    public string nextScene = "Dan_game";
+    private string nextScene = "";
     public bool destroySelfAfter = false;
     public bool destroyGameObjectAfter = true;
     // [ReadOnly]
