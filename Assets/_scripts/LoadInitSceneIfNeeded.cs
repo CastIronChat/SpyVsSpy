@@ -24,7 +24,7 @@ public class LoadInitSceneIfNeeded : MonoBehaviour
         if(gameConstantsGetter.instanceOrNull == null) {
             DontDestroyOnLoad(gameObject);
             nextScene = SceneManager.GetActiveScene().name;
-            Debug.Log("Sending us to init scene", this);
+            Debug.Log($"Sending us to init scene. Departing from scene {SceneManager.GetActiveScene().name}, and will return to {nextScene} after init loads.", this);
             SceneManager.LoadScene(initSceneName);
             StartCoroutine(AfterInitSceneLoaded());
         }
