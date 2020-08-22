@@ -15,7 +15,7 @@ public class HidingspotManager : MonoBehaviour
   }
   public ScrollingText scrollingText;
   public List<HidingSpot> hidingSpots;
-  public DoorRegistry doors = new DoorRegistry();
+  public DoorRegistry doors;
     // Start is called before the first frame update
     void Start()
     {
@@ -70,6 +70,7 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
+        doors = new DoorRegistry();
         var allDoors = new List<Door>(map.getComponents<Door>());
         // Assign all doors IDs based on their position in the scene, like words in a book:
         // sorted top to bottom, left to right.
