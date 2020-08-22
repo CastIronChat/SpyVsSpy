@@ -80,4 +80,6 @@ MonoBehaviour:
   - RoomLayout
   - ResetHidingSpots
   - SetHidingSpotAndDoorLists
+  - Setlocation
+  - SetLocation
   DisableAutoOpenWizard: 1

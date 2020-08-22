@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class HidingspotManager : MonoBehaviour
@@ -16,6 +17,7 @@ public class HidingspotManager : MonoBehaviour
   public ScrollingText scrollingText;
   public List<HidingSpot> hidingSpots;
   public DoorRegistry doors = new DoorRegistry();
+    public bool doorlistset = false, hidingspotlistset = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +39,7 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetCollectibleForHidingSpot(int whichspot,int whatitem)
     {
-        if(whichspot < hidingSpots.Count)
+        if(whichspot < hidingSpots.Count && whichspot >= 0)
         {
           hidingSpots[whichspot].SetCollectible(whatitem);
         }
@@ -70,30 +72,43 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
-        var allDoors = new List<Door>(map.getComponents<Door>());
-        // Assign all doors IDs based on their position in the scene, like words in a book:
-        // sorted top to bottom, left to right.
-        allDoors.Sort(HelperMethods.compareByTransform);
-        foreach ( var door in allDoors )
+        if (doorlistset == false)
         {
-            doors.add(door);
-            door.gameManager = gameManager;
-            door.doorManager = this;
+            doorlistset = true;
+            var allDoors = new List<Door>(map.getComponents<Door>());
+            if (allDoors.Count <= 0)
+            { doorlistset = false; return; }
+            // Assign all doors IDs based on their position in the scene, like words in a book:
+            // sorted top to bottom, left to right.
+            allDoors.Sort(HelperMethods.compareByTransform);
+            foreach (var door in allDoors)
+            {
+                doors.add(door);
+                door.gameManager = gameManager;
+                door.doorManager = this;
+            }
         }
     }
 
     public void SetHidingspotList()
     {
-        var allHidingSpots = new List<HidingSpot>(map.getComponents<HidingSpot>());
-        // Assign all doors IDs based on their position in the scene, like words in a book:
-        // sorted top to bottom, left to right.
-        allHidingSpots.Sort(HelperMethods.compareByTransform);
-        foreach ( var hidingSpot in allHidingSpots )
+        if (hidingspotlistset == false)
         {
-            if (hidingSpot.transform.gameObject.active == true)
+            hidingspotlistset = true;
+            var allHidingSpots = new List<HidingSpot>(map.getComponents<HidingSpot>());
+            print("allhidingspoits :" + allHidingSpots.Count);
+            if (allHidingSpots.Count <= 0)
+            { hidingspotlistset = false; return; }
+            // Assign all doors IDs based on their position in the scene, like words in a book:
+            // sorted top to bottom, left to right.
+            allHidingSpots.Sort(HelperMethods.compareByTransform);
+            foreach (var hidingSpot in allHidingSpots)
             {
-                hidingSpot.SetSpotInList(hidingSpots.Count, gameManager);
-                hidingSpots.Add(hidingSpot);
+                //if (hidingSpot.transform.gameObject.active == true)
+                //{
+                    hidingSpot.SetSpotInList(hidingSpots.Count, gameManager);
+                    hidingSpots.Add(hidingSpot);
+                //}
             }
         }
     }

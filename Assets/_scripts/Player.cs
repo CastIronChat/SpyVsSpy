@@ -137,6 +137,12 @@ public class Player : Photon.MonoBehaviour, Entity
     }
 
     [PunRPC]
+    public void SetLocation(Vector3 newloc)
+    {
+        transform.position = newloc;
+    }
+
+    [PunRPC]
     public void SetBriefcase(bool setHasBriefcase)
     {
       GetInventory().hasBriefcase = setHasBriefcase;

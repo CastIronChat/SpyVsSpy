@@ -44,21 +44,21 @@ public class GenerateRoom : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I) || generate == true)
         {
             // disable hazards that might be already include, for playing multiple rounds
-            while(hazards.childCount > 0)
-            {
-                Transform temp = hazards.GetChild(0);
-                temp.parent = wholelayouts;
-                temp.position = wholelayouts.position;
-                temp.gameObject.active = false;
-                //Destroy(hazard.gameObject);
-            }
+            //while(hazards.childCount > 0)
+            //{
+                //    Transform temp = hazards.GetChild(0);
+                //    temp.parent = wholelayouts;
+                //    temp.position = wholelayouts.position;
+                //    temp.gameObject.active = false;
+                //Destroy(hazards.GetChild(0).gameObject);
+            //}
             //reset room layouts for playing multiple rounds
-            while (activeRoomLayOutPrefabs.Count > 0)
-            {
-                roomLayOutPrefabs[activeRoomLayOutPrefabs[0]].active = false;
-                activeRoomLayOutPrefabs.RemoveAt(0);
+            //while (activeRoomLayOutPrefabs.Count > 0)
+            //{
+            //    roomLayOutPrefabs[activeRoomLayOutPrefabs[0]].active = false;
+            //    activeRoomLayOutPrefabs.RemoveAt(0);
 
-            }
+            //}
             RandomizeDoors();
           
 
@@ -68,13 +68,23 @@ public class GenerateRoom : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.U) || generate == true)
         {
 
-            foreach (Transform hazard in hazards)
+            foreach (Transform hazard in gameManager.map.hazards)
             {
-                hazard.parent = wholelayouts;
-                hazard.position = wholelayouts.position;
-                hazard.gameObject.active = false;
-                //Destroy(hazard.gameObject);
+                //    hazard.parent = wholelayouts;
+                //    hazard.position = wholelayouts.position;
+                //    hazard.gameObject.active = false;
+                Destroy(hazard.gameObject);
             }
+            foreach (Transform enviroment in gameManager.map.enviroment)
+            {
+                //    hazard.parent = wholelayouts;
+                //    hazard.position = wholelayouts.position;
+                //    hazard.gameObject.active = false;
+                Destroy(enviroment.gameObject);
+            }
+            gameManager.hidingSpotManager.hidingSpots.Clear();
+            //gameManager.hidingSpotManager.doorlistset = false;
+            gameManager.hidingSpotManager.hidingspotlistset = false;
             RandomizeRoomSpots();
         }
 
@@ -169,24 +179,46 @@ public class GenerateRoom : MonoBehaviour
         int count = 0;
         while (count < roomLayOutPrefabs.Count)
         {
+            foreach (Transform el in roomLayOutPrefabs[count].transform)
+            {
+                if (el.GetComponent<HidingSpot>() != null)
+                {
+                    el.GetComponent<HidingSpot>().SetTrap(null);
+                    el.GetComponent<HidingSpot>().SetCollectible(0);
+                }
+            }
             roomLayOutPrefabs[count].transform.parent = layouts;
             roomLayOutPrefabs[count].active = false;
+
+            
             count++;
         }
     }
 
     public void SetDoorOrWall(int whichspot,bool dooron, bool wallon)
     {
-        doors.GetChild(whichspot).gameObject.active = dooron;
-        walls.GetChild(whichspot).gameObject.active = wallon;
+        if (doors.childCount > whichspot) { doors.GetChild(whichspot).gameObject.active = dooron; }
+        if (walls.childCount > whichspot) { walls.GetChild(whichspot).gameObject.active = wallon; }
+       
     }
 
     public void SetLayout(int whichlayout, Vector3 pos, Quaternion rot)
     {
-        roomLayOutPrefabs[whichlayout].active = true;
-        roomLayOutPrefabs[whichlayout].transform.position = pos;
-        roomLayOutPrefabs[whichlayout].transform.rotation = rot;
-        roomLayOutPrefabs[whichlayout].transform.parent = hazards;
+        GameObject clone = Instantiate(roomLayOutPrefabs[whichlayout], pos,rot);
+        foreach (Transform el in clone.transform)
+        {
+            if (el.GetComponent<HidingSpot>() != null)
+            {
+
+                el.transform.parent = gameManager.map.hazards;
+            }
+            else { el.transform.parent = gameManager.map.enviroment; }
+        }
+        Destroy(clone);
+        //roomLayOutPrefabs[whichlayout].active = true;
+        //roomLayOutPrefabs[whichlayout].transform.position = pos;
+        //roomLayOutPrefabs[whichlayout].transform.rotation = rot;
+        //roomLayOutPrefabs[whichlayout].transform.parent = hazards;
     }
 
     public void RandomizeRoomSpots()
@@ -224,9 +256,9 @@ public class GenerateRoom : MonoBehaviour
             if (validRoom == true)
             {
                 GameObject newlayout = roomLayOutPrefabs[count];
-                //GameObject clone = Instantiate(newlayout, room.position, newlayout.transform.rotation);
-                newlayout.transform.parent = hazards;
-                newlayout.transform.position = room.position;
+                //GameObject clone = Instantiate(roomLayOutPrefabs[count], room.position, newlayout.transform.rotation);
+                //newlayout.transform.position = room.position;
+               
                 if (Random.Range(0, 2.0f) < 5.0f)
                 {
 
@@ -251,6 +283,41 @@ public class GenerateRoom : MonoBehaviour
 
 
     }
+
+
+    public void RandomizeCollectibleSpots()
+    {
+        int collectiblesleft = 4;
+        int count = 0;
+        List<HidingSpot> tempHidingspots = new List<HidingSpot>();
+        if (hazards.childCount <= collectiblesleft) { return; }
+        foreach (Transform el in hazards)
+        {
+            foreach (Transform el2 in el)
+            {
+                if (el2.GetComponent<HidingSpot>() != null)
+                {
+                    tempHidingspots.Add(el2.GetComponent<HidingSpot>());
+                }
+            }
+        }
+        if (tempHidingspots.Count <= collectiblesleft) { return; }
+        while (collectiblesleft > 0 && count < 20)
+        {
+            count++;
+            int rnd = (int)Random.Range(0, tempHidingspots.Count);
+            if (tempHidingspots[rnd].GetCollectible() == 0 )
+            {
+                tempHidingspots[rnd].SetCollectible(collectiblesleft);
+
+                gameManager.BroadcastHidingSpotCollectible(tempHidingspots[rnd].GetPlaceInList(), collectiblesleft);
+                Debug.Log(tempHidingspots[rnd].transform.position);
+                collectiblesleft--;
+            }
+            else { Debug.Log(tempHidingspots[rnd].GetPlaceInList()); }
+        }
+    }
+
 
     public void RandomizeRoomSpotsWithCorners()
     {
