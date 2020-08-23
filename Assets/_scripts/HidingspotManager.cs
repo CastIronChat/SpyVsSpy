@@ -79,7 +79,16 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
+<<<<<<< HEAD
         if (doorlistset == false)
+=======
+        var allDoors = new List<Door>(map.getComponents<Door>());
+        // Assign all doors IDs based on their position in the scene, like words in a book:
+        // sorted top to bottom, left to right.
+        doors.clear();
+        allDoors.Sort(HelperMethods.compareByTransform);
+        foreach ( var door in allDoors )
+>>>>>>> 7c63be1033cab53d51979dccc4dab90f1c2d2ab3
         {
             doorlistset = true;
             var allDoors = new List<Door>(map.getComponents<Door>());

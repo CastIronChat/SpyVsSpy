@@ -191,6 +191,15 @@ namespace CastIronChat.EntityRegistry
             entity.registry = null;
         }
 
+        public void clear()
+        {
+            foreach ( E entity in entities.Values )
+            {
+                entity.registry = null;
+            }
+            entities.Clear();
+        }
+
         public IEnumerator<E> GetEnumerator()
         {
             return entities.Values.GetEnumerator();
