@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using CastIronChat.EntityRegistry;
 using UnityEngine;
@@ -41,6 +41,7 @@ public class Door : MonoBehaviour, Entity
         var player = col.GetComponent<Player>();
         if ( player != null )
         {
+            print(uniqueId);
             // col.transform.position = oppositeDoor.position;
             // GetComponent<Collider2D>().isTrigger = false;
             //   doorSprite.SetActive( true );

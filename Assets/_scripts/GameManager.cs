@@ -92,6 +92,7 @@ public class GameManager : Photon.MonoBehaviour
     {
         if (PhotonNetwork.isMasterClient && Input.GetKeyDown(KeyCode.RightShift))
         {
+            TryToStartRound(1);
         }
 
         if (PhotonNetwork.isMasterClient)
@@ -111,6 +112,7 @@ public class GameManager : Photon.MonoBehaviour
     {
         if (PhotonNetwork.isMasterClient)
         {
+            spawnRoom.SetDoorOrWall(whichspot, dooron, wallon);
             photonView.RPC("DoorOrWall", PhotonTargets.AllBufferedViaServer, whichspot, dooron, wallon);
         }
     }
@@ -121,16 +123,17 @@ public class GameManager : Photon.MonoBehaviour
         spawnRoom.SetDoorOrWall(whichspot, dooron, wallon);
     }
 
-    public void BroadcastRoomLayout(int whichlayout, Vector3 pos, Quaternion rot)
+    public void BroadcastRoomLayout(int whichlayout, Vector3 pos, float rot)
     {
         if (PhotonNetwork.isMasterClient)
         {
+
             photonView.RPC("RoomLayout", PhotonTargets.AllBufferedViaServer, whichlayout, pos, rot);
         }
     }
 
     [PunRPC]
-    public void RoomLayout(int whichlayout, Vector3 pos, Quaternion rot)
+    public void RoomLayout(int whichlayout, Vector3 pos, float rot)
     {
         spawnRoom.SetLayout(whichlayout, pos, rot);
     }
@@ -164,23 +167,33 @@ public class GameManager : Photon.MonoBehaviour
     {
         hidingSpotManager.SetHidingspotList();
         hidingSpotManager.SetDoorList();
+        //the hiding places need to be set to know which can be used in the randomizer for placing collectibles
+        if (PhotonNetwork.isMasterClient)
+        {
+
+            spawnRoom.RandomizeCollectibleSpots();
+        }
     }
 
 
-
+    //try to startround -> randomize the map -> set the door and hiding spot list -> set the collectibles -> start
     public void TryToStartRound(int rndtype)
     {
         if (PhotonNetwork.isMasterClient)
         {
-            spawnRoom.Randomizer(true);
-            photonView.RPC("SetHidingSpotAndDoorLists", PhotonTargets.AllBufferedViaServer);
-            //BroadcastSetHidingSpotAndDoorLists();
-            //SetHidingSpotAndDoorLists();
-            spawnRoom.RandomizeCollectibleSpots();
-            photonView.RPC("StartRound", PhotonTargets.AllBufferedViaServer);
+            spawnRoom.RandomizeDoors();
+            spawnRoom.RandomizeRoomSpots();
+
         }
     }
 
+    public void BroadcastStartRound()
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            photonView.RPC("StartRound", PhotonTargets.AllBufferedViaServer);
+        }
+    }
 
     [PunRPC]
     public void rpcVoteForNewRoundType(int rndtype, int fromplayer)

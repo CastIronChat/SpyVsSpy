@@ -56,10 +56,17 @@ public class HidingspotManager : MonoBehaviour
 
     public void OpenDoor(int whichdoor,bool open)
     {
-      if(whichdoor < doors.Count)
-      {
-         doors[whichdoor].SetOpen(open);
-      }
+        //the door unique ids start at 1 so comparing against the child count doesnt work, and is not required because
+        //we no longer use the transfrom's children to sync their order in the list
+        foreach (var el in doors)
+        {
+            if (el.uniqueId == whichdoor)
+            { el.SetOpen(open); }
+        }
+      //if(whichdoor < doors.Count)
+      //{
+      //   doors[whichdoor].SetOpen(open);
+      //}
     }
 
     public void SetTrapForHidingSpot(int whichspot, TrapType trapType)

@@ -437,7 +437,7 @@ public class Player : Photon.MonoBehaviour, Entity
         heldSprite.enabled = true;
         GetInventory().equippedTrap = trapType;
         heldSprite.sprite = trapType.sprite;
-        gameManager.scrollingText.NewLine("Equipped trap #" + trapType.uniqueId + ": " + trapType.name);
+        //gameManager.scrollingText.NewLine("Equipped trap #" + trapType.uniqueId + ": " + trapType.name);
       }
 
     }
@@ -450,7 +450,7 @@ public class Player : Photon.MonoBehaviour, Entity
 
         if (hit)
         {
-          gameManager.scrollingText.NewLine(hit.transform.name);
+          //gameManager.scrollingText.NewLine(hit.transform.name);
           if (hit.transform.GetComponent<Door>() != null)
           {
             hit.transform.GetComponent<Door>().SetOpen(!hit.transform.GetComponent<Collider2D>().isTrigger );
@@ -640,7 +640,7 @@ public class Player : Photon.MonoBehaviour, Entity
           {
             isPoisoned = true;
             poisonTimer = 0;
-            gameManager.scrollingText.NewLine("GASP POISON " );
+            //gameManager.scrollingText.NewLine("GASP POISON " );
           }
 
         }

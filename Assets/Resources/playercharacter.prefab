@@ -171,7 +171,7 @@ MonoBehaviour:
   lives: 3
   gamesPlayed: 0
   wins: 0
-  speed: 2
+  speed: 4
   networkspeed: 12
   interactDistance: 0.4
   attackInputLock: 0.5
