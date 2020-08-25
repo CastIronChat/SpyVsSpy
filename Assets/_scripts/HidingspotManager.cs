@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class HidingspotManager : MonoBehaviour
@@ -16,6 +17,7 @@ public class HidingspotManager : MonoBehaviour
   public ScrollingText scrollingText;
   public List<HidingSpot> hidingSpots;
   public DoorRegistry doors = new DoorRegistry();
+    public bool doorlistset = false, hidingspotlistset = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +39,7 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetCollectibleForHidingSpot(int whichspot,int whatitem)
     {
-        if(whichspot < hidingSpots.Count)
+        if(whichspot < hidingSpots.Count && whichspot >= 0)
         {
           hidingSpots[whichspot].SetCollectible(whatitem);
         }
@@ -54,10 +56,17 @@ public class HidingspotManager : MonoBehaviour
 
     public void OpenDoor(int whichdoor,bool open)
     {
-      if(whichdoor < doors.Count)
-      {
-         doors[whichdoor].SetOpen(open);
-      }
+        //the door unique ids start at 1 so comparing against the child count doesnt work, and is not required because
+        //we no longer use the transfrom's children to sync their order in the list
+        foreach (var el in doors)
+        {
+            if (el.uniqueId == whichdoor)
+            { el.SetOpen(open); }
+        }
+      //if(whichdoor < doors.Count)
+      //{
+      //   doors[whichdoor].SetOpen(open);
+      //}
     }
 
     public void SetTrapForHidingSpot(int whichspot, TrapType trapType)
@@ -70,31 +79,52 @@ public class HidingspotManager : MonoBehaviour
 
     public void SetDoorList()
     {
+<<<<<<< HEAD
+        if (doorlistset == false)
+=======
         var allDoors = new List<Door>(map.getComponents<Door>());
         // Assign all doors IDs based on their position in the scene, like words in a book:
         // sorted top to bottom, left to right.
         doors.clear();
         allDoors.Sort(HelperMethods.compareByTransform);
         foreach ( var door in allDoors )
+>>>>>>> 7c63be1033cab53d51979dccc4dab90f1c2d2ab3
         {
-            doors.add(door);
-            door.gameManager = gameManager;
-            door.doorManager = this;
+            doorlistset = true;
+            var allDoors = new List<Door>(map.getComponents<Door>());
+            if (allDoors.Count <= 0)
+            { doorlistset = false; return; }
+            // Assign all doors IDs based on their position in the scene, like words in a book:
+            // sorted top to bottom, left to right.
+            allDoors.Sort(HelperMethods.compareByTransform);
+            foreach (var door in allDoors)
+            {
+                doors.add(door);
+                door.gameManager = gameManager;
+                door.doorManager = this;
+            }
         }
     }
 
     public void SetHidingspotList()
     {
-        var allHidingSpots = new List<HidingSpot>(map.getComponents<HidingSpot>());
-        // Assign all doors IDs based on their position in the scene, like words in a book:
-        // sorted top to bottom, left to right.
-        allHidingSpots.Sort(HelperMethods.compareByTransform);
-        foreach ( var hidingSpot in allHidingSpots )
+        if (hidingspotlistset == false)
         {
-            if (hidingSpot.transform.gameObject.active == true)
+            hidingspotlistset = true;
+            var allHidingSpots = new List<HidingSpot>(map.getComponents<HidingSpot>());
+            print("allhidingspoits :" + allHidingSpots.Count);
+            if (allHidingSpots.Count <= 0)
+            { hidingspotlistset = false; return; }
+            // Assign all doors IDs based on their position in the scene, like words in a book:
+            // sorted top to bottom, left to right.
+            allHidingSpots.Sort(HelperMethods.compareByTransform);
+            foreach (var hidingSpot in allHidingSpots)
             {
-                hidingSpot.SetSpotInList(hidingSpots.Count, gameManager);
-                hidingSpots.Add(hidingSpot);
+                //if (hidingSpot.transform.gameObject.active == true)
+                //{
+                    hidingSpot.SetSpotInList(hidingSpots.Count, gameManager);
+                    hidingSpots.Add(hidingSpot);
+                //}
             }
         }
     }

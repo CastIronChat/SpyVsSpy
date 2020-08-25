@@ -92,9 +92,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3771598757467225011}
+  - component: {fileID: 3771598757467225015}
   - component: {fileID: 3771598757467225013}
   - component: {fileID: 3771598757467225012}
-  - component: {fileID: 3771598757467225015}
   - component: {fileID: 3771598757467225014}
   - component: {fileID: 3771598757467225009}
   - component: {fileID: 3771598757467225008}
@@ -120,6 +120,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3771598757467225015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3771598757467225010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  hidingspotManager: {fileID: 0}
+  spotInList: -1
+  canBeBumpedInto: 0
+  trapValue: {fileID: 0}
+  collectibleValue: 1
+  hiddenItem: {fileID: 0}
+  trap: {fileID: 0}
 --- !u!212 &3771598757467225013
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -196,26 +216,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.65, y: 0.6936393}
   m_EdgeRadius: 0
---- !u!114 &3771598757467225015
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3771598757467225010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
-  spotInList: -1
-  canBeBumpedInto: 0
-  trapValue: {fileID: 0}
-  collectibleValue: 1
-  hiddenItem: {fileID: 0}
-  trap: {fileID: 0}
 --- !u!50 &3771598757467225014
 Rigidbody2D:
   serializedVersion: 4
