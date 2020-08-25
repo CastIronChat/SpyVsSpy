@@ -55,7 +55,7 @@ public class Player : Photon.MonoBehaviour, Entity
     public GameObject myScoreCard;
     public Material myColor;
     public List<Color> colors;
-    public SpriteRenderer characterSprite,heldSprite,weaponSprite;
+    public SpriteRenderer characterSprite,heldSprite,weaponSprite,punchsprite;
 
     /// TODO support diagonal movement?
     private CardinalDirection movementDirection = CardinalDirection.None,facingDirection = CardinalDirection.None;
@@ -140,6 +140,10 @@ public class Player : Photon.MonoBehaviour, Entity
     public void SetLocation(Vector3 newloc)
     {
         transform.position = newloc;
+        if (photonView.isMine)
+        {
+            gameManager.UpdateVisitedRooms(newloc);
+        }
     }
 
     [PunRPC]
@@ -289,14 +293,19 @@ public class Player : Photon.MonoBehaviour, Entity
           {
               if(Input.GetKeyDown(KeyCode.P))
               {this.photonView.RPC( "StartDisarming", PhotonTargets.AllBufferedViaServer );}
-
-              if(input.__debugInventoryResetDown())
-              {
-                inventory.traps[gameConstants.trapTypes[0]] = 0;
-                inventory.traps[gameConstants.trapTypes[1]] = 1;
-                inventory.traps[gameConstants.trapTypes[2]] = 1;
-                inventory.traps[gameConstants.trapTypes[3]] = 1;
-              }
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    if (gameManager.map.mapui.mapobj.active  == false) { inputLockTimer = 3.0f; gameManager.map.mapui.mapobj.active = true; }
+                    else { gameManager.map.mapui.mapobj.active = false; }
+                    //this.photonView.RPC("OpenMap", PhotonTargets.AllBufferedViaServer);
+                }
+                //if(input.__debugInventoryResetDown())
+                //{
+                //  inventory.traps[gameConstants.trapTypes[0]] = 0;
+                //  inventory.traps[gameConstants.trapTypes[1]] = 1;
+                //  inventory.traps[gameConstants.trapTypes[2]] = 1;
+                //  inventory.traps[gameConstants.trapTypes[3]] = 1;
+                //}
                 Move();
                 UseTraps();
                 if ( Input.GetKeyDown(KeyCode.Space)){TryToInteract();}
@@ -316,7 +325,11 @@ public class Player : Photon.MonoBehaviour, Entity
         UpdateTrapHUD();
     }
 
-
+    [PunRPC]
+    public void OpenMap()
+    {
+       
+    }
 
     [PunRPC]
     public void SetSpriteFlip(bool flip, float rot)
@@ -482,25 +495,25 @@ public class Player : Photon.MonoBehaviour, Entity
       rb.velocity = Vector3.zero;
         if(characterSprite.GetComponent<SpriteRenderer>().flipX == false)
         {
-          if(GetInventory().hasBriefcase == true)
-          {
-            anim.Play("punch");
-          }
-          else
-          {
-            anim.Play("stab");
-          }
+              if(GetInventory().hasBriefcase == true || inventory.GetWeaponHeld() == 0)
+              {
+                anim.Play("punch");
+              }
+              else
+              {
+                anim.Play("stab");
+              }
         }
         else
         {
-          if(GetInventory().hasBriefcase == true)
-          {
-            anim.Play("reversepunch");
-          }
-          else
-          {
-            anim.Play("reversestab");
-          }
+            if (GetInventory().hasBriefcase == true || inventory.GetWeaponHeld() == 0)
+            {
+                 anim.Play("reversepunch");
+            }
+            else
+            {
+                 anim.Play("reversestab");
+            }
         }
 
     }

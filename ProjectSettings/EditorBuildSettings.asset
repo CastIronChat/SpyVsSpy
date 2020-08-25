@@ -5,9 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/Dan_game.unity
-    guid: b030abb3f1e8513438917c3c70538f4b
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/server-connect-ui.unity
     guid: cea7bc7a40e09624f8dc6c4b7d0ab317
@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Andrew/gameplay.unity
     guid: 941294a08f6fe9349b1bf2f361c22692
+  - enabled: 1
+    path: Assets/Scenes/Dan_game.unity
+    guid: f8d513fb603e0854fa8373dd72de667e
   m_configObjects: {}

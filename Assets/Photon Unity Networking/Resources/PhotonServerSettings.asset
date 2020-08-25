@@ -82,4 +82,5 @@ MonoBehaviour:
   - SetHidingSpotAndDoorLists
   - Setlocation
   - SetLocation
+  - OpenMap
   DisableAutoOpenWizard: 1
