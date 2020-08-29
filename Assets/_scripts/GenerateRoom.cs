@@ -75,16 +75,37 @@ public class GenerateRoom : MonoBehaviour
     public void RandomizeDoors()
     {
         int count = 0;
-        while (count < doors.childCount)
+        var _doors = GetComponentsInChildren<Door>( doors );
+        var exitDoors = new List<Door>();
+        for (int i = 0, l = _doors.Length; i < l; i++)
         {
+            var door = _doors[i];
+            if ( door.isExit )
+            {
+                exitDoors.Add( door );
+                continue;
+            }
             if (Random.Range(0, 2.0f) > 1.5f)
             {
-                gameManager.BroadCastDoorOrWall(count, false, true);
+                gameManager.BroadCastDoorOrWall(i, false, true);
 
             }
             else
-            { gameManager.BroadCastDoorOrWall(count, true, false); }
-            count++;
+            { gameManager.BroadCastDoorOrWall(i, true, false); }
+        }
+
+        // Ensure there is only one exit
+        var chosenExitDoorIndex = Random.Range( 0, exitDoors.Count );
+        for ( int i = 0, l = exitDoors.Count; i < l; i++ )
+        {
+            if ( i == chosenExitDoorIndex )
+            {
+                gameManager.BroadCastDoorOrWall( i, true, false );
+            }
+            else
+            {
+                gameManager.BroadCastDoorOrWall( i, false, true );
+            }
         }
     }
 
