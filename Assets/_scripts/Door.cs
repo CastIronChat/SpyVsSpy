@@ -55,7 +55,7 @@ public class Door : MonoBehaviour, Entity
 
     public bool canBeOpenedBy(Player player)
     {
-        return !isExit || gameManager.collectibleManager.getState( player ).hasAllCollectibles;
+        return !isExit || gameManager.collectibleManager.getState( player ).canExit;
     }
 
     public int uniqueId { get; set; }

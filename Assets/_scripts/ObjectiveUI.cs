@@ -18,6 +18,9 @@
     private void Update()
     {
         var localPlayerState = gm.collectibleManager.getState( pm.localPlayer );
-        if (localPlayerState.hasAllCollectibles)
+        if ( localPlayerState.hasAllCollectibles )
+        {
+
+        }
     }
 }

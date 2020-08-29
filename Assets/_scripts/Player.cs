@@ -299,8 +299,14 @@ public class Player : Photon.MonoBehaviour, Entity
               {this.photonView.RPC( "StartDisarming", PhotonTargets.AllBufferedViaServer );}
                 if (gameManager.input.GetToggleMapDown())
                 {
-                    if (gameManager.map.mapui.mapobj.active  == false) { inputLockTimer = 3.0f; gameManager.map.mapui.mapobj.active = true; }
-                    else { gameManager.map.mapui.mapobj.active = false; }
+                    if (gameManager.map.mapui.shown == false) {
+                        inputLockTimer = 3.0f;
+                        gameManager.map.mapui.shown = true;
+                    }
+                    else
+                    {
+                        gameManager.map.mapui.shown = false;
+                    }
                     //this.photonView.RPC("OpenMap", PhotonTargets.AllBufferedViaServer);
                 }
                 //if(input.__debugInventoryResetDown())
