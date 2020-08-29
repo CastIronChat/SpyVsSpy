@@ -8,7 +8,7 @@ public class Inventory {
     public HashSet<Collectible> items = new HashSet<Collectible>();
 
     private GameManager gameManager = GameManager.instance;
-    public int inventorySize, equippedTrapIndex;
+    public int inventorySize, equippedTrapIndex,weaponHeld;
     public TrapType equippedTrap {
         get => gameManager.gameConstants.trapTypes[equippedTrapIndex];
         set => equippedTrapIndex = value.uniqueId;
@@ -25,6 +25,7 @@ public class Inventory {
     }
 
     public Inventory() {
+        weaponHeld = 0;
         inventorySize = gameManager.gameConstants.playerMaxInventorySpace;
         traps = new Dictionary<TrapType, int>();
         foreach(var trapType in trapTypes) {
@@ -90,6 +91,15 @@ public class Inventory {
       collectibles[type] = count;
     }
 
+    public void SetWeapon( int weaponValue)
+    {
+        weaponHeld = weaponValue;
+    }
+    public int GetWeaponHeld()
+    {
+        return weaponHeld;
+    }
+    
     public string GetTrapsString()
     {
       string trapstring = "";
@@ -104,21 +114,21 @@ public class Inventory {
     {
         {
             IconRowHUD inventoryImages = gameManager.playertrapimages;
-        int index = 0;
+            int index = 0;
             inventoryImages.setCursorVisibility( false );
             inventoryImages.setCursorPosition( 0 );
             foreach ( var type in trapTypes )
             {
-            var count = traps[type];
-                inventoryImages.setIconVisibility( index, count > 0 );
-                inventoryImages.setIcon( index, type.sprite );
-                if ( equippedTrapIndex == index )
-                {
-                    inventoryImages.setCursorVisibility( true );
-                    inventoryImages.setCursorPosition( index );
+                var count = traps[type];
+                    inventoryImages.setIconVisibility( index, count > 0 );
+                    inventoryImages.setIcon( index, type.sprite );
+                    if ( equippedTrapIndex == index )
+                    {
+                        inventoryImages.setCursorVisibility( true );
+                        inventoryImages.setCursorPosition( index );
+                    }
+                index++;
             }
-            index++;
-        }
         }
         {
             IconRowHUD inventoryImages = gameManager.playerinventoryimages;

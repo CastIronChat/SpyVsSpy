@@ -309,6 +309,7 @@ MonoBehaviour:
   poisonTime: 2
   disarmTime: 5
   roundTimeIsLimited: 1
+  weaponSprite: {fileID: 21300000, guid: 605d754f1eee20042807a8cd9153ef39, type: 3}
 --- !u!1 &3183641451571270964
 GameObject:
   m_ObjectHideFlags: 0

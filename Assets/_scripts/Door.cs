@@ -47,6 +47,7 @@ public class Door : MonoBehaviour, Entity
             //   doorSprite.SetActive( true );
 
             if(player.photonView.isMine) {
+                gameManager.UpdateVisitedRooms(col.transform.position);
                 gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, uniqueId, false );
             }
         }
