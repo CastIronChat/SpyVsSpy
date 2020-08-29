@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using CastIronChat.EntityRegistry;
 using UnityEngine;
@@ -41,11 +41,13 @@ public class Door : MonoBehaviour, Entity
         var player = col.GetComponent<Player>();
         if ( player != null )
         {
+            print(uniqueId);
             // col.transform.position = oppositeDoor.position;
             // GetComponent<Collider2D>().isTrigger = false;
             //   doorSprite.SetActive( true );
 
             if(player.photonView.isMine) {
+                gameManager.UpdateVisitedRooms(col.transform.position);
                 gameManager.photonView.RPC( "OpenDoor", PhotonTargets.AllBufferedViaServer, uniqueId, false );
             }
         }

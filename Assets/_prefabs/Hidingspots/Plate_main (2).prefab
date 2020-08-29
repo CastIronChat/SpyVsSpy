@@ -45,6 +45,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -125,6 +126,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -169,9 +171,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3947147555366642201}
+  - component: {fileID: 3947147555366642205}
   - component: {fileID: 3947147555366642207}
   - component: {fileID: 3947147555366642204}
-  - component: {fileID: 3947147555366642205}
   - component: {fileID: 3947147555366642202}
   - component: {fileID: 3947147555366642203}
   - component: {fileID: 3947147555366642200}
@@ -197,6 +199,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3947147555366642205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947147555366642198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  hidingspotManager: {fileID: 0}
+  spotInList: -1
+  canBeBumpedInto: 0
+  trapValue: {fileID: 0}
+  collectibleValue: 1
+  hiddenItem: {fileID: 0}
+  trap: {fileID: 0}
 --- !u!212 &3947147555366642207
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -211,6 +233,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -272,26 +295,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
---- !u!114 &3947147555366642205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3947147555366642198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3754ff7ee3b2c414294400d90d6d3e14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  hidingspotManager: {fileID: 0}
-  spotInList: -1
-  canBeBumpedInto: 0
-  trapValue: {fileID: 0}
-  collectibleValue: 1
-  hiddenItem: {fileID: 0}
-  trap: {fileID: 0}
 --- !u!50 &3947147555366642202
 Rigidbody2D:
   serializedVersion: 4
@@ -405,6 +408,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

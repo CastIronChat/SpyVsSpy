@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: collectible4
-  sprite: {fileID: 21300000, guid: d9e284fe171305347ace829be970b827, type: 3}
+  sprite: {fileID: 21300000, guid: d526a14a1e82b594b8ed912edb46ea10, type: 3}
 --- !u!1 &3183641450730695679
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: collectible3
-  sprite: {fileID: 21300000, guid: e8753117a22d04b4dac499ee87f34ebe, type: 3}
+  sprite: {fileID: 21300000, guid: 08fb53a841b7d2e4c970b7e510b33172, type: 3}
 --- !u!1 &3183641450789907925
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: collectible2
-  sprite: {fileID: 21300000, guid: c9f077c914e490d45a39064ef026c796, type: 3}
+  sprite: {fileID: 21300000, guid: 29dc2c00ac7c12d4a97a67104f6f2340, type: 3}
 --- !u!1 &3183641451028147871
 GameObject:
   m_ObjectHideFlags: 0
@@ -309,6 +309,7 @@ MonoBehaviour:
   poisonTime: 2
   disarmTime: 5
   roundTimeIsLimited: 1
+  weaponSprite: {fileID: 21300000, guid: 605d754f1eee20042807a8cd9153ef39, type: 3}
 --- !u!1 &3183641451571270964
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,7 +520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: collectible1
-  sprite: {fileID: 21300000, guid: aa4cd030eba79354a905ffffdd5086d1, type: 3}
+  sprite: {fileID: 21300000, guid: 8eebdda7827ec6f4bb21d8b4f3635445, type: 3}
 --- !u!1 &3183641452184168701
 GameObject:
   m_ObjectHideFlags: 0

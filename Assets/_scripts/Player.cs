@@ -34,7 +34,7 @@ public class Player : Photon.MonoBehaviour, Entity
     /// </summary>
     public int playerId
     {
-        get => photonView.ownerId;
+        get => this.photonView.ownerId;
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class Player : Photon.MonoBehaviour, Entity
     public GameObject myScoreCard;
     public Material myColor;
     public List<Color> colors;
-    public SpriteRenderer characterSprite,heldSprite,weaponSprite;
+    public SpriteRenderer characterSprite,heldSprite,weaponSprite,punchsprite;
 
     /// TODO support diagonal movement?
     private CardinalDirection movementDirection = CardinalDirection.None,facingDirection = CardinalDirection.None;
@@ -78,8 +78,8 @@ public class Player : Photon.MonoBehaviour, Entity
 
     void Start()
     {
-        if ( playerIndex < colors.Count )
-        { characterSprite.GetComponent<SpriteRenderer>().color = colors[this.playerIndex]; }
+        if (this.photonView.ownerId < colors.Count )
+        { characterSprite.GetComponent<SpriteRenderer>().color = colors[this.photonView.ownerId]; }
 
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -108,7 +108,7 @@ public class Player : Photon.MonoBehaviour, Entity
         if ( photonView.isMine )
         {
             name = PhotonNetwork.playerName;
-            gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, playerId, name );
+            gameManager.photonView.RPC( "PlayerJoinGame", PhotonTargets.AllBufferedViaServer, photonView.ownerId, name );
         }
     }
 
@@ -133,6 +133,16 @@ public class Player : Photon.MonoBehaviour, Entity
 
 
 
+        }
+    }
+
+    [PunRPC]
+    public void SetLocation(Vector3 newloc)
+    {
+        transform.position = newloc;
+        if (photonView.isMine)
+        {
+            gameManager.UpdateVisitedRooms(newloc);
         }
     }
 
@@ -283,14 +293,19 @@ public class Player : Photon.MonoBehaviour, Entity
           {
               if(Input.GetKeyDown(KeyCode.P))
               {this.photonView.RPC( "StartDisarming", PhotonTargets.AllBufferedViaServer );}
-
-              if(input.__debugInventoryResetDown())
-              {
-                inventory.traps[gameConstants.trapTypes[0]] = 0;
-                inventory.traps[gameConstants.trapTypes[1]] = 1;
-                inventory.traps[gameConstants.trapTypes[2]] = 1;
-                inventory.traps[gameConstants.trapTypes[3]] = 1;
-              }
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    if (gameManager.map.mapui.mapobj.active  == false) { inputLockTimer = 3.0f; gameManager.map.mapui.mapobj.active = true; }
+                    else { gameManager.map.mapui.mapobj.active = false; }
+                    //this.photonView.RPC("OpenMap", PhotonTargets.AllBufferedViaServer);
+                }
+                //if(input.__debugInventoryResetDown())
+                //{
+                //  inventory.traps[gameConstants.trapTypes[0]] = 0;
+                //  inventory.traps[gameConstants.trapTypes[1]] = 1;
+                //  inventory.traps[gameConstants.trapTypes[2]] = 1;
+                //  inventory.traps[gameConstants.trapTypes[3]] = 1;
+                //}
                 Move();
                 UseTraps();
                 if ( Input.GetKeyDown(KeyCode.Space)){TryToInteract();}
@@ -310,7 +325,11 @@ public class Player : Photon.MonoBehaviour, Entity
         UpdateTrapHUD();
     }
 
-
+    [PunRPC]
+    public void OpenMap()
+    {
+       
+    }
 
     [PunRPC]
     public void SetSpriteFlip(bool flip, float rot)
@@ -399,7 +418,7 @@ public class Player : Photon.MonoBehaviour, Entity
         {facingDirection = movementDirection;}
         // Update velocity
         var movementUnitVector = CardinalDirectionHelper.ToVector3(movementDirection);
-        rb.velocity = movementUnitVector * speed * Time.deltaTime;
+        rb.velocity = movementUnitVector * speed;
         this.photonView.RPC( "SetVelocity", PhotonTargets.AllViaServer, movementUnitVector );
         // Update sprite
         switch(movementDirection) {
@@ -431,7 +450,7 @@ public class Player : Photon.MonoBehaviour, Entity
         heldSprite.enabled = true;
         GetInventory().equippedTrap = trapType;
         heldSprite.sprite = trapType.sprite;
-        gameManager.scrollingText.NewLine("Equipped trap #" + trapType.uniqueId + ": " + trapType.name);
+        //gameManager.scrollingText.NewLine("Equipped trap #" + trapType.uniqueId + ": " + trapType.name);
       }
 
     }
@@ -444,7 +463,7 @@ public class Player : Photon.MonoBehaviour, Entity
 
         if (hit)
         {
-          gameManager.scrollingText.NewLine(hit.transform.name);
+          //gameManager.scrollingText.NewLine(hit.transform.name);
           if (hit.transform.GetComponent<Door>() != null)
           {
             hit.transform.GetComponent<Door>().SetOpen(!hit.transform.GetComponent<Collider2D>().isTrigger );
@@ -476,25 +495,25 @@ public class Player : Photon.MonoBehaviour, Entity
       rb.velocity = Vector3.zero;
         if(characterSprite.GetComponent<SpriteRenderer>().flipX == false)
         {
-          if(GetInventory().hasBriefcase == true)
-          {
-            anim.Play("punch");
-          }
-          else
-          {
-            anim.Play("stab");
-          }
+              if(GetInventory().hasBriefcase == true || inventory.GetWeaponHeld() == 0)
+              {
+                anim.Play("punch");
+              }
+              else
+              {
+                anim.Play("stab");
+              }
         }
         else
         {
-          if(GetInventory().hasBriefcase == true)
-          {
-            anim.Play("reversepunch");
-          }
-          else
-          {
-            anim.Play("reversestab");
-          }
+            if (GetInventory().hasBriefcase == true || inventory.GetWeaponHeld() == 0)
+            {
+                 anim.Play("reversepunch");
+            }
+            else
+            {
+                 anim.Play("reversestab");
+            }
         }
 
     }
@@ -634,7 +653,7 @@ public class Player : Photon.MonoBehaviour, Entity
           {
             isPoisoned = true;
             poisonTimer = 0;
-            gameManager.scrollingText.NewLine("GASP POISON " );
+            //gameManager.scrollingText.NewLine("GASP POISON " );
           }
 
         }
