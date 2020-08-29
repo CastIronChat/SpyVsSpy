@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using UnityEngine.Assertions;
+using UnityEngine.PlayerLoop;
 using Id = System.Int32;
 
 namespace CastIronChat.EntityRegistry
@@ -198,6 +199,7 @@ namespace CastIronChat.EntityRegistry
                 entity.registry = null;
             }
             entities.Clear();
+            idAllocator.reset();
         }
 
         public IEnumerator<E> GetEnumerator()
@@ -379,6 +381,12 @@ namespace CastIronChat.EntityRegistry
     public interface IdAllocator
     {
         Id nextId();
+
+        /// <summary>
+        /// Reset the allocator to initial state.
+        /// Can be used if you need to reassign all IDs and need to ensure all clients are at the same starting point.
+        /// </summary>
+        void reset();
     }
 
     /// Default ID allocator which creates integer IDs in order, starting at 0.
@@ -386,14 +394,21 @@ namespace CastIronChat.EntityRegistry
     {
         public DefaultIdAllocator(Id startAt = 1)
         {
+            this.startAt = startAt;
             _nextId = startAt;
         }
 
+        private Id startAt;
         private Id _nextId;
 
         public Id nextId()
         {
             return _nextId++;
+        }
+
+        public void reset()
+        {
+            _nextId = startAt;
         }
     }
 
