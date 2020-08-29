@@ -338,7 +338,7 @@ public class Player : Photon.MonoBehaviour, Entity
     [PunRPC]
     public void OpenMap()
     {
-       
+
     }
 
     [PunRPC]
