@@ -27,6 +27,11 @@ public class Player : Photon.MonoBehaviour, Entity
         get => gameManager.playerManager;
     }
 
+    private PlayerInput input
+    {
+        get => gameManager.input;
+    }
+
     /// <summary>
     /// Unique ID to identify this player over the network.
     /// NOTE using ownerID will not work if we want to support 2x players on one client.
@@ -61,7 +66,6 @@ public class Player : Photon.MonoBehaviour, Entity
     private CardinalDirection movementDirection = CardinalDirection.None,facingDirection = CardinalDirection.None;
     private Animator anim;
     private Rigidbody2D rb;
-    private PlayerInput input = new PlayerInput();
     private Inventory inventory;
     private Vector3 serverPos;
     private Quaternion serverRot;
@@ -291,9 +295,9 @@ public class Player : Photon.MonoBehaviour, Entity
           if(inputLockTimer > 0){inputLockTimer -= Time.deltaTime;}
           else
           {
-              if(Input.GetKeyDown(KeyCode.P))
+              if(gameManager.input.GetDisarmDown())
               {this.photonView.RPC( "StartDisarming", PhotonTargets.AllBufferedViaServer );}
-                if (Input.GetKeyDown(KeyCode.L))
+                if (gameManager.input.GetToggleMapDown())
                 {
                     if (gameManager.map.mapui.mapobj.active  == false) { inputLockTimer = 3.0f; gameManager.map.mapui.mapobj.active = true; }
                     else { gameManager.map.mapui.mapobj.active = false; }
@@ -308,7 +312,7 @@ public class Player : Photon.MonoBehaviour, Entity
                 //}
                 Move();
                 UseTraps();
-                if ( Input.GetKeyDown(KeyCode.Space)){TryToInteract();}
+                if ( input.GetInteractDown()){TryToInteract();}
                 // if ( input.GetInteractDown() ){TryToInteract();}
           }
         }

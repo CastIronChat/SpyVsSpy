@@ -40,7 +40,7 @@ public class GenerateRoom : MonoBehaviour
     public void Randomizer(bool generate = false)
     {
 
-        if (Input.GetKeyDown(KeyCode.I) || generate == true)
+        if (gameManager.input.__debugRandomizeDoorsDown() || generate)
         {
             // disable hazards that might be already include, for playing multiple rounds
             //while(hazards.childCount > 0)
@@ -64,7 +64,7 @@ public class GenerateRoom : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.U) || generate == true)
+        if (gameManager.input.__debugRandomizeRoomSpotsDown() || generate)
         {
 
             RandomizeRoomSpots();

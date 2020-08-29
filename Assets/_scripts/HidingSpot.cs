@@ -20,7 +20,7 @@ public class HidingSpot : MonoBehaviour
     void Update()
     {
 
-        if(Input.GetKeyDown(KeyCode.Q))
+        if(gameManager.input.__debugPlaySearchAnimationDown())
         {PlayAnimation("search");}
     }
 

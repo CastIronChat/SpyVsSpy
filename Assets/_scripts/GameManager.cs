@@ -36,6 +36,8 @@ public class GameManager : Photon.MonoBehaviour
         get => GameConstants.instance;
     }
 
+    public PlayerInput input = new PlayerInput();
+
     public GenerateRoom spawnRoom;
     public GameObject scoreBoard, startbutton, bubbleHidingspot, bubblePlayer;
     public int activePlayers;
