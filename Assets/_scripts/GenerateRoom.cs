@@ -133,6 +133,8 @@ public class GenerateRoom : MonoBehaviour
 
     }
 
+
+    //after randomization set the hiding spots and static pieces with a new object spawned from the list
     public void SetLayout(int whichlayout, Vector3 pos, float rot)
     {
         GameObject clone = Instantiate(roomLayOutPrefabs[whichlayout], pos, transform.rotation);
@@ -148,11 +150,9 @@ public class GenerateRoom : MonoBehaviour
             else { clone.transform.GetChild(count).parent = gameManager.map.enviroment; }
             count--;
         }
+        //the clone is the parent holding the hiding spots and static enviroment pieces so it can be cleaned up after the room is set
         Destroy(clone);
-        //roomLayOutPrefabs[whichlayout].active = true;
-        //roomLayOutPrefabs[whichlayout].transform.position = pos;
-        //roomLayOutPrefabs[whichlayout].transform.rotation = rot;
-        //roomLayOutPrefabs[whichlayout].transform.parent = hazards;
+      
     }
 
     public void RandomizeRoomSpots()
@@ -180,11 +180,18 @@ public class GenerateRoom : MonoBehaviour
         foreach (Transform room in rooms)
         {
             bool validRoom = false;
-            foreach (Transform doorobj in doors)
+            //if it is the main center large room, or there is a door connected to it, the room is valid
+            if (room.GetComponent<Room>() != null && room.GetComponent<Room>().largeRoom == true )
+            { validRoom = true; }
+            else
             {
-                if (doorobj.gameObject.active == true && Vector3.Distance(doorobj.position, room.position) < 4)
-                { validRoom = true; }
+                foreach (Transform doorobj in doors)
+                {
+                    if (doorobj.gameObject.active == true && Vector3.Distance(doorobj.position, room.position) < 4  )
+                    { validRoom = true; }
+                }
             }
+          
 
             if (validRoom == true)
             {
@@ -251,9 +258,32 @@ public class GenerateRoom : MonoBehaviour
             }
             else { Debug.Log(hazards.GetChild(rnd).GetComponent<HidingSpot>().GetPlaceInList()); }
         }
-        gameManager.BroadcastStartRound();
+        RandomizeWeapons();
     }
 
+    public void RandomizeWeapons()
+    {
+        int weaponsLeft = 4;
+        int count = 0;
+        //List<HidingSpot> tempHidingspots = new List<HidingSpot>();
+        if (hazards.childCount <= weaponsLeft) { return; }
 
+        while (weaponsLeft > 0 && count < 40)
+        {
+            count++;
+            int rnd = (int)Random.Range(0, hazards.childCount);
+            if (hazards.GetChild(rnd).GetComponent<HidingSpot>().GetCollectible() == 0)
+            {
+                hazards.GetChild(rnd).GetComponent<HidingSpot>().SetCollectible(5);
+
+                gameManager.BroadcastHidingSpotCollectible(hazards.GetChild(rnd).GetComponent<HidingSpot>().GetPlaceInList(), 5);
+                Debug.Log(hazards.GetChild(rnd).transform.position);
+                weaponsLeft--;
+            }
+            else { Debug.Log(hazards.GetChild(rnd).GetComponent<HidingSpot>().GetPlaceInList()); }
+        }
+
+        gameManager.BroadcastStartRound();
+    }
 
 }

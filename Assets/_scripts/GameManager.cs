@@ -187,6 +187,7 @@ public class GameManager : Photon.MonoBehaviour
         }
     }
 
+
     public void BroadcastStartRound()
     {
         if (PhotonNetwork.isMasterClient)
@@ -230,6 +231,7 @@ public class GameManager : Photon.MonoBehaviour
             Vector3 spawnlocation = new Vector3(rooms.GetChild(player.GetComponent<PhotonView>().ownerId).position.x - 2.5f, rooms.GetChild(player.GetComponent<PhotonView>().ownerId).position.y);
 
             player.transform.position = spawnlocation;
+           
             if (PhotonNetwork.isMasterClient) { player.photonView.RPC("SetLocation", PhotonTargets.AllViaServer, spawnlocation); }
         }
     }
@@ -475,6 +477,12 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void rpcSetCollectibleForHidingSpot(int whichHidingSpot, int whatitem)
     {
+        
+        //collectible removed
+        if (whatitem > 0 && whatitem < 5) { map.IncrementRoomCollectibles(hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position, 1); }
+        else { if ( hidingSpotManager.GetHidingSpot(whichHidingSpot).GetCollectible() > 0 && hidingSpotManager.GetHidingSpot(whichHidingSpot).GetCollectible() < 5) { map.IncrementRoomCollectibles(hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position, -1); } }
+        
+        map.UpdateMapUi();
         hidingSpotManager.SetCollectibleForHidingSpot(whichHidingSpot, whatitem);
     }
 
@@ -497,6 +505,14 @@ public class GameManager : Photon.MonoBehaviour
     public void OpenDoor(int whichDoor, bool open)
     {
         hidingSpotManager.OpenDoor( whichDoor, open );
+        map.UpdateMapUi(); 
+        //if (open == false) { UpdateMapUI(); }
+    }
+
+    public void UpdateVisitedRooms(Vector3 location )
+    {
+        map.MarkRoomAsVisited(location);
+        map.UpdateMapUi();
     }
 
     public void EnableBubbles()
@@ -521,7 +537,10 @@ public class GameManager : Photon.MonoBehaviour
                 bubblePlayer.transform.position = go.position;
                 bubblePlayer.transform.GetChild( 0 ).GetComponent<SpriteRenderer>().sprite =
                     gameConstants.collectibleTypes[collectible].sprite;
+
                 bubbleHidingspot.transform.position = hidingSpotManager.GetHidingSpot( whichspot ).transform.position;
+                bubbleHidingspot.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
+                    gameConstants.collectibleTypes[0].sprite;
                 //pass the value to avoid a race condition
 
                 if ( collectibleInSpot != 0 )
@@ -585,24 +604,38 @@ public class GameManager : Photon.MonoBehaviour
                         }
                         else
                         {
-                            if ( actingPlayer.GetInventory().CanHoldMoreCollectibles() == true )
+                            //1-4 being the gem collectibles, 5+ being weapons, -1 is briefcase, 0 nothing
+                            if (activatedHidingSpot.GetCollectible() < 5 && activatedHidingSpot.GetCollectible() > 0)
                             {
-                                int collectiblegrabbed = activatedHidingSpot.GetCollectible();
-                                actingPlayer.GetComponent<PhotonView>().RPC( "AddCollectible",
-                                    PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue, 1 );
+                                if (actingPlayer.GetInventory().CanHoldMoreCollectibles() == true)
+                                {
+                                    int collectiblegrabbed = activatedHidingSpot.GetCollectible();
+                                    actingPlayer.GetComponent<PhotonView>().RPC("AddCollectible",
+                                        PhotonTargets.AllBufferedViaServer, activatedHidingSpot.collectibleValue, 1);
 
 
-                                this.photonView.RPC( "rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found" );
+                                    this.photonView.RPC("rpcNewScrollLine", PhotonTargets.AllViaServer, "Item Found");
 
 
-                                //move the item in the hiding spot to the players inventory
-                                this.photonView.RPC( "rpcSetCollectibleForHidingSpot",
-                                    PhotonTargets.AllBufferedViaServer, whichHidingSpot, 0 );
+                                    //move the item in the hiding spot to the players inventory
+                                    this.photonView.RPC("rpcSetCollectibleForHidingSpot",
+                                        PhotonTargets.AllBufferedViaServer, whichHidingSpot, 0);
 
-                                //set the bubbles to show the item picked up
-                                photonView.RPC( "SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, whichPlayer,
-                                    collectiblegrabbed, 0, 0, 0 );
+                                    //set the bubbles to show the item picked up
+                                    photonView.RPC("SetBubbles", PhotonTargets.AllViaServer, whichHidingSpot, whichPlayer,
+                                        collectiblegrabbed, 0, 0, 0);
+
+
+                                }
                             }
+                            else
+                            {
+                                //weapon collectible
+
+                                actingPlayer.GetInventory().SetWeapon(5);
+                            }
+
+
                         }
                     }
                 }
