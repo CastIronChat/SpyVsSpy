@@ -49,3 +49,13 @@ New-Item -Type SymbolicLink -Target C:\Users\cspotcode\Documents\Personal-dev\@C
 ```
 
 Might want to also symlink `Packages/manifest.json`
+
+# Layers
+
+0 -
+1 -
+2 - 
+4 - player
+5 -
+6 -
+7 - walls

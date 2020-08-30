@@ -329,6 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 6541319070722673849, guid: ac39988e74e20f94989c2b2be122e8f8,
     type: 3}
+  spawnSpaceParent: {fileID: 0}
 --- !u!114 &29
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,8 +353,8 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
-  viewIdField: 1
-  instantiationId: 1
+  viewIdField: 2
+  instantiationId: 2
   currentMasterID: -1
   isRuntimeInstantiated: 0
 --- !u!196 &30
@@ -3533,11 +3534,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &130282681
 Rigidbody2D:
   serializedVersion: 4
@@ -11177,11 +11176,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 1, z: 0}
-  spotInList: -1
-  roomsize: 9
+  isExit: 0
 --- !u!50 &403030133
 Rigidbody2D:
   serializedVersion: 4
@@ -11441,11 +11438,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 9
+  isExit: 0
 --- !u!50 &407338229
 Rigidbody2D:
   serializedVersion: 4
@@ -17277,11 +17272,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &589624684
 Rigidbody2D:
   serializedVersion: 4
@@ -18518,11 +18511,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!212 &625990768
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -23372,11 +23363,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!212 &814096466
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -25785,11 +25774,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &887168683
 Rigidbody2D:
   serializedVersion: 4
@@ -27346,11 +27333,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &928814852
 Rigidbody2D:
   serializedVersion: 4
@@ -27764,11 +27749,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &936443640
 Rigidbody2D:
   serializedVersion: 4
@@ -28123,11 +28106,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &947113957
 Rigidbody2D:
   serializedVersion: 4
@@ -29445,11 +29426,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 9
+  isExit: 0
 --- !u!50 &994711859
 Rigidbody2D:
   serializedVersion: 4
@@ -30562,11 +30541,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &1034497659
 Rigidbody2D:
   serializedVersion: 4
@@ -31250,11 +31227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1813329207}
   scrollingText: {fileID: 843869123}
-  hidingSpotParent: {fileID: 1049484760}
-  doorsParent: {fileID: 799751327}
-  activeHidingSpots: {fileID: 640133531}
   hidingSpots: []
-  doors: []
 --- !u!1 &1055511014
 GameObject:
   m_ObjectHideFlags: 0
@@ -31490,11 +31463,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &1069217548
 Rigidbody2D:
   serializedVersion: 4
@@ -34159,11 +34130,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &1142950479
 Rigidbody2D:
   serializedVersion: 4
@@ -38818,11 +38787,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &1320156054
 Rigidbody2D:
   serializedVersion: 4
@@ -42743,11 +42710,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &1449428361
 Rigidbody2D:
   serializedVersion: 4
@@ -52652,8 +52617,8 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1813329207}
   ObservedComponentsFoldoutOpen: 1
-  viewIdField: 3
-  instantiationId: 3
+  viewIdField: 4
+  instantiationId: 4
   currentMasterID: -1
   isRuntimeInstantiated: 0
 --- !u!114 &1813329207
@@ -52670,11 +52635,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerManager: {fileID: 1317979550}
   hidingSpotManager: {fileID: 1049484761}
+  collectibleManager: {fileID: 0}
+  map: {fileID: 0}
   scrollingText: {fileID: 843869123}
   roundManager: {fileID: 1795956389}
   playerPrefab: {fileID: 100000, guid: 306d58f3d17f0bd4082310859a39d5e8, type: 3}
   scoreBoard: {fileID: 1424402384}
   startbutton: {fileID: 1744082377}
+  bubbleHidingspot: {fileID: 0}
+  bubblePlayer: {fileID: 0}
   activePlayers: 0
   myRenderer: {fileID: 0}
   colors:
@@ -52685,7 +52654,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 3bde9ad9baddc264083ac6244cc1d337, type: 2}
   playerinventoryimages: {fileID: 2001101598}
   playertrapimages: {fileID: 1332968859}
-  rooms: {fileID: 283930881}
   idleplayerManager: {fileID: 362790910}
   debugExplosion: {fileID: 7312031365088650165, guid: c8be7267a362f304c8d8dc0ee2312829,
     type: 3}
@@ -53150,11 +53118,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 1, z: 0}
-  spotInList: -1
-  roomsize: 9
+  isExit: 0
 --- !u!50 &1832503649
 Rigidbody2D:
   serializedVersion: 4
@@ -54988,11 +54954,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 0, y: 0.54, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &1885815312
 Rigidbody2D:
   serializedVersion: 4
@@ -57088,7 +57052,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc68825c13990d8499072f083112fc2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  icons: {fileID: 2098760690}
+  notFoundIcons: {fileID: 2098760690}
+  objectiveHeader: {fileID: 0}
 --- !u!1 &1950308926
 GameObject:
   m_ObjectHideFlags: 0
@@ -57266,11 +57231,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  oppositeDoor: {fileID: 0}
+  doorManager: {fileID: 0}
   doorSprite: {fileID: 0}
-  openDirection: {x: 1, y: 0, z: 0}
-  spotInList: -1
-  roomsize: 8
+  isExit: 0
 --- !u!50 &1955559079
 Rigidbody2D:
   serializedVersion: 4

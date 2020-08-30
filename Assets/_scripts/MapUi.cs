@@ -10,11 +10,11 @@ public class MapUi : MonoBehaviour
     public Color visitedColor, notvisitedColor;
     public Map map;
     public GameObject mapobj;
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -24,7 +24,7 @@ public class MapUi : MonoBehaviour
         if (map.GetComponent<Map>().mapui == null) { map.GetComponent<Map>().mapui  = GetComponent<MapUi>(); }
     }
 
-    public void SetRoomImage(int whichroom,Room room) 
+    public void SetRoomImage(int whichroom,Room room)
     {
         if (roomImageParent.childCount > whichroom)
         {
@@ -33,5 +33,9 @@ public class MapUi : MonoBehaviour
         }
     }
 
-
+    public bool shown
+    {
+        get => mapobj.activeSelf;
+        set => mapobj.SetActive( value );
+    }
 }
