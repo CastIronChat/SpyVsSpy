@@ -1,4 +1,7 @@
-﻿public class ObjectiveUI
+﻿/// <summary>
+/// TODO Doesn't appear to be used anywhere; make CollectibleManager use this class?
+/// </summary>
+public class ObjectiveUI
 {
 
     private GameManager gm

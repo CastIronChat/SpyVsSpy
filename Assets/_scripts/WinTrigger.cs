@@ -7,11 +7,16 @@ using UnityEngine;
 /// </summary>
 public class WinTrigger : MonoBehaviour
 {
-    private void OnCollisionEnter2D(Collision2D other)
+    GameManager gm
+    {
+        get => GameManager.instance;
+    }
+    private void OnTriggerEnter2D(Collider2D other)
     {
         var player = other.gameObject.GetComponent<Player>();
-        if ( player != null )
+        if ( player != null && gm.winState.winner == null )
         {
+            gm.BroadcastPlayerHitWinTrigger( player );
             // TODO use GameManager RPC to announce winner, start timer to show the "restart" button
         }
     }
