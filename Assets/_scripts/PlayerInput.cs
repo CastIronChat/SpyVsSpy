@@ -54,11 +54,33 @@ public class PlayerInput
         if(Input.GetKeyDown(KeyCode.Alpha4)) return 3;
         return null;
     }
+    public bool GetToggleMapDown()
+    {
+        return Input.GetKeyDown( KeyCode.L );
+    }
+    public bool GetDisarmDown()
+    {
+        return Input.GetKeyDown( KeyCode.P );
+    }
 
     bool __debug = true;
     // Methods with __debug prefix are for testing in development.
     // Should be disabled or removed to avoid cheating.
     public bool __debugInventoryResetDown() {
         return __debug && Input.GetKeyDown(KeyCode.Alpha5);
+    }
+
+    public bool __debugRandomizeDoorsDown()
+    {
+        return __debug && Input.GetKeyDown( KeyCode.I );
+    }
+    public bool __debugRandomizeRoomSpotsDown()
+    {
+        return __debug && Input.GetKeyDown( KeyCode.U );
+    }
+
+    public bool __debugPlaySearchAnimationDown()
+    {
+        return __debug && Input.GetKeyDown( KeyCode.Q );
     }
 }

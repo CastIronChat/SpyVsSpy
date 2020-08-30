@@ -445,7 +445,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initSceneName: init
-  nextScene: 
   destroySelfAfter: 0
   destroyGameObjectAfter: 1
 --- !u!4 &746104918

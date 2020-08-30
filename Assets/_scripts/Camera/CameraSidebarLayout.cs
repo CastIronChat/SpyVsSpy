@@ -20,8 +20,11 @@ class CameraSidebarLayout : CameraLayoutEngine
         for ( var i = 0; i < manager.cameraCountIncludingDummies; i++ )
         {
             var camera = manager.getCameraAtIncludingDummies( i );
-            var component = camera.GetComponent<ViewportFollowRectTransform>();
-            if ( component != null ) Destroy( component );
+            if ( camera != null )
+            {
+                var component = camera.GetComponent<ViewportFollowRectTransform>();
+                if ( component != null ) Destroy( component );
+            }
         }
     }
 

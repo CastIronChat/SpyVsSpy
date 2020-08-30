@@ -36,6 +36,8 @@ public class GameManager : Photon.MonoBehaviour
         get => GameConstants.instance;
     }
 
+    public PlayerInput input = new PlayerInput();
+
     public GenerateRoom spawnRoom;
     public GameObject scoreBoard, startbutton, bubbleHidingspot, bubblePlayer;
     public int activePlayers;
@@ -151,7 +153,6 @@ public class GameManager : Photon.MonoBehaviour
     public void ResetHidingSpots()
     {
         spawnRoom.ResetHidingSpots();
-
     }
 
     public void BroadcastSetHidingSpotAndDoorLists()
@@ -231,7 +232,7 @@ public class GameManager : Photon.MonoBehaviour
             Vector3 spawnlocation = new Vector3(rooms.GetChild(player.GetComponent<PhotonView>().ownerId).position.x - 2.5f, rooms.GetChild(player.GetComponent<PhotonView>().ownerId).position.y);
 
             player.transform.position = spawnlocation;
-           
+
             if (PhotonNetwork.isMasterClient) { player.photonView.RPC("SetLocation", PhotonTargets.AllViaServer, spawnlocation); }
         }
     }
@@ -477,11 +478,11 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void rpcSetCollectibleForHidingSpot(int whichHidingSpot, int whatitem)
     {
-        
+
         //collectible removed
         if (whatitem > 0 && whatitem < 5) { map.IncrementRoomCollectibles(hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position, 1); }
         else { if ( hidingSpotManager.GetHidingSpot(whichHidingSpot).GetCollectible() > 0 && hidingSpotManager.GetHidingSpot(whichHidingSpot).GetCollectible() < 5) { map.IncrementRoomCollectibles(hidingSpotManager.GetHidingSpot(whichHidingSpot).transform.position, -1); } }
-        
+
         map.UpdateMapUi();
         hidingSpotManager.SetCollectibleForHidingSpot(whichHidingSpot, whatitem);
     }
@@ -505,7 +506,7 @@ public class GameManager : Photon.MonoBehaviour
     public void OpenDoor(int whichDoor, bool open)
     {
         hidingSpotManager.OpenDoor( whichDoor, open );
-        map.UpdateMapUi(); 
+        map.UpdateMapUi();
         //if (open == false) { UpdateMapUI(); }
     }
 

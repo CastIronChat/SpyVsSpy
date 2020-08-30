@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class GenerateRoom : MonoBehaviour
 {
-
     public GameManager gameManager
     {
         get => GameManager.instance;
@@ -34,13 +34,16 @@ public class GenerateRoom : MonoBehaviour
 
 
     void Update()
-    { Randomizer(); }
+    { __debugRandomize(); }
 
 
-    public void Randomizer(bool generate = false)
+    /// <summary>
+    /// Re-randomizes the map when debugging keybindings are presssed, or can be forced via method param
+    /// </summary>
+    public void __debugRandomize(bool generate = false)
     {
 
-        if (Input.GetKeyDown(KeyCode.I) || generate == true)
+        if (gameManager.input.__debugRandomizeDoorsDown() || generate)
         {
             // disable hazards that might be already include, for playing multiple rounds
             //while(hazards.childCount > 0)
@@ -64,9 +67,8 @@ public class GenerateRoom : MonoBehaviour
         }
 
 
-        if (Input.GetKeyDown(KeyCode.U) || generate == true)
+        if (gameManager.input.__debugRandomizeRoomSpotsDown() || generate)
         {
-
             RandomizeRoomSpots();
         }
 
@@ -74,17 +76,42 @@ public class GenerateRoom : MonoBehaviour
 
     public void RandomizeDoors()
     {
-        int count = 0;
-        while (count < doors.childCount)
+        int nonExitDoorsSet = 0;
+        var _doors = doors.GetComponentsInChildren<Door>(true);
+        for (int i = 0, l = _doors.Length; i < l; i++)
         {
+            var door = _doors[i];
+            if ( door.isExit )
+            {
+                continue;
+            }
+
+            nonExitDoorsSet++;
             if (Random.Range(0, 2.0f) > 1.5f)
             {
-                gameManager.BroadCastDoorOrWall(count, false, true);
+                gameManager.BroadCastDoorOrWall(i, false, true);
 
             }
             else
-            { gameManager.BroadCastDoorOrWall(count, true, false); }
-            count++;
+            { gameManager.BroadCastDoorOrWall(i, true, false); }
+        }
+
+        // Ensure there is only one exit
+        // Exit doors use the new DoorOrWall pair, so we can query for them differently.
+        // This logic will need to be changed if non-exit doors start using DoorOrWall pair, too, because we'll need
+        // to filter the list based on which are exits and which are not.
+        var exitDoors = doors.GetComponentsInChildren<DoorOrWall>(true);
+        var chosenExitDoorIndex = Random.Range( 0, exitDoors.Length ) + nonExitDoorsSet;
+        for ( int i = nonExitDoorsSet, l = exitDoors.Length + nonExitDoorsSet; i < l; i++ )
+        {
+            if ( i == chosenExitDoorIndex )
+            {
+                gameManager.BroadCastDoorOrWall( i, true, false );
+            }
+            else
+            {
+                gameManager.BroadCastDoorOrWall( i, false, true );
+            }
         }
     }
 
@@ -97,12 +124,12 @@ public class GenerateRoom : MonoBehaviour
             //    hazard.gameObject.active = false;
             Destroy(hazard.gameObject);
         }
-        foreach (Transform enviroment in gameManager.map.enviroment)
+        foreach (Transform environment in gameManager.map.enviroment)
         {
             //    hazard.parent = wholelayouts;
             //    hazard.position = wholelayouts.position;
             //    hazard.gameObject.active = false;
-            Destroy(enviroment.gameObject);
+            Destroy(environment.gameObject);
         }
         gameManager.hidingSpotManager.hidingSpots.Clear();
         //gameManager.hidingSpotManager.doorlistset = false;
@@ -128,9 +155,28 @@ public class GenerateRoom : MonoBehaviour
 
     public void SetDoorOrWall(int whichspot, bool dooron, bool wallon)
     {
-        if (doors.childCount > whichspot) { doors.GetChild(whichspot).gameObject.active = dooron; }
-        if (walls.childCount > whichspot) { walls.GetChild(whichspot).gameObject.active = wallon; }
+        if ( doors.childCount > whichspot )
+        {
+            var go = doors.GetChild( whichspot );
+            var pair = go.GetComponent<DoorOrWall>();
+            if ( pair != null )
+            {
+                pair.setTo( isDoor: dooron );
+                Assert.AreEqual( dooron, !wallon, "wallon and dooron must be opposites" );
+            }
+            else
+            {
+                if ( doors.childCount > whichspot )
+                {
+                    doors.GetChild( whichspot ).gameObject.SetActive( dooron );
+                }
 
+                if ( walls.childCount > whichspot )
+                {
+                    walls.GetChild( whichspot ).gameObject.SetActive( wallon );
+                }
+            }
+        }
     }
 
 
@@ -152,7 +198,7 @@ public class GenerateRoom : MonoBehaviour
         }
         //the clone is the parent holding the hiding spots and static enviroment pieces so it can be cleaned up after the room is set
         Destroy(clone);
-      
+
     }
 
     public void RandomizeRoomSpots()
@@ -160,7 +206,6 @@ public class GenerateRoom : MonoBehaviour
         //check that it has a door connected to it
 
         gameManager.BroadcastResetHidingSpots();
-        List<GameObject> templayouts = roomLayOutPrefabs.GetRange(0, roomLayOutPrefabs.Count);//new List<GameObject>();
         //while (activeRoomLayOutPrefabs.Count > 0)
         //{
         //    roomLayOutPrefabs[activeRoomLayOutPrefabs[0]].active = false;
@@ -168,11 +213,10 @@ public class GenerateRoom : MonoBehaviour
 
         //}
         activeRoomLayOutPrefabs.Clear();
-        int rnd = 0;
         int count = 0;
         while (activeRoomLayOutPrefabs.Count < rooms.childCount)
         {
-            rnd = (int)Random.Range(0, roomLayOutPrefabs.Count);
+            int rnd = Random.Range(0, roomLayOutPrefabs.Count);
             if (activeRoomLayOutPrefabs.Contains(rnd) == false)
             { activeRoomLayOutPrefabs.Add(rnd); }
         }
@@ -191,7 +235,7 @@ public class GenerateRoom : MonoBehaviour
                     { validRoom = true; }
                 }
             }
-          
+
 
             if (validRoom == true)
             {
@@ -221,11 +265,7 @@ public class GenerateRoom : MonoBehaviour
 
         gameManager.BroadcastSetHidingSpotAndDoorLists();
         //gameManager.BroadcastStartRound();
-
-
-
     }
-
 
     public void RandomizeCollectibleSpots()
     {
@@ -247,16 +287,18 @@ public class GenerateRoom : MonoBehaviour
         while (collectiblesleft > 0 && count < 40)
         {
             count++;
-            int rnd = (int)Random.Range(0, hazards.childCount);
-            if (hazards.GetChild(rnd).GetComponent<HidingSpot>().GetCollectible() == 0)
+            int rnd = Random.Range(0, hazards.childCount);
+            var hazard = hazards.GetChild( rnd );
+            var hidingSpot = hazard.GetComponent<HidingSpot>();
+            if (hidingSpot.GetCollectible() == 0)
             {
-                hazards.GetChild(rnd).GetComponent<HidingSpot>().SetCollectible(collectiblesleft);
+                hidingSpot.SetCollectible(collectiblesleft);
 
-                gameManager.BroadcastHidingSpotCollectible(hazards.GetChild(rnd).GetComponent<HidingSpot>().GetPlaceInList(), collectiblesleft);
-                Debug.Log(hazards.GetChild(rnd).transform.position);
+                gameManager.BroadcastHidingSpotCollectible(hidingSpot.GetPlaceInList(), collectiblesleft);
+                Debug.Log(hazard.transform.position);
                 collectiblesleft--;
             }
-            else { Debug.Log(hazards.GetChild(rnd).GetComponent<HidingSpot>().GetPlaceInList()); }
+            else { Debug.Log(hidingSpot.GetPlaceInList()); }
         }
         RandomizeWeapons();
     }
@@ -271,16 +313,18 @@ public class GenerateRoom : MonoBehaviour
         while (weaponsLeft > 0 && count < 40)
         {
             count++;
-            int rnd = (int)Random.Range(0, hazards.childCount);
-            if (hazards.GetChild(rnd).GetComponent<HidingSpot>().GetCollectible() == 0)
+            int rnd = Random.Range(0, hazards.childCount);
+            var hazard = hazards.GetChild( rnd );
+            var hidingSpot = hazard.GetComponent<HidingSpot>();
+            if (hidingSpot.GetCollectible() == 0)
             {
-                hazards.GetChild(rnd).GetComponent<HidingSpot>().SetCollectible(5);
+                hidingSpot.SetCollectible(5);
 
-                gameManager.BroadcastHidingSpotCollectible(hazards.GetChild(rnd).GetComponent<HidingSpot>().GetPlaceInList(), 5);
-                Debug.Log(hazards.GetChild(rnd).transform.position);
+                gameManager.BroadcastHidingSpotCollectible(hidingSpot.GetPlaceInList(), 5);
+                Debug.Log(hazard.transform.position);
                 weaponsLeft--;
             }
-            else { Debug.Log(hazards.GetChild(rnd).GetComponent<HidingSpot>().GetPlaceInList()); }
+            else { Debug.Log(hidingSpot.GetPlaceInList()); }
         }
 
         gameManager.BroadcastStartRound();

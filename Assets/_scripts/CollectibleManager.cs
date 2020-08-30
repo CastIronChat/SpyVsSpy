@@ -56,7 +56,7 @@ public class CollectibleManager : MonoBehaviour
         }
 
         var localPlayerState = getState( pm.localPlayer );
-        if ( localPlayerState.hasAllCollectibles )
+        if ( localPlayerState.canExit )
         {
             objectiveHeader.SetActive( true );
             // HACK what if there are multiple objectives?  Is our responsibility to control the objectives UI for
@@ -109,4 +109,12 @@ public class CollectibleManager : MonoBehaviour
 public class PlayerCollectibleState
 {
     public bool hasAllCollectibles = false;
+
+    /// <summary>
+    /// Player can open exit door and win
+    /// </summary>
+    public bool canExit
+    {
+        get => hasAllCollectibles;
+    }
 }
