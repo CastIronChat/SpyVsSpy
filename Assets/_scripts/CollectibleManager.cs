@@ -55,17 +55,19 @@ public class CollectibleManager : MonoBehaviour
             state.hasAllCollectibles = countHeldByThisPlayer >= collectibleTypes.Count - 1;
         }
 
+        objectiveHeader.SetActive( false );
         var localPlayerState = getState( pm.localPlayer );
-        if ( localPlayerState.canExit )
+        if ( gm.winState.winner != null )
         {
             objectiveHeader.SetActive( true );
             // HACK what if there are multiple objectives?  Is our responsibility to control the objectives UI for
             // *all* objectives?
-            objectiveHeader.GetComponentInChildren<Text>().text = "Get to the exit!";
+            objectiveHeader.GetComponentInChildren<Text>().text = $"{gm.winState.winner.name} wins!";
         }
-        else
+        else if ( localPlayerState.canExit )
         {
-            objectiveHeader.SetActive( false );
+            objectiveHeader.SetActive( true );
+            objectiveHeader.GetComponentInChildren<Text>().text = "Get to the exit!";
         }
 
         notFoundIcons.setCursorVisibility( false );

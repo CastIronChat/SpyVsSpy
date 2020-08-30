@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -41,5 +42,10 @@ public class PlayerManager : MonoBehaviour
         // TODO duplication between tracking players via the transform children and via the Registry.
         player.transform.parent = transform;
         players.add( player );
+    }
+
+    public void Start()
+    {
+        players.installAsSerializer();
     }
 }
