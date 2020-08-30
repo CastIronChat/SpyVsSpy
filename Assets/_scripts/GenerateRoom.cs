@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class GenerateRoom : MonoBehaviour
 {
-
     public GameManager gameManager
     {
         get => GameManager.instance;
@@ -34,10 +34,13 @@ public class GenerateRoom : MonoBehaviour
 
 
     void Update()
-    { Randomizer(); }
+    { __debugRandomize(); }
 
 
-    public void Randomizer(bool generate = false)
+    /// <summary>
+    /// Re-randomizes the map when debugging keybindings are presssed, or can be forced via method param
+    /// </summary>
+    public void __debugRandomize(bool generate = false)
     {
 
         if (gameManager.input.__debugRandomizeDoorsDown() || generate)
@@ -66,7 +69,6 @@ public class GenerateRoom : MonoBehaviour
 
         if (gameManager.input.__debugRandomizeRoomSpotsDown() || generate)
         {
-
             RandomizeRoomSpots();
         }
 
@@ -74,17 +76,17 @@ public class GenerateRoom : MonoBehaviour
 
     public void RandomizeDoors()
     {
-        int count = 0;
-        var _doors = GetComponentsInChildren<Door>( doors );
-        var exitDoors = new List<Door>();
+        int nonExitDoorsSet = 0;
+        var _doors = doors.GetComponentsInChildren<Door>(true);
         for (int i = 0, l = _doors.Length; i < l; i++)
         {
             var door = _doors[i];
             if ( door.isExit )
             {
-                exitDoors.Add( door );
                 continue;
             }
+
+            nonExitDoorsSet++;
             if (Random.Range(0, 2.0f) > 1.5f)
             {
                 gameManager.BroadCastDoorOrWall(i, false, true);
@@ -95,8 +97,12 @@ public class GenerateRoom : MonoBehaviour
         }
 
         // Ensure there is only one exit
-        var chosenExitDoorIndex = Random.Range( 0, exitDoors.Count );
-        for ( int i = 0, l = exitDoors.Count; i < l; i++ )
+        // Exit doors use the new DoorOrWall pair, so we can query for them differently.
+        // This logic will need to be changed if non-exit doors start using DoorOrWall pair, too, because we'll need
+        // to filter the list based on which are exits and which are not.
+        var exitDoors = doors.GetComponentsInChildren<DoorOrWall>(true);
+        var chosenExitDoorIndex = Random.Range( 0, exitDoors.Length ) + nonExitDoorsSet;
+        for ( int i = nonExitDoorsSet, l = exitDoors.Length + nonExitDoorsSet; i < l; i++ )
         {
             if ( i == chosenExitDoorIndex )
             {
@@ -149,9 +155,28 @@ public class GenerateRoom : MonoBehaviour
 
     public void SetDoorOrWall(int whichspot, bool dooron, bool wallon)
     {
-        if (doors.childCount > whichspot) { doors.GetChild(whichspot).gameObject.active = dooron; }
-        if (walls.childCount > whichspot) { walls.GetChild(whichspot).gameObject.active = wallon; }
+        if ( doors.childCount > whichspot )
+        {
+            var go = doors.GetChild( whichspot );
+            var pair = go.GetComponent<DoorOrWall>();
+            if ( pair != null )
+            {
+                pair.setTo( isDoor: dooron );
+                Assert.AreEqual( dooron, !wallon, "wallon and dooron must be opposites" );
+            }
+            else
+            {
+                if ( doors.childCount > whichspot )
+                {
+                    doors.GetChild( whichspot ).gameObject.SetActive( dooron );
+                }
 
+                if ( walls.childCount > whichspot )
+                {
+                    walls.GetChild( whichspot ).gameObject.SetActive( wallon );
+                }
+            }
+        }
     }
 
 
@@ -240,11 +265,7 @@ public class GenerateRoom : MonoBehaviour
 
         gameManager.BroadcastSetHidingSpotAndDoorLists();
         //gameManager.BroadcastStartRound();
-
-
-
     }
-
 
     public void RandomizeCollectibleSpots()
     {

@@ -153,7 +153,6 @@ public class GameManager : Photon.MonoBehaviour
     public void ResetHidingSpots()
     {
         spawnRoom.ResetHidingSpots();
-
     }
 
     public void BroadcastSetHidingSpotAndDoorLists()

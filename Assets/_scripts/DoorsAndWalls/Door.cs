@@ -10,8 +10,11 @@ public class DoorRegistry : Registry<Door>
 }
 public class Door : MonoBehaviour, Entity
 {
+    [HideInInspector]
     public GameManager gameManager;
+    [HideInInspector]
     public HidingspotManager doorManager;
+    [Description("Used to show/hide and turn collision on/off")]
     public GameObject doorSprite;
 
     [Description(@"

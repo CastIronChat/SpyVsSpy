@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class HidingspotManager : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class HidingspotManager : MonoBehaviour
     public DoorRegistry doors = new DoorRegistry();
 
     public bool doorlistset = false, hidingspotlistset = false;
-    
+
     // Start is called before the first frame update
     void Start()
     {

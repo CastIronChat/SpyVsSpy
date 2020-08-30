@@ -20,7 +20,7 @@ public class HidingSpot : MonoBehaviour
     void Update()
     {
 
-        if(gameManager.input.__debugPlaySearchAnimationDown())
+        if(gameManager != null && gameManager.input.__debugPlaySearchAnimationDown())
         {PlayAnimation("search");}
     }
 
