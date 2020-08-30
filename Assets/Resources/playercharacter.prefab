@@ -189,6 +189,7 @@ MonoBehaviour:
   characterSprite: {fileID: 1410988799141569444}
   heldSprite: {fileID: 5390566615242513836}
   weaponSprite: {fileID: 8820651695482201203}
+  punchsprite: {fileID: 0}
 --- !u!114 &6541319070722673853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,7 +286,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 6
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -450,7 +451,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 6
   m_Sprite: {fileID: 21300000, guid: cfdd46a630581fa459f05e964a25929d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
