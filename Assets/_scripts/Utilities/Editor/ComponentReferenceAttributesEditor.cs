@@ -10,6 +10,7 @@ namespace ComponentReferenceAttributesEditor
     [CustomPropertyDrawer( typeof( ParentComponentAttribute ) )]
     [CustomPropertyDrawer( typeof( DescendantComponentAttribute ) )]
     [CustomPropertyDrawer( typeof( AncestorComponentAttribute ) )]
+    [CustomPropertyDrawer( typeof( SiblingComponentAttribute ) )]
     public class ComponentReferenceDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

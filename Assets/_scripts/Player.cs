@@ -14,6 +14,7 @@ public class PlayerRegistry : Registry<Player>
     }
 }
 
+[SelectionBase]
 public class Player : Photon.MonoBehaviour, Entity
 {
     public GameManager gameManager
@@ -711,5 +712,10 @@ public class Player : Photon.MonoBehaviour, Entity
     public Inventory GetInventory()
     {
         return inventory;
+    }
+
+    public void setAvatarVisibility(bool visible)
+    {
+        characterSprite.enabled = visible;
     }
 }

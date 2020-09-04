@@ -10,6 +10,11 @@ public class PlayerCamera : MonoBehaviour, IDisposable
     public float y;
     public float width;
     public float height;
+    /// <summary>
+    /// When set, the camera will temporarily follow this object instead.  Set to null to follow the player again.
+    /// </summary>
+    public Transform alternativeFollowTarget;
+    public bool snapToRoomGrid = true;
 
     private RectTransformUtility roomSizeReference
     {
@@ -21,22 +26,35 @@ public class PlayerCamera : MonoBehaviour, IDisposable
     }
 
     void Update() {
-        followPlayer();
+        followTarget();
     }
-    void followPlayer() {
-        // Camera snaps to a grid.
-        // A dummy box collider is used as a visual reference of this grid.
-        float roomWidth = roomSizeReference.width;
-        float roomHeight = roomSizeReference.height;
+    void followTarget()
+    {
+        var target = alternativeFollowTarget == null ? player.transform : alternativeFollowTarget;
 
-        var cornerToMiddleOffset = new Vector3(roomWidth, roomHeight) / 2;
+        float camX = target.position.x;
+        float camY = target.position.y;
 
-        // Get the player's transform relative to the lower-left corner of the reference box
-        var playerRelativeToReferenceLowerLeftCorner = player.transform.position - roomSizeReference.transform.position + cornerToMiddleOffset;
-        var roomX = Math.Floor(playerRelativeToReferenceLowerLeftCorner.x / roomWidth);
-        var roomY = Math.Floor(playerRelativeToReferenceLowerLeftCorner.y / roomHeight);
+        if ( snapToRoomGrid )
+        {
+            // Camera snaps to a grid.
+            // A dummy box collider is used as a visual reference of this grid.
+            float roomWidth = roomSizeReference.width;
+            float roomHeight = roomSizeReference.height;
 
-        cam.transform.position = new Vector3( (float)(roomSizeReference.transform.position.x + roomX * roomWidth), (float)(roomSizeReference.transform.position.y + roomY * roomHeight), cam.transform.position.z );
+            var cornerToMiddleOffset = new Vector3( roomWidth, roomHeight ) / 2;
+
+            // Get the target's transform relative to the lower-left corner of the reference box
+            var playerRelativeToReferenceLowerLeftCorner =
+                target.position - roomSizeReference.transform.position + cornerToMiddleOffset;
+            var roomX = Math.Floor( playerRelativeToReferenceLowerLeftCorner.x / roomWidth );
+            var roomY = Math.Floor( playerRelativeToReferenceLowerLeftCorner.y / roomHeight );
+
+            camX = (float) (roomSizeReference.transform.position.x + roomX * roomWidth);
+            camY = (float) (roomSizeReference.transform.position.y + roomY * roomHeight);
+        }
+
+        cam.transform.position = new Vector3( camX, camY, cam.transform.position.z );
     }
 
     // Call when fields have been changed and the camera will update itself to visually reflect the changes.
