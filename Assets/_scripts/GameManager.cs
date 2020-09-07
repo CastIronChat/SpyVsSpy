@@ -26,6 +26,7 @@ public class GameManager : Photon.MonoBehaviour
         hidingSpotManager; //Track all the hiding spots in a single place rather than have each hiding spot handle itself
 
     [ChildComponent] public CollectibleManager collectibleManager;
+    public CameraManager cameraManager;
     [SiblingComponent] public Map map;
     public ScrollingText scrollingText;
     public RoundManager roundManager;
@@ -61,16 +62,32 @@ public class GameManager : Photon.MonoBehaviour
     //placeholder that needs to be moved to the master trap logic
     public GameObject debugExplosion;
 
+    private bool _startButtonShownToMasterClient = false;
+    public bool startButtonShownToMasterClient
+    {
+        get => _startButtonShownToMasterClient;
+        set
+        {
+            _startButtonShownToMasterClient = value;
+            if ( PhotonNetwork.isMasterClient )
+            {
+                startbutton.SetActive( _startButtonShownToMasterClient );
+            }
+        }
+    }
+
+    private void OnValidate()
+    {
+        Assert.IsNotNull( cameraManager );
+    }
+
     public void Awake()
     {
         if ( !PhotonNetwork.connected )
         {
         }
 
-        if ( PhotonNetwork.isMasterClient )
-        {
-            startbutton.SetActive( true );
-        }
+        startButtonShownToMasterClient = true;
 
         // GameObject clone = PhotonNetwork.Instantiate(this.playerPrefab.name, transform.position, Quaternion.identity, 0);
         // clone.GetComponent<Player>().gameManager = GetComponent<GameManager>();
@@ -212,7 +229,7 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void StartRound()
     {
-        startbutton.SetActive( false );
+        startButtonShownToMasterClient = false;
 
         // Move all idle players onto playerManager
         foreach ( Transform go in idleplayerManager )
@@ -687,8 +704,16 @@ public class GameManager : Photon.MonoBehaviour
     public void PlayerHitWinTrigger(Int32 playerId)
     {
         var player = playerManager.players.get(playerId);
-        if ( winState.winner == null ) winState.winner = player;
+        if ( winState.winner == null )
+        {
+            winState.winner = player;
+            OnSetWinner( player );
+        }
     }
+
+    public delegate void OnSetWinnerDelegate(Player player);
+
+    public event OnSetWinnerDelegate OnSetWinner;
 
     public void OnMasterClientSwitched(PhotonPlayer player)
     {

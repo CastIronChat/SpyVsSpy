@@ -8,6 +8,8 @@ public class DoorRegistry : Registry<Door>
     public DoorRegistry(): base(id: RegistryIds.Doors, name: "doors", validIdsStartAt: 1) {
     }
 }
+
+[SelectionBase]
 public class Door : MonoBehaviour, Entity
 {
     [HideInInspector]

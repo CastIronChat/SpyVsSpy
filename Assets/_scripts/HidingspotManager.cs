@@ -90,12 +90,7 @@ public class HidingspotManager : MonoBehaviour
     {
         if ( doorlistset == false )
         {
-            var allDoors = new List<Door>( map.getComponents<Door>() );
-            // If called before any doors exist, this must be a timing issue, where the map is not ready yet.
-            if ( allDoors.Count <= 0 )
-            {
-                return;
-            }
+            var allDoors = new List<Door>( map.getComponents<Door>(true) );
 
             doorlistset = true;
             // Assign all doors IDs based on their position in the scene, like words in a book:

@@ -32,7 +32,7 @@ public class CameraManager : MonoBehaviour
     {
         return i < cameras.Count ? cameras[i] : dummyCameras[i - cameras.Count];
     }
-    Dictionary<Player, PlayerCamera> playerToCamera = new Dictionary<Player, PlayerCamera>();
+    private Dictionary<Player, PlayerCamera> playerToCamera = new Dictionary<Player, PlayerCamera>();
 
     /// Set true in inspector to play with the layout values
     public bool forceReLayoutEveryFrame = false;
@@ -53,11 +53,11 @@ public class CameraManager : MonoBehaviour
         {
             var old = _enabledLayout;
             _enabledLayout = value;
-        if ( _enabledLayout != old )
-        {
-            setEnabledLayout();
+            if ( _enabledLayout != old )
+            {
+                setEnabledLayout();
+            }
         }
-    }
     }
     private void setEnabledLayout() {
         for(var i = 0; i < layouts.Count; i++) {
@@ -132,5 +132,10 @@ public class CameraManager : MonoBehaviour
         camera.player = p;
         camera.manager = this;
         return camera;
+    }
+
+    public PlayerCamera getCameraForPlayer(Player player)
+    {
+        return playerToCamera[player];
     }
 }

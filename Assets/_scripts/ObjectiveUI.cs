@@ -1,9 +1,14 @@
-﻿/// <summary>
-/// TODO Doesn't appear to be used anywhere; make CollectibleManager use this class?
-/// </summary>
-public class ObjectiveUI
-{
+﻿using ComponentReferenceAttributes;
+using JetBrains.Annotations;
+using UnityEngine;
+using UnityEngine.UI;
 
+/// <summary>
+/// UI showing player objectives.
+/// Does not decide what to show based on game state; is puppeteered by other code.
+/// </summary>
+public class ObjectiveUI : MonoBehaviour
+{
     private GameManager gm
     {
         get => GameManager.instance;
@@ -17,13 +22,23 @@ public class ObjectiveUI
         get => gm.collectibleManager;
     }
 
+    [ChildComponent]
+    public Text textComponent;
 
-    private void Update()
+    /// <summary>
+    /// Set the objective shown to the user.
+    /// If null, the UI is hidden.
+    /// </summary>
+    public void setObjective([CanBeNull] string objective)
     {
-        var localPlayerState = gm.collectibleManager.getState( pm.localPlayer );
-        if ( localPlayerState.hasAllCollectibles )
+        if ( objective == null )
         {
-
+            gameObject.SetActive( false );
+        }
+        else
+        {
+            gameObject.SetActive( false );
+            textComponent.text = objective;
         }
     }
 }
