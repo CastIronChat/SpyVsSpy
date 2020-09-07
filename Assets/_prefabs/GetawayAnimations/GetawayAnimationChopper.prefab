@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7739181619210472080}
   - component: {fileID: 779437540885135740}
+  - component: {fileID: 9009202734266698045}
   m_Layer: 0
   m_Name: GetawayAnimationChopper
   m_TagString: Untagged
@@ -28,14 +29,14 @@ Transform:
   m_LocalPosition: {x: -2.1056392, y: 3.644311, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 3774481582874601894}
+  - {fileID: 5526424958830775808}
+  - {fileID: 4415596680552072760}
+  - {fileID: 8884503543944437095}
   - {fileID: 1764004419449206355}
   - {fileID: 5241442755540245204}
   - {fileID: 80642680458122724}
   - {fileID: 7203849669075105605}
-  - {fileID: 8884503543944437095}
-  - {fileID: 5526424958830775808}
-  - {fileID: 3774481582874601894}
-  - {fileID: 4415596680552072760}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -58,6 +59,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &9009202734266698045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598621170935425628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56bce286e1664387853469269475aad9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 779437540885135740}
+  cameraFollows: {fileID: 3774481582874601894}
+  playerFollows: {fileID: 5526424958830775808}
 --- !u!1 &2512178051201498391
 GameObject:
   m_ObjectHideFlags: 0
@@ -82,11 +98,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2512178051201498391}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.08, y: 3.65, z: 0}
+  m_LocalPosition: {x: 2.1, y: -11.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3195205609468580365
 GameObject:
@@ -117,7 +133,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 5
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &881641978358096795
 MonoBehaviour:
@@ -164,7 +180,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -180, y: 0, z: 90}
 --- !u!212 &6602510963486201805
 SpriteRenderer:
@@ -245,7 +261,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 3
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: -180, y: 0, z: 90}
 --- !u!212 &7581617008771502851
 SpriteRenderer:
@@ -326,7 +342,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 2
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: -180, y: 0, z: 90}
 --- !u!212 &8895253971232241667
 SpriteRenderer:
@@ -488,7 +504,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: -180, y: 0, z: 90}
 --- !u!212 &5899349866166881031
 SpriteRenderer:
@@ -630,6 +646,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4415596680552072760}
+  - component: {fileID: 809160141023217400}
   m_Layer: 0
   m_Name: DoorReference
   m_TagString: Untagged
@@ -649,8 +666,23 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 7
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &809160141023217400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8170881925085833093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c5e67ed7458cc8479fc3158a692eb66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: 'Used as visual reference when animating
+
+'
 --- !u!1 &8477006800803518633
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,7 +713,7 @@ Transform:
   - {fileID: 3689397988141765522}
   - {fileID: 7865614072129997633}
   m_Father: {fileID: 7739181619210472080}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8907254072601224670
 GameObject:

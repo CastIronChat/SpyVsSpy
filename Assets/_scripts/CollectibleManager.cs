@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -20,7 +22,12 @@ public class CollectibleManager : MonoBehaviour
 
     [FormerlySerializedAs( "icons" )] public IconRowHUD notFoundIcons;
 
-    public GameObject objectiveHeader;
+    public ObjectiveUI objectiveUI;
+
+    private void OnValidate()
+    {
+        Assert.IsNotNull( objectiveUI );
+    }
 
     public PlayerCollectibleState getState(Player p)
     {
@@ -55,19 +62,17 @@ public class CollectibleManager : MonoBehaviour
             state.hasAllCollectibles = countHeldByThisPlayer >= collectibleTypes.Count - 1;
         }
 
-        objectiveHeader.SetActive( false );
+        objectiveUI.setObjective( null );
         var localPlayerState = getState( pm.localPlayer );
         if ( gm.winState.winner != null )
         {
-            objectiveHeader.SetActive( true );
             // HACK what if there are multiple objectives?  Is our responsibility to control the objectives UI for
             // *all* objectives?
-            objectiveHeader.GetComponentInChildren<Text>().text = $"{gm.winState.winner.name} wins!";
+            objectiveUI.setObjective( $"{gm.winState.winner.name} wins!" );
         }
         else if ( localPlayerState.canExit )
         {
-            objectiveHeader.SetActive( true );
-            objectiveHeader.GetComponentInChildren<Text>().text = "Get to the exit!";
+            objectiveUI.setObjective( "Get to the exit!" );
         }
 
         notFoundIcons.setCursorVisibility( false );
@@ -80,9 +85,6 @@ public class CollectibleManager : MonoBehaviour
                 notFoundIcons.setIconVisibility( icon, true );
                 notFoundIcons.setIcon( icon, collectibleType.sprite );
                 icon++;
-            }
-            else
-            {
             }
         }
 

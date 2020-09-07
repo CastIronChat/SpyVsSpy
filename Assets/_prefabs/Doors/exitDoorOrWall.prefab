@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 6475200976450976237}
   - component: {fileID: 906674018138029456}
   m_Layer: 2
-  m_Name: wall
+  m_Name: enabledIfWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -202,21 +202,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcb398acbfec426787e0de178d6e2f33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3294932437027986864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2416580652380540363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c5e67ed7458cc8479fc3158a692eb66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  description: 'Used as visual reference when animating
-
-'
 --- !u!1 &3827266213592897224
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,12 +213,12 @@ GameObject:
   - component: {fileID: 1624369961096121778}
   - component: {fileID: 4491072621085502600}
   m_Layer: 0
-  m_Name: door
+  m_Name: enabledIfDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1624369961096121778
 Transform:
   m_ObjectHideFlags: 0
@@ -731,6 +716,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GetawayAnimationChopper
       objectReference: {fileID: 0}
+    - target: {fileID: 598621170935425628, guid: ca456062f31157d42b1601be9b160233,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7739181619210472080, guid: ca456062f31157d42b1601be9b160233,
         type: 3}
       propertyPath: m_RootOrder
@@ -766,12 +756,6 @@ PrefabInstance:
 --- !u!4 &4290450711262142686 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7739181619210472080, guid: ca456062f31157d42b1601be9b160233,
-    type: 3}
-  m_PrefabInstance: {fileID: 5831500287539407438}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2416580652380540363 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8170881925085833093, guid: ca456062f31157d42b1601be9b160233,
     type: 3}
   m_PrefabInstance: {fileID: 5831500287539407438}
   m_PrefabAsset: {fileID: 0}

@@ -83,5 +83,10 @@ MonoBehaviour:
   - Setlocation
   - SetLocation
   - OpenMap
+<<<<<<< HEAD
+=======
+  - BroadcastPlayerWon
+  - BroadcastPlayerHitWinTrigger
+>>>>>>> e825b46614c1333783f4e1d5b2d97763575f08ea
   - PlayerHitWinTrigger
   DisableAutoOpenWizard: 1

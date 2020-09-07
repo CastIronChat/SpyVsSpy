@@ -15,9 +15,9 @@ public class Map : MonoBehaviour
     /// At the moment, a silly abstraction, since we're just wrapping GetComponentsInChildren<>
     /// Maybe it will need to do extra filtering in the future; I'm not sure.
     /// </summary>
-    public T[] getComponents<T>() where T : Component
+    public T[] getComponents<T>(bool includeInactive = false) where T : Component
     {
-        return GetComponentsInChildren<T>();
+        return GetComponentsInChildren<T>(includeInactive);
     }
 
     private void OnValidate()
@@ -55,7 +55,7 @@ public class Map : MonoBehaviour
         {
             GameObject findmap = GameObject.Find("Mapui");
             if (findmap != null && findmap.GetComponent<MapUi>() != null) { mapui = findmap.GetComponent<MapUi>(); }
-            
+
         }
         if (mapui != null)
         {
