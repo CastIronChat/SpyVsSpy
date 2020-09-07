@@ -114909,5 +114909,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mapui
       objectReference: {fileID: 0}
+    - target: {fileID: 9102316204410829989, guid: b043bbf3198c0b5468a6584f1099896d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9102316205472466853, guid: b043bbf3198c0b5468a6584f1099896d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b043bbf3198c0b5468a6584f1099896d, type: 3}

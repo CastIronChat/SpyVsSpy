@@ -680,6 +680,7 @@ public class GameManager : Photon.MonoBehaviour
 
     public void BroadcastPlayerHitWinTrigger(Player player)
     {
+        startbutton.active = true;
         photonView.RPC("PlayerHitWinTrigger", PhotonTargets.AllBufferedViaServer, player.uniqueId);
     }
 

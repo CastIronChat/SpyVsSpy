@@ -83,4 +83,5 @@ MonoBehaviour:
   - Setlocation
   - SetLocation
   - OpenMap
+  - PlayerHitWinTrigger
   DisableAutoOpenWizard: 1
