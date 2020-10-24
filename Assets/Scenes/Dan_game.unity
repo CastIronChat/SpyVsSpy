@@ -99340,7 +99340,9 @@ MonoBehaviour:
   startbutton: {fileID: 1744082377}
   bubbleHidingspot: {fileID: 912381557}
   bubblePlayer: {fileID: 1418589098}
+  lobbyArea: {fileID: 1690388286}
   activePlayers: 0
+  countDownToRestart: -1
   myRenderer: {fileID: 0}
   colors:
   - {fileID: 2100000, guid: 339b8bba8110fbc44a3fcdfd6c2c7568, type: 2}

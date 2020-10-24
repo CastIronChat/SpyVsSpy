@@ -13,6 +13,9 @@ EditorBuildSettings:
     guid: a72811a02deaf2840a05c3f6279e951b
   - enabled: 1
     path: Assets/Scenes/Dan_game.unity
+    guid: f8d513fb603e0854fa8373dd72de667e
+  - enabled: 0
+    path: Assets/Scenes/old_Dan_game.unity
     guid: fd086918b1db6ff4aa29010c7766f3b6
   - enabled: 0
     path: Assets/Scenes/Andrew/gameplay.unity

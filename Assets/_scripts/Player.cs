@@ -134,6 +134,16 @@ public class Player : Photon.MonoBehaviour, Entity
         }
     }
 
+    [PunRPC]
+    public void ResetForNewRound()
+    {
+        if (photonView.isMine)
+        {
+            name = PhotonNetwork.playerName;
+            gameManager.photonView.RPC("PlayerJoinGame", PhotonTargets.AllBufferedViaServer, photonView.ownerId,
+                name);
+        }
+    }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -320,7 +330,7 @@ public class Player : Photon.MonoBehaviour, Entity
                 {
                     if ( gameManager.map.mapui.shown == false )
                     {
-                        inputLockTimer = 3.0f;
+                        inputLockTimer = 0.2f;
                         gameManager.map.mapui.shown = true;
                     }
                     else

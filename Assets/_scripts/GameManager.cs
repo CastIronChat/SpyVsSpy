@@ -46,7 +46,9 @@ public class GameManager : Photon.MonoBehaviour
 
     public GenerateRoom spawnRoom;
     public GameObject scoreBoard, startbutton, bubbleHidingspot, bubblePlayer;
+    public Transform lobbyArea;
     public int activePlayers;
+    public float countDownToRestart = -1;
     public Renderer myRenderer;
     public List<Material> colors;
     public IconRowHUD playerinventoryimages;
@@ -123,6 +125,29 @@ public class GameManager : Photon.MonoBehaviour
 
         if ( PhotonNetwork.isMasterClient )
         {
+            if (countDownToRestart != -1 && winState.winner != null)
+            {
+                countDownToRestart -= Time.deltaTime;
+                if (countDownToRestart <= 0)
+                {
+                    countDownToRestart = -1;
+                    int count = 0;
+                    foreach (Transform el in playerManager.transform)
+                    {
+                        el.GetComponent<PhotonView>().RPC("ResetForNewRound", PhotonTargets.AllBufferedViaServer);
+                        el.transform.position = lobbyArea.GetChild(count).position;
+                        el.GetComponent<PhotonView>().RPC("SetLocation", PhotonTargets.AllBufferedViaServer, lobbyArea.GetChild(count).position);
+                        
+                        count++;
+                    }
+                    startbutton.active = true;
+                    winState.winner = null;
+                    OnSetWinner(null);
+                    //TryToStartRound(1);
+                }
+
+            }
+
         }
     }
 
@@ -229,6 +254,12 @@ public class GameManager : Photon.MonoBehaviour
     [PunRPC]
     public void StartRound()
     {
+        if (winState.winner != null)
+        {
+            winState.winner = null;
+            OnSetWinner(null);
+        }
+       
         startButtonShownToMasterClient = false;
 
         // Move all idle players onto playerManager
@@ -697,14 +728,19 @@ public class GameManager : Photon.MonoBehaviour
 
     public void BroadcastPlayerHitWinTrigger(Player player)
     {
-        startbutton.active = true;
+        //startbutton.active = true;
         photonView.RPC("PlayerHitWinTrigger", PhotonTargets.AllBufferedViaServer, player.uniqueId);
     }
 
     [PunRPC]
     public void PlayerHitWinTrigger(Int32 playerId)
     {
-        var player = playerManager.players.get(playerId);
+        if (PhotonNetwork.isMasterClient)
+        {
+            countDownToRestart = 5;
+        }
+        //else { countDownToRestart = -1; }
+            var player = playerManager.players.get(playerId);
         if ( winState.winner == null )
         {
             winState.winner = player;
@@ -723,23 +759,16 @@ public class GameManager : Photon.MonoBehaviour
 
     public void OnLeftRoom()
     {
-        Debug.Log( "XXXXXXOnLeftRoom (local)" );
-
-        // back to main menu
-        // SceneManager.LoadScene(WorkerMenu.SceneNameMenu);
+ 
     }
 
     public void OnDisconnectedFromPhoton()
     {
-        Debug.Log( "XXXXOnDisconnectedFromPhoton" );
-
-        // back to main menu
-        // SceneManager.LoadScene(WorkerMenu.SceneNameMenu);
+       
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        Debug.Log( "XXXXXOnPhotonInstantiate " + info.sender ); // you could use this info to store this or react
     }
 
     public void OnPhotonPlayerConnected(PhotonPlayer player)
