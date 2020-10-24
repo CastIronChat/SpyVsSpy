@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections;
 using ComponentReferenceAttributes;
-using ICSharpCode.NRefactory.Visitors;
+//using ICSharpCode.NRefactory.Visitors;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
@@ -39,7 +39,7 @@ public class GetawayAnimation : MonoBehaviour
 
     private void Update()
     {
-        if ( isPlayerFollowingAnimation )
+        if ( isPlayerFollowingAnimation && winner != null && playerFollows != null )
         {
             winner.transform.position = playerFollows.transform.position;
             winner.transform.rotation = playerFollows.transform.rotation;
@@ -69,8 +69,8 @@ public class GetawayAnimation : MonoBehaviour
     private void StartAnimation(Player winner) {
         this.winner = winner;
         var cam = cm.getCameraForPlayer(this.winner);
-        cam.alternativeFollowTarget = cameraFollows;
-        cam.snapToRoomGrid = false;
+        //cam.alternativeFollowTarget = cameraFollows;
+        //cam.snapToRoomGrid = false;
         isPlayerFollowingAnimation = true;
         animator.playbackTime = 0;
         animator.enabled = true;
@@ -83,6 +83,8 @@ public class GetawayAnimation : MonoBehaviour
 
     private void AnimationEvent_AnimationEnds()
     {
+        if (winner == null || cameraFollows == null || isPlayerFollowingAnimation == null)
+        { return; }
         winner.setAvatarVisibility( true );
         isPlayerFollowingAnimation = false;
         var cam = cm.getCameraForPlayer(winner);

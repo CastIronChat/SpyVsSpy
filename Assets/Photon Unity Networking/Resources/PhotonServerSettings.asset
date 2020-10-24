@@ -22,7 +22,7 @@ MonoBehaviour:
   ServerAddress: 
   ServerPort: 5055
   VoiceServerPort: 5055
-  JoinLobby: 1
+  JoinLobby: 0
   EnableLobbyStatistics: 0
   PunLogging: 0
   NetworkLogging: 1
@@ -38,14 +38,15 @@ MonoBehaviour:
   - DestroyRpc
   - DisarmHidingSpot
   - DoJump
+  - DoorOrWall
   - Flash
   - InstantiateRpc
-  - JoinGame
   - Marco
-  - NewTurn
   - OpenDoor
   - OpenHidingSpot
+  - OpenMap
   - PickupItemInit
+  - PlayerHitWinTrigger
   - PlayerJoinGame
   - Polo
   - PunPickup
@@ -54,6 +55,8 @@ MonoBehaviour:
   - RemoveCollectible
   - RequestForPickupItems
   - RequestForPickupTimes
+  - ResetHidingSpots
+  - RoomLayout
   - rpcAttackAnimation
   - rpcGetThrownByTrap
   - rpcInteract
@@ -68,7 +71,8 @@ MonoBehaviour:
   - rpcVoteForNewRoundType
   - SetBriefcase
   - SetBubbles
-  - SetNumberInList
+  - SetHidingSpotAndDoorLists
+  - SetLocation
   - SetSpriteFlip
   - SetVelocity
   - StartDisarming
@@ -76,14 +80,5 @@ MonoBehaviour:
   - TaggedPlayer
   - UpdateLives
   - UpdateScore
-  - DoorOrWall
-  - RoomLayout
-  - ResetHidingSpots
-  - SetHidingSpotAndDoorLists
-  - Setlocation
-  - SetLocation
-  - OpenMap
-  - BroadcastPlayerWon
-  - BroadcastPlayerHitWinTrigger
-  - PlayerHitWinTrigger
+  - ResetForNewRound
   DisableAutoOpenWizard: 1
